@@ -1,23 +1,52 @@
 import { db } from "@/server/db";
 import { source } from "@/server/db/schema";
-import { and, eq, inArray } from "drizzle-orm";
-import { CreateSourceInput, UpdateSourceInput } from "./source.validator";
+import { and, desc, eq, ilike, inArray, or } from "drizzle-orm";
+import {
+  CreateSourceInput,
+  ListSourcesQuery,
+  UpdateSourceInput,
+} from "./source.validator";
 
 /**
  * Repository class managing direct database operations for the `source` table via Drizzle ORM.
  */
 export class SourceRepository {
   /**
-   * Queries all sources associated with a given workspace ID.
+   * Queries sources associated with a workspace ID, supporting filtering by type, status, search query (q), and ordered by createdAt desc.
    *
    * @param workspaceId - Workspace unique identifier.
+   * @param filters - Optional filters (type, status, search query q).
    * @returns Array of source records.
    */
-  static async findByWorkspaceId(workspaceId: string) {
+  static async findByWorkspaceId(
+    workspaceId: string,
+    filters: Partial<Omit<ListSourcesQuery, "workspaceId">> = {},
+  ) {
+    const conditions = [eq(source.workspaceId, workspaceId)];
+
+    if (filters.type) {
+      conditions.push(eq(source.type, filters.type));
+    }
+
+    if (filters.status) {
+      conditions.push(eq(source.status, filters.status));
+    }
+
+    if (filters.q) {
+      const searchPattern = `%${filters.q}%`;
+      conditions.push(
+        or(
+          ilike(source.title, searchPattern),
+          ilike(source.content, searchPattern),
+        )!,
+      );
+    }
+
     return await db
       .select()
       .from(source)
-      .where(eq(source.workspaceId, workspaceId));
+      .where(and(...conditions))
+      .orderBy(desc(source.createdAt));
   }
 
   /**

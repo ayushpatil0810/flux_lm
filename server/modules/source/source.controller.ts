@@ -8,6 +8,7 @@ import { SourceService } from "./source.service";
 import {
   bulkDeleteSourcesSchema,
   createSourceSchema,
+  listSourcesQuerySchema,
   updateSourceSchema,
 } from "./source.validator";
 
@@ -35,21 +36,34 @@ export class SourceController {
   }
 
   /**
-   * Handles GET /api/sources?workspaceId=...
-   * Fetches all sources for a specific workspace.
+   * Handles GET /api/sources?workspaceId=...&type=...&status=...&q=...
+   * Fetches sources for a specific workspace with optional filtering and search.
    */
   static listSources = asyncHandler(async (req: NextRequest) => {
     const user = await SourceController.getAuthenticatedUser(req);
     const { searchParams } = new URL(req.url);
-    const workspaceId = searchParams.get("workspaceId");
 
-    if (!workspaceId) {
-      throw ApiError.badRequest("workspaceId query parameter is required");
+    const queryParams = {
+      workspaceId: searchParams.get("workspaceId") || undefined,
+      type: searchParams.get("type") || undefined,
+      status: searchParams.get("status") || undefined,
+      q: searchParams.get("q") || undefined,
+    };
+
+    const validation = listSourcesQuerySchema.safeParse(queryParams);
+    if (!validation.success) {
+      throw ApiError.badRequest(
+        "Validation failed",
+        getZodFieldErrors(validation.error),
+      );
     }
+
+    const { workspaceId, ...filters } = validation.data;
 
     const sources = await SourceService.getWorkspaceSources(
       workspaceId,
       user.id,
+      filters,
     );
     return ApiResponse.success(sources);
   });
@@ -137,7 +151,7 @@ export class SourceController {
   );
 
   /**
-   * Handles DELETE /api/sources (or POST /api/sources/bulk-delete)
+   * Handles DELETE /api/sources
    * Bulk deletes multiple sources for a workspace.
    */
   static bulkDeleteSources = asyncHandler(async (req: NextRequest) => {

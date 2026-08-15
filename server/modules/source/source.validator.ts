@@ -16,6 +16,16 @@ export const sourceStatusSchema = z.enum([
 ]);
 
 /**
+ * Zod validation schema for querying sources.
+ */
+export const listSourcesQuerySchema = z.object({
+  workspaceId: z.string().min(1, "Workspace ID is required"),
+  type: sourceTypeSchema.optional(),
+  status: sourceStatusSchema.optional(),
+  q: z.string().optional(),
+});
+
+/**
  * Zod validation schema for creating a new Source.
  */
 export const createSourceSchema = z.object({
@@ -57,6 +67,7 @@ export const bulkDeleteSourcesSchema = z.object({
     .min(1, "At least one source ID is required to delete"),
 });
 
+export type ListSourcesQuery = z.infer<typeof listSourcesQuerySchema>;
 export type CreateSourceInput = z.infer<typeof createSourceSchema>;
 export type UpdateSourceInput = z.infer<typeof updateSourceSchema>;
 export type BulkDeleteSourcesInput = z.infer<typeof bulkDeleteSourcesSchema>;

@@ -4,6 +4,7 @@ import { SourceRepository } from "./source.repository";
 import {
   BulkDeleteSourcesInput,
   CreateSourceInput,
+  ListSourcesQuery,
   UpdateSourceInput,
 } from "./source.validator";
 
@@ -12,17 +13,22 @@ import {
  */
 export class SourceService {
   /**
-   * Retrieves all sources for a workspace after verifying user ownership.
+   * Retrieves all sources for a workspace matching optional filters after verifying user ownership.
    *
    * @param workspaceId - Workspace unique identifier.
    * @param userId - Requesting user identifier.
+   * @param filters - Optional query filters (type, status, q).
    * @returns Array of source records.
    */
-  static async getWorkspaceSources(workspaceId: string, userId: string) {
+  static async getWorkspaceSources(
+    workspaceId: string,
+    userId: string,
+    filters: Partial<Omit<ListSourcesQuery, "workspaceId">> = {},
+  ) {
     // Verify workspace access
     await WorkspaceService.getWorkspaceById(workspaceId, userId);
 
-    return await SourceRepository.findByWorkspaceId(workspaceId);
+    return await SourceRepository.findByWorkspaceId(workspaceId, filters);
   }
 
   /**
