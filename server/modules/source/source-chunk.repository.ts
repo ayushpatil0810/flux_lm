@@ -1,0 +1,66 @@
+import { db } from "@/server/db";
+import { sourceChunk } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
+
+export interface CreateSourceChunkInput {
+  sourceId: string;
+  index: number;
+  content: string;
+  tokenCount?: number;
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Repository class managing direct database operations for the `source_chunk` table via Drizzle ORM.
+ */
+export class SourceChunkRepository {
+  /**
+   * Bulk inserts array of source chunk records into the database.
+   *
+   * @param chunks - Array of chunk objects containing sourceId, index, content, metadata.
+   * @returns Array of inserted source chunk records.
+   */
+  static async createMany(chunks: CreateSourceChunkInput[]) {
+    if (chunks.length === 0) return [];
+
+    return await db
+      .insert(sourceChunk)
+      .values(
+        chunks.map((c) => ({
+          sourceId: c.sourceId,
+          index: c.index,
+          content: c.content,
+          tokenCount: c.tokenCount || null,
+          metadata: c.metadata || null,
+        })),
+      )
+      .returning();
+  }
+
+  /**
+   * Retrieves all chunks belonging to a specific source ID, ordered by chunk index ascending.
+   *
+   * @param sourceId - Parent source unique identifier.
+   * @returns Array of source chunk records.
+   */
+  static async findBySourceId(sourceId: string) {
+    return await db
+      .select()
+      .from(sourceChunk)
+      .where(eq(sourceChunk.sourceId, sourceId))
+      .orderBy(sourceChunk.index);
+  }
+
+  /**
+   * Deletes all chunks associated with a specific source ID.
+   *
+   * @param sourceId - Parent source unique identifier.
+   * @returns Deleted source chunk records.
+   */
+  static async deleteBySourceId(sourceId: string) {
+    return await db
+      .delete(sourceChunk)
+      .where(eq(sourceChunk.sourceId, sourceId))
+      .returning();
+  }
+}
