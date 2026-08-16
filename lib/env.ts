@@ -34,6 +34,10 @@ const envSchema = z.object({
   OPENAI_API_KEY: z.string().optional(),
   PINECONE_API_KEY: z.string().optional(),
   PINECONE_INDEX: z.string().optional(),
+
+  // Inngest Background Workflows
+  INNGEST_EVENT_KEY: z.string().optional(),
+  INNGEST_SIGNING_KEY: z.string().optional(),
 });
 
 const parseEnv = () => {

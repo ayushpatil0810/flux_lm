@@ -5,6 +5,7 @@ import { parsePdf } from "@/lib/pdf";
 import { deleteVectorsBySourceId, upsertVectors } from "@/lib/pinecone";
 import { uploadToStorage } from "@/lib/storage";
 import { getYoutubeTranscript } from "@/lib/youtube";
+import { inngest } from "@/inngest/client";
 import { WorkspaceService } from "@/server/modules/workspace/workspace.service";
 import { ApiError } from "@/server/utils/api-error";
 import { SourceChunkRepository } from "./source-chunk.repository";
@@ -72,19 +73,31 @@ export class SourceService {
     sourceId: string;
     workspaceId: string;
   }) {
-    // TODO: Trigger Inngest event for background processing workflow
-    // e.g. await inngest.send({ name: "source/process", data: payload });
     console.log(
-      `[SourceService] Enqueued background processing for source ID: ${payload.sourceId}`,
+      `[SourceService] Dispatching Inngest event 'source/process' for source ID: ${payload.sourceId}`,
     );
 
-    // Trigger local background execution of the source processing pipeline
-    SourceService.processSourcePipeline(payload.sourceId).catch((err) => {
-      console.error(
-        `[SourceService] Processing pipeline failed for source ID ${payload.sourceId}:`,
-        err,
+    try {
+      await inngest.send({
+        name: "source/process",
+        data: {
+          sourceId: payload.sourceId,
+          workspaceId: payload.workspaceId,
+        },
+      });
+    } catch (inngestError) {
+      console.warn(
+        `[SourceService] Failed to send Inngest event, falling back to local async processing:`,
+        inngestError,
       );
-    });
+      // Fallback to local background execution if Inngest is unreachable
+      SourceService.processSourcePipeline(payload.sourceId).catch((err) => {
+        console.error(
+          `[SourceService] Processing pipeline failed for source ID ${payload.sourceId}:`,
+          err,
+        );
+      });
+    }
   }
 
   /**
