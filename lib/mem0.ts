@@ -57,3 +57,75 @@ export async function addMemoriesFromMessages(
     logger.error({ userId, error }, "[Mem0] Failed to add memories.");
   }
 }
+
+/**
+ * Retrieves all memories for a specific user.
+ */
+export async function getUserMemories(userId: string) {
+  if (!process.env.MEM0_API_KEY) {
+    logger.warn({ userId }, "[Mem0] MEM0_API_KEY not set. Skipping list.");
+    return [];
+  }
+
+  try {
+    const response = await client.getAll({ filters: { userId } });
+    return response.results;
+  } catch (error) {
+    logger.error({ userId, error }, "[Mem0] Failed to get user memories.");
+    throw error;
+  }
+}
+
+/**
+ * Manually adds a specific memory for a user.
+ */
+export async function addMemory(userId: string, text: string) {
+  if (!process.env.MEM0_API_KEY) {
+    logger.warn({ userId }, "[Mem0] MEM0_API_KEY not set. Skipping add.");
+    return null;
+  }
+
+  try {
+    const response = await client.add([{ role: "user", content: text }], { userId });
+    return response;
+  } catch (error) {
+    logger.error({ userId, error }, "[Mem0] Failed to add user memory.");
+    throw error;
+  }
+}
+
+/**
+ * Updates a specific memory by its ID.
+ */
+export async function updateUserMemory(memoryId: string, text: string) {
+  if (!process.env.MEM0_API_KEY) {
+    logger.warn({ memoryId }, "[Mem0] MEM0_API_KEY not set. Skipping update.");
+    return null;
+  }
+
+  try {
+    const response = await client.update(memoryId, { text });
+    return response;
+  } catch (error) {
+    logger.error({ memoryId, error }, "[Mem0] Failed to update memory.");
+    throw error;
+  }
+}
+
+/**
+ * Deletes a specific memory by its ID.
+ */
+export async function deleteUserMemory(memoryId: string) {
+  if (!process.env.MEM0_API_KEY) {
+    logger.warn({ memoryId }, "[Mem0] MEM0_API_KEY not set. Skipping delete.");
+    return null;
+  }
+
+  try {
+    const response = await client.delete(memoryId);
+    return response;
+  } catch (error) {
+    logger.error({ memoryId, error }, "[Mem0] Failed to delete memory.");
+    throw error;
+  }
+}
