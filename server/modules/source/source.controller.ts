@@ -8,7 +8,9 @@ import { SourceService } from "./source.service";
 import {
   bulkDeleteSourcesSchema,
   createSourceSchema,
+  importTextSourceSchema,
   importWebsiteSourceSchema,
+  importYoutubeSourceSchema,
   listSourcesQuerySchema,
   updateSourceSchema,
 } from "./source.validator";
@@ -167,6 +169,58 @@ export class SourceController {
     return ApiResponse.created(
       imported,
       "PDF source imported successfully",
+    );
+  });
+
+  /**
+   * Handles POST /api/sources/import/text
+   * Imports a raw text or markdown source.
+   */
+  static importTextSource = asyncHandler(async (req: NextRequest) => {
+    const user = await SourceController.getAuthenticatedUser(req);
+    const body = await req.json();
+
+    const validation = importTextSourceSchema.safeParse(body);
+    if (!validation.success) {
+      throw ApiError.badRequest(
+        "Validation failed",
+        getZodFieldErrors(validation.error),
+      );
+    }
+
+    const imported = await SourceService.importTextSource(
+      user.id,
+      validation.data,
+    );
+    return ApiResponse.created(
+      imported,
+      "Text source imported successfully",
+    );
+  });
+
+  /**
+   * Handles POST /api/sources/import/youtube
+   * Imports a YouTube video transcript source.
+   */
+  static importYoutubeSource = asyncHandler(async (req: NextRequest) => {
+    const user = await SourceController.getAuthenticatedUser(req);
+    const body = await req.json();
+
+    const validation = importYoutubeSourceSchema.safeParse(body);
+    if (!validation.success) {
+      throw ApiError.badRequest(
+        "Validation failed",
+        getZodFieldErrors(validation.error),
+      );
+    }
+
+    const imported = await SourceService.importYoutubeSource(
+      user.id,
+      validation.data,
+    );
+    return ApiResponse.created(
+      imported,
+      "YouTube source imported successfully",
     );
   });
 

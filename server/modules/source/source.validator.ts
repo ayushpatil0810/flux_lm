@@ -61,6 +61,27 @@ export const importPdfSourceSchema = z.object({
     .optional(),
 });
 
+export const importTextSourceSchema = z.object({
+  workspaceId: z.string().min(1, "Workspace ID is required"),
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(200, "Title cannot exceed 200 characters")
+    .trim(),
+  content: z.string().min(1, "Content is required"),
+  type: z.enum(["TEXT", "MARKDOWN"]).optional().default("TEXT"),
+});
+
+export const importYoutubeSourceSchema = z.object({
+  workspaceId: z.string().min(1, "Workspace ID is required"),
+  url: z.string().min(1, "YouTube URL or Video ID is required"),
+  title: z
+    .string()
+    .max(200, "Title cannot exceed 200 characters")
+    .trim()
+    .optional(),
+});
+
 /**
  * Zod validation schema for updating a Source.
  */
@@ -101,6 +122,10 @@ export interface ImportPdfSourceInput {
     contentType?: string;
   };
 }
+export type ImportTextSourceInput = z.infer<typeof importTextSourceSchema>;
+export type ImportYoutubeSourceInput = z.infer<
+  typeof importYoutubeSourceSchema
+>;
 export type UpdateSourceInput = z.infer<typeof updateSourceSchema>;
 export type BulkDeleteSourcesInput = z.infer<typeof bulkDeleteSourcesSchema>;
 

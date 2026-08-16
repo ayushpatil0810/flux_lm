@@ -1,5 +1,7 @@
-import { parseDocument, scrapeUrl } from "@/lib/firecrawl";
+import { scrapeUrl } from "@/lib/firecrawl";
+import { parsePdf } from "@/lib/pdf";
 import { uploadToStorage } from "@/lib/storage";
+import { getYoutubeTranscript } from "@/lib/youtube";
 import { WorkspaceService } from "@/server/modules/workspace/workspace.service";
 import { ApiError } from "@/server/utils/api-error";
 import { SourceRepository } from "./source.repository";
@@ -7,7 +9,9 @@ import {
   BulkDeleteSourcesInput,
   CreateSourceInput,
   ImportPdfSourceInput,
+  ImportTextSourceInput,
   ImportWebsiteSourceInput,
+  ImportYoutubeSourceInput,
   ListSourcesQuery,
   UpdateSourceInput,
 } from "./source.validator";
@@ -148,7 +152,7 @@ export class SourceService {
   }
 
   /**
-   * Imports a PDF file source by parsing text/markdown via Firecrawl, uploading the PDF binary
+   * Imports a PDF file source by extracting text locally via unpdf, uploading the PDF binary
    * to Cloudflare R2 storage, and enqueuing background processing workflow.
    *
    * @param userId - Requesting user identifier.
@@ -162,11 +166,7 @@ export class SourceService {
 
     let parsedPdf;
     try {
-      parsedPdf = await parseDocument({
-        data: input.file.data,
-        filename: input.file.filename,
-        contentType: input.file.contentType || "application/pdf",
-      });
+      parsedPdf = await parsePdf(input.file.data);
     } catch (error: any) {
       throw ApiError.badRequest(
         `Failed to parse PDF document: ${error?.message || "Unknown error"}`,
@@ -187,15 +187,80 @@ export class SourceService {
       workspaceId: input.workspaceId,
       type: "PDF",
       title,
-      content: parsedPdf.markdown,
+      content: parsedPdf.text,
       url: storageResult.url,
       status: "PENDING",
       metadata: {
-        ...parsedPdf.metadata,
         storageKey: storageResult.key,
         bucket: storageResult.bucket,
         originalFilename: input.file.filename,
-        ...(parsedPdf.summary ? { summary: parsedPdf.summary } : {}),
+        totalPages: parsedPdf.totalPages,
+      },
+    });
+  }
+
+  /**
+   * Imports a raw text or markdown source and enqueues background processing.
+   *
+   * @param userId - Requesting user identifier.
+   * @param input - Payload containing workspaceId, title, content, and optional type.
+   * @returns Newly created source record with PENDING status.
+   */
+  static async importTextSource(
+    userId: string,
+    input: ImportTextSourceInput,
+  ) {
+    // Verify workspace access
+    await WorkspaceService.getWorkspaceById(input.workspaceId, userId);
+
+    return await SourceService.createAndProcessSource({
+      workspaceId: input.workspaceId,
+      type: input.type || "TEXT",
+      title: input.title.trim(),
+      content: input.content,
+      status: "PENDING",
+    });
+  }
+
+  /**
+   * Imports a YouTube video transcript source by fetching transcript segments & video metadata
+   * and enqueuing background processing workflow.
+   *
+   * @param userId - Requesting user identifier.
+   * @param input - Payload containing workspaceId, YouTube URL/Video ID, and optional title.
+   * @returns Newly created YOUTUBE source record with PENDING status.
+   * @throws {ApiError} If workspace access is denied or YouTube transcript fetching fails.
+   */
+  static async importYoutubeSource(
+    userId: string,
+    input: ImportYoutubeSourceInput,
+  ) {
+    // Verify workspace access
+    await WorkspaceService.getWorkspaceById(input.workspaceId, userId);
+
+    let ytResult;
+    try {
+      ytResult = await getYoutubeTranscript(input.url);
+    } catch (error: any) {
+      throw ApiError.badRequest(
+        `Failed to fetch YouTube transcript: ${error?.message || "Unknown error"}`,
+      );
+    }
+
+    const title = input.title?.trim() || ytResult.title;
+
+    return await SourceService.createAndProcessSource({
+      workspaceId: input.workspaceId,
+      type: "YOUTUBE",
+      title,
+      content: ytResult.transcriptText,
+      url: ytResult.videoUrl,
+      status: "PENDING",
+      metadata: {
+        videoId: ytResult.videoId,
+        authorName: ytResult.authorName,
+        thumbnailUrl: ytResult.thumbnailUrl,
+        originalUrl: input.url,
       },
     });
   }
