@@ -3,6 +3,7 @@ import { SourceChunkRepository } from "@/server/modules/source/source-chunk.repo
 import { SourceRepository } from "@/server/modules/source/source.repository";
 import { SourceService } from "@/server/modules/source/source.service";
 import { ApiError } from "@/server/utils/api-error";
+import { ConversationService } from "@/server/modules/conversation/conversation.service";
 import { inngest } from "./client";
 
 const log = logger.child({ module: "Inngest" });
@@ -101,6 +102,7 @@ export const summarizeConversationFunction = inngest.createFunction(
 
     await step.run("summarize", async () => {
       log.info({ conversationId, userId }, "Summarizing conversation memory");
+      await ConversationService.summarizeConversation(conversationId, userId);
       return { conversationId };
     });
 

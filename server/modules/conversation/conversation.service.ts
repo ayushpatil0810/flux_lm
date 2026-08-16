@@ -2,6 +2,13 @@ import { ApiError } from "@/server/utils/api-error";
 import { ConversationRepository } from "./conversation.repository";
 import { CreateConversationInput, AddMessageInput } from "./conversation.validator";
 import { WorkspaceService } from "../workspace/workspace.service";
+import { streamText, convertToModelMessages, type UIMessage, isStepCount, generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { CHAT_MODELS, CHAT_MODEL, RECENT_MESSAGE_WINDOW, CONVERSATION_SUMMARY_INTERVAL } from "@/lib/constants";
+import { buildChatSystemPrompt, retrieveWorkspaceContext, getLastUserMessageText, buildConversationTitle, getTextFromUIMessage } from "./conversation.utils";
+import { webSearchTool } from "./conversation.tools";
+import { searchUserMemories, addMemoriesFromMessages } from "@/lib/mem0";
+import { inngest } from "@/inngest/client";
 
 /**
  * Service class encapsulating business logic and rules for Conversation management.
@@ -102,5 +109,195 @@ export class ConversationService {
     await ConversationService.getConversationById(conversationId, userId);
 
     return await ConversationRepository.findMessages(conversationId, limit);
+  }
+
+  /**
+   * Main RAG chat endpoint logic: streams an AI reply with workspace context and optional web search.
+   *
+   * @param workspaceId - Workspace whose sources to search
+   * @param userId - Authenticated user's id
+   * @param input - Client chat payload
+   * @returns Streaming Data Response
+   */
+  static async streamWorkspaceChat(
+    workspaceId: string,
+    userId: string,
+    input: {
+      conversationId?: string;
+      messages: UIMessage[];
+      model?: string;
+      webSearch?: boolean;
+    },
+  ) {
+    const workspace = await WorkspaceService.getWorkspaceById(workspaceId, userId);
+    
+    // Find model to use (from input, workspace default, or fallback to CHAT_MODEL)
+    const requestedModel = input.model ?? (workspace as any).defaultModel;
+    const chatModel = CHAT_MODELS.find((model) => model === requestedModel) ?? CHAT_MODEL;
+    
+    // Enable web search if requested and tool is available (API keys can be checked inside the tool or implicitly allowed)
+    const webSearchEnabled = input.webSearch === true;
+
+    const userText = getLastUserMessageText(input.messages);
+    if (!userText) {
+      throw ApiError.badRequest("A user message is required");
+    }
+
+    // Resolve or create conversation
+    let conversation;
+    if (input.conversationId) {
+      conversation = await ConversationService.getConversationById(input.conversationId, userId);
+    } else {
+      conversation = await ConversationService.createConversation(userId, {
+        workspaceId,
+        title: buildConversationTitle(userText),
+      });
+    }
+
+    // Save the incoming user message
+    await ConversationService.addMessage(conversation.id, userId, {
+      role: "USER",
+      content: userText,
+    });
+
+    // Parallel fetch RAG context and User Memories
+    const [retrievedChunks, userMemories] = await Promise.all([
+      retrieveWorkspaceContext(workspaceId, userText),
+      searchUserMemories(userId, userText),
+    ]);
+
+    const citations = retrievedChunks.map((chunk) => ({
+      sourceId: chunk.sourceId,
+      sourceTitle: chunk.sourceTitle,
+      sourceType: chunk.sourceType,
+      chunkId: chunk.chunkId,
+      chunkIndex: chunk.chunkIndex,
+      page: chunk.page,
+      excerpt: chunk.text.slice(0, 280),
+      score: chunk.score,
+    }));
+
+    const systemPrompt = buildChatSystemPrompt({
+      chunks: retrievedChunks,
+      conversationSummary: conversation.summary || null,
+      userMemories: userMemories.map((memory) => memory.memory),
+      webSearchEnabled,
+    });
+
+    // Provide context window for model
+    const contextMessages =
+      conversation.summary && input.messages.length > RECENT_MESSAGE_WINDOW
+        ? input.messages.slice(-RECENT_MESSAGE_WINDOW)
+        : input.messages;
+
+    const tools = webSearchEnabled ? { web_search: webSearchTool } : undefined;
+
+    const result = streamText({
+      model: openai(chatModel),
+      system: systemPrompt,
+      messages: await convertToModelMessages(contextMessages),
+      tools,
+      stopWhen: webSearchEnabled ? isStepCount(3) : undefined,
+      onFinish: async ({ response, text }) => {
+        const assistantText = text.trim();
+        if (!assistantText) return;
+
+        // Build citations (if we want to extract web citations we can parse the tool calls, but for simplicity we rely on DB citations)
+        // Note: AI SDK v3.x onFinish provides `text`, `toolCalls`, `toolResults` etc.
+        const allCitations = [...citations]; 
+        
+        await ConversationService.addMessage(conversation.id, userId, {
+          role: "ASSISTANT",
+          content: assistantText,
+          citations: allCitations.length > 0 ? allCitations : undefined,
+        });
+
+        // Update the conversation's title if this is the first real exchange and title is default
+        if (conversation.title === "New Chat") {
+          await ConversationRepository.updateSummary(
+            conversation.id,
+            conversation.summary || "",
+            conversation.summaryMessageCount || 0
+          );
+        }
+
+        // Check if we need to summarize
+        const messageCount = await ConversationRepository.countMessagesByConversationId(conversation.id);
+        if (messageCount > 0 && messageCount % CONVERSATION_SUMMARY_INTERVAL === 0) {
+          await inngest.send({
+            name: "conversation/summarize",
+            data: { conversationId: conversation.id, userId },
+          });
+        }
+
+      },
+    });
+
+    return result.toTextStreamResponse({
+      headers: {
+        "X-Conversation-Id": conversation.id,
+      },
+    });
+  }
+
+  /**
+   * Summarizes the conversation history and persists the rolling summary.
+   * Designed to be called by a background worker (e.g. Inngest).
+   *
+   * @param conversationId - Conversation to summarize
+   * @param userId - ID of the user (for verification)
+   */
+  static async summarizeConversation(conversationId: string, userId: string) {
+    const conversation = await ConversationService.getConversationById(conversationId, userId);
+    
+    // Use the workspace's default model or fallback
+    const workspace = await WorkspaceService.getWorkspaceById(conversation.workspaceId, userId);
+    const requestedModel = (workspace as any).defaultModel;
+    const chatModel = CHAT_MODELS.find((model) => model === requestedModel) ?? CHAT_MODEL;
+
+    const messages = await ConversationRepository.findMessages(conversationId);
+    if (messages.length === 0) return;
+
+    const transcript = messages
+      .map((message) => `${message.role}: ${message.content}`)
+      .join("\n\n");
+    const previousSummary = conversation.summary?.trim();
+
+    const { text: summary } = await generateText({
+      model: openai(chatModel),
+      system: [
+        "You summarize chat conversations for a learning assistant.",
+        "Produce a concise rolling summary covering topics discussed, questions asked,",
+        "key insights, and unresolved threads.",
+        "Write in third person about the user. Keep it under 250 words.",
+      ].join("\n"),
+      prompt: [
+        previousSummary ? `Previous summary:\n${previousSummary}\n` : null,
+        "Full conversation transcript:",
+        transcript,
+        "",
+        "Write an updated summary that incorporates new messages.",
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    });
+
+    const updated = await ConversationRepository.updateSummary(
+      conversation.id,
+      summary.trim(),
+      messages.length
+    );
+
+    const recentMessages = messages.slice(-16).map((message) => ({
+      role: message.role.toLowerCase() as "user" | "assistant",
+      content: message.content,
+    }));
+
+    await addMemoriesFromMessages(userId, recentMessages, {
+      source: "learned",
+      conversationId,
+    });
+
+    return updated;
   }
 }
