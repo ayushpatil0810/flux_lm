@@ -10,6 +10,12 @@ export interface CreateSourceChunkInput {
   metadata?: Record<string, unknown>;
 }
 
+export interface UpdateSourceChunkInput {
+  content?: string;
+  tokenCount?: number;
+  metadata?: Record<string, unknown>;
+}
+
 /**
  * Repository class managing direct database operations for the `source_chunk` table via Drizzle ORM.
  */
@@ -52,6 +58,23 @@ export class SourceChunkRepository {
   }
 
   /**
+   * Updates an existing source chunk record by its unique ID.
+   *
+   * @param id - Source chunk unique identifier.
+   * @param input - Fields to update (content, tokenCount, metadata).
+   * @returns Updated source chunk record or null if not found.
+   */
+  static async update(id: string, input: UpdateSourceChunkInput) {
+    const [updated] = await db
+      .update(sourceChunk)
+      .set(input)
+      .where(eq(sourceChunk.id, id))
+      .returning();
+
+    return updated || null;
+  }
+
+  /**
    * Deletes all chunks associated with a specific source ID.
    *
    * @param sourceId - Parent source unique identifier.
@@ -64,3 +87,4 @@ export class SourceChunkRepository {
       .returning();
   }
 }
+

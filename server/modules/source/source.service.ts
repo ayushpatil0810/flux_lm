@@ -1,9 +1,13 @@
+import { chunkPages, chunkText } from "@/lib/chunker";
 import { scrapeUrl } from "@/lib/firecrawl";
+import { generateEmbeddings } from "@/lib/openai";
 import { parsePdf } from "@/lib/pdf";
+import { deleteVectorsBySourceId, upsertVectors } from "@/lib/pinecone";
 import { uploadToStorage } from "@/lib/storage";
 import { getYoutubeTranscript } from "@/lib/youtube";
 import { WorkspaceService } from "@/server/modules/workspace/workspace.service";
 import { ApiError } from "@/server/utils/api-error";
+import { SourceChunkRepository } from "./source-chunk.repository";
 import { SourceRepository } from "./source.repository";
 import {
   BulkDeleteSourcesInput,
@@ -73,6 +77,14 @@ export class SourceService {
     console.log(
       `[SourceService] Enqueued background processing for source ID: ${payload.sourceId}`,
     );
+
+    // Trigger local background execution of the source processing pipeline
+    SourceService.processSourcePipeline(payload.sourceId).catch((err) => {
+      console.error(
+        `[SourceService] Processing pipeline failed for source ID ${payload.sourceId}:`,
+        err,
+      );
+    });
   }
 
   /**
@@ -266,6 +278,231 @@ export class SourceService {
   }
 
   /**
+   * Updates source status to PROCESSING.
+   *
+   * @param sourceId - Source unique identifier.
+   */
+  static async markSourceProcessing(sourceId: string) {
+    return await SourceRepository.update(sourceId, { status: "PROCESSING" });
+  }
+
+  /**
+   * Marks a source status as FAILED and records the processing error in metadata.
+   *
+   * @param sourceId - Source unique identifier.
+   * @param error - Caught error object or message.
+   * @param existingMetadata - Existing source metadata.
+   */
+  static async markSourceFailed(
+    sourceId: string,
+    error: unknown,
+    existingMetadata?: unknown,
+  ) {
+    const message =
+      error instanceof Error ? error.message : "Source processing failed";
+
+    const metadata =
+      existingMetadata && typeof existingMetadata === "object"
+        ? (existingMetadata as Record<string, unknown>)
+        : {};
+
+    return await SourceRepository.update(sourceId, {
+      status: "FAILED",
+      metadata: {
+        ...metadata,
+        processingError: message,
+      },
+    });
+  }
+
+  /**
+   * Step 1 of processing pipeline: Extracts raw text content from a source record.
+   *
+   * @param sourceId - Source unique identifier.
+   */
+  static async extractSourceContent(sourceId: string) {
+    const sourceRecord = await SourceRepository.findById(sourceId);
+    if (!sourceRecord) {
+      throw ApiError.notFound("Source not found");
+    }
+
+    const text = sourceRecord.content?.trim();
+    if (!text) {
+      throw ApiError.badRequest(`Source ${sourceId} has no extractable content`);
+    }
+
+    const metadata =
+      sourceRecord.metadata && typeof sourceRecord.metadata === "object"
+        ? (sourceRecord.metadata as Record<string, unknown>)
+        : {};
+
+    return {
+      sourceId: sourceRecord.id,
+      workspaceId: sourceRecord.workspaceId,
+      text,
+      pages: Array.isArray(metadata.pages)
+        ? (metadata.pages as string[])
+        : undefined,
+      source: sourceRecord,
+    };
+  }
+
+  /**
+   * Step 2 of processing pipeline: Chunks source content into sequential text chunks
+   * and persists them in the database.
+   *
+   * @param sourceId - Source unique identifier.
+   * @param text - Full raw document text.
+   * @param pages - Optional array of page strings (for multi-page documents).
+   */
+  static async chunkSourceContent(
+    sourceId: string,
+    text: string,
+    pages?: string[],
+  ) {
+    await SourceChunkRepository.deleteBySourceId(sourceId);
+
+    const chunks = pages?.length ? chunkPages(pages) : chunkText(text);
+
+    if (chunks.length === 0) {
+      throw ApiError.badRequest("No chunks were generated from source content");
+    }
+
+    return await SourceChunkRepository.createMany(
+      chunks.map((chunk) => ({
+        sourceId,
+        index: chunk.index,
+        content: chunk.content,
+        tokenCount: Math.ceil(chunk.content.length / 4),
+        metadata: chunk.metadata,
+      })),
+    );
+  }
+
+  /**
+   * Step 3 of processing pipeline: Embeds text chunks via OpenAI (in batches of 50),
+   * indexes vector embeddings into Pinecone, and updates source status to READY.
+   *
+   * @param sourceRecord - Parent source record.
+   * @param chunks - Array of chunk records saved in database.
+   */
+  static async embedAndIndexSource(
+    sourceRecord: Awaited<ReturnType<typeof SourceRepository.findById>>,
+    chunks: Awaited<ReturnType<typeof SourceChunkRepository.findBySourceId>>,
+  ) {
+    if (!sourceRecord) {
+      throw ApiError.notFound("Source not found");
+    }
+
+    const batchSize = 50;
+    const pineconeItems = [];
+
+    for (let i = 0; i < chunks.length; i += batchSize) {
+      const batch = chunks.slice(i, i + batchSize);
+      const embeddings = await generateEmbeddings(
+        batch.map((chunk) => chunk.content),
+      );
+
+      for (let j = 0; j < batch.length; j += 1) {
+        const chunk = batch[j]!;
+        const embedding = embeddings[j]!;
+        const chunkMetadata =
+          chunk.metadata && typeof chunk.metadata === "object"
+            ? (chunk.metadata as Record<string, unknown>)
+            : {};
+
+        pineconeItems.push({
+          id: chunk.id,
+          values: embedding,
+          metadata: {
+            workspaceId: sourceRecord.workspaceId,
+            sourceId: sourceRecord.id,
+            chunkId: chunk.id,
+            chunkIndex: chunk.index,
+            sourceTitle: sourceRecord.title,
+            sourceType: sourceRecord.type,
+            text: chunk.content.slice(0, 35000),
+            ...(typeof chunkMetadata.page === "number"
+              ? { page: chunkMetadata.page }
+              : {}),
+          },
+        });
+      }
+    }
+
+    await upsertVectors(pineconeItems);
+
+    const metadata =
+      sourceRecord.metadata && typeof sourceRecord.metadata === "object"
+        ? (sourceRecord.metadata as Record<string, unknown>)
+        : {};
+
+    return await SourceRepository.update(sourceRecord.id, {
+      status: "READY",
+      metadata: {
+        ...metadata,
+        chunkCount: chunks.length,
+        indexedAt: new Date().toISOString(),
+        processingError: undefined,
+      },
+    });
+  }
+
+  /**
+   * Executes complete end-to-end background processing pipeline for a source.
+   *
+   * @param sourceId - Source unique identifier.
+   */
+  static async processSourcePipeline(sourceId: string) {
+    let sourceRecord;
+    try {
+      sourceRecord = await SourceRepository.findById(sourceId);
+      if (!sourceRecord) throw ApiError.notFound("Source not found");
+
+      await SourceService.markSourceProcessing(sourceId);
+
+      const extracted = await SourceService.extractSourceContent(sourceId);
+      const chunks = await SourceService.chunkSourceContent(
+        sourceId,
+        extracted.text,
+        extracted.pages,
+      );
+
+      return await SourceService.embedAndIndexSource(sourceRecord, chunks);
+    } catch (error) {
+      if (sourceRecord) {
+        await SourceService.markSourceFailed(
+          sourceId,
+          error,
+          sourceRecord.metadata,
+        );
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Removes source vectors from Pinecone and deletes chunks from database.
+   *
+   * @param workspaceId - Workspace unique identifier.
+   * @param sourceId - Source unique identifier.
+   */
+  static async removeSourceFromIndex(workspaceId: string, sourceId: string) {
+    await deleteVectorsBySourceId(sourceId);
+    await SourceChunkRepository.deleteBySourceId(sourceId);
+  }
+
+  /**
+   * Returns all chunks for a source plus total count.
+   *
+   * @param sourceId - Source unique identifier.
+   */
+  static async listChunksForSource(sourceId: string) {
+    const chunks = await SourceChunkRepository.findBySourceId(sourceId);
+    return { chunks, count: chunks.length };
+  }
+
+  /**
    * Updates a source record after verifying user ownership.
    *
    * @param id - Source unique identifier.
@@ -293,7 +530,9 @@ export class SourceService {
    */
   static async deleteSource(id: string, userId: string) {
     // Verify existence & workspace access
-    await SourceService.getSourceById(id, userId);
+    const existingSource = await SourceService.getSourceById(id, userId);
+
+    await SourceService.removeSourceFromIndex(existingSource.workspaceId, id);
 
     return await SourceRepository.delete(id);
   }
@@ -311,6 +550,10 @@ export class SourceService {
   ) {
     // Verify workspace access
     await WorkspaceService.getWorkspaceById(input.workspaceId, userId);
+
+    for (const sourceId of input.ids) {
+      await SourceService.removeSourceFromIndex(input.workspaceId, sourceId);
+    }
 
     const deleted = await SourceRepository.deleteMany(
       input.workspaceId,
