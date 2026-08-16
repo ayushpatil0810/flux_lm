@@ -23,6 +23,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getInitials } from "@/lib/utils";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -36,17 +37,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     await authClient.signOut();
     router.push("/login");
     router.refresh();
-  };
-
-  const getInitials = (name: string, email: string) => {
-    if (name) {
-      const parts = name.split(" ");
-      if (parts.length >= 2) {
-        return (parts[0][0] + parts[1][0]).toUpperCase();
-      }
-      return name.slice(0, 2).toUpperCase();
-    }
-    return email.slice(0, 2).toUpperCase();
   };
 
   return (

@@ -4,6 +4,7 @@ import { ApiResponse } from "@/server/utils/api-response";
 import { asyncHandler } from "@/server/utils/async-handler";
 import { getZodFieldErrors } from "@/server/utils/zod-error";
 import { NextRequest } from "next/server";
+import { getAuthenticatedUser } from "@/server/utils/auth-utils";
 import { ConversationService } from "./conversation.service";
 import {
   addMessageSchema,
@@ -17,30 +18,12 @@ import {
  */
 export class ConversationController {
   /**
-   * Helper method to retrieve the currently authenticated user from session headers.
-   *
-   * @param req - Incoming NextRequest object containing headers.
-   * @returns The authenticated User object.
-   * @throws {ApiError} 401 Unauthorized if no active session is found.
-   */
-  private static async getAuthenticatedUser(req: NextRequest) {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-
-    if (!session || !session.user) {
-      throw ApiError.unauthorized("Authentication required");
-    }
-
-    return session.user;
-  }
-
-  /**
    * Handles GET /api/conversations?workspaceId=...
+
    * Fetches all conversations for a specific workspace.
    */
   static listConversations = asyncHandler(async (req: NextRequest) => {
-    const user = await ConversationController.getAuthenticatedUser(req);
+    const user = await getAuthenticatedUser(req);
     const { searchParams } = new URL(req.url);
 
     const queryParams = {
@@ -71,7 +54,7 @@ export class ConversationController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> },
     ) => {
-      const user = await ConversationController.getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       const { id } = await params;
       const conversation = await ConversationService.getConversationById(id, user.id);
       return ApiResponse.success(conversation);
@@ -83,7 +66,7 @@ export class ConversationController {
    * Creates a new conversation.
    */
   static createConversation = asyncHandler(async (req: NextRequest) => {
-    const user = await ConversationController.getAuthenticatedUser(req);
+    const user = await getAuthenticatedUser(req);
     const body = await req.json();
 
     const validation = createConversationSchema.safeParse(body);
@@ -110,7 +93,7 @@ export class ConversationController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> },
     ) => {
-      const user = await ConversationController.getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       const { id } = await params;
       await ConversationService.deleteConversation(id, user.id);
       return ApiResponse.success(null, "Conversation deleted successfully");
@@ -126,7 +109,7 @@ export class ConversationController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> },
     ) => {
-      const user = await ConversationController.getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       const { id } = await params;
       const { searchParams } = new URL(req.url);
 
@@ -159,7 +142,7 @@ export class ConversationController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> },
     ) => {
-      const user = await ConversationController.getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       const { id } = await params;
       const body = await req.json();
 
@@ -189,7 +172,7 @@ export class ConversationController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> },
     ) => {
-      const user = await ConversationController.getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       const { id: workspaceId } = await params;
       const body = await req.json();
 

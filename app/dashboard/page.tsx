@@ -3,24 +3,11 @@
 import { authClient } from "@/lib/auth-client";
 import { UserCheck, ShieldCheck, Mail, Calendar } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getInitials } from "@/lib/utils";
 
 export default function DashboardHome() {
   const { data: session } = authClient.useSession();
   const user = session?.user;
-
-  const getInitials = (name?: string, email?: string) => {
-    if (name) {
-      const parts = name.split(" ");
-      if (parts.length >= 2) {
-        return (parts[0][0] + parts[1][0]).toUpperCase();
-      }
-      return name.slice(0, 2).toUpperCase();
-    }
-    if (email) {
-      return email.slice(0, 2).toUpperCase();
-    }
-    return "U";
-  };
 
   return (
     <div className="flex-1 overflow-y-auto p-6 md:p-10">

@@ -7,6 +7,16 @@ import { learningArtifact } from "./learning-artifact";
 import { source } from "./source";
 import { timestamps } from "./utils";
 
+export const workspaceEntityBase = {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  workspaceId: text("workspace_id")
+    .notNull()
+    .references(() => workspace.id, { onDelete: "cascade" }),
+  ...timestamps,
+};
+
 export const workspace = pgTable(
   "workspace",
   {

@@ -15,6 +15,13 @@ export const sourceStatusSchema = z.enum([
   "FAILED",
 ]);
 
+export const sourceSharedFields = {
+  content: z.string().optional(),
+  url: z.string().url("Invalid URL format").optional().or(z.literal("")),
+  status: sourceStatusSchema.optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+};
+
 /**
  * Zod validation schema for querying sources.
  */
@@ -40,10 +47,7 @@ export const createSourceSchema = z.object({
     .min(1, "Title is required")
     .max(200, "Title cannot exceed 200 characters")
     .trim(),
-  content: z.string().optional(),
-  url: z.string().url("Invalid URL format").optional().or(z.literal("")),
-  status: sourceStatusSchema.optional(),
-  metadata: z.record(z.string(), z.unknown()).optional(),
+  ...sourceSharedFields,
 });
 
 export const importWebsiteSourceSchema = z.object({
@@ -96,10 +100,7 @@ export const updateSourceSchema = z.object({
     .max(200, "Title cannot exceed 200 characters")
     .trim()
     .optional(),
-  content: z.string().optional(),
-  url: z.string().url("Invalid URL format").optional().or(z.literal("")),
-  status: sourceStatusSchema.optional(),
-  metadata: z.record(z.string(), z.unknown()).optional(),
+  ...sourceSharedFields,
 });
 
 /**

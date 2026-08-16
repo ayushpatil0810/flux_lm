@@ -4,6 +4,7 @@ import { ApiResponse } from "@/server/utils/api-response";
 import { asyncHandler } from "@/server/utils/async-handler";
 import { getZodFieldErrors } from "@/server/utils/zod-error";
 import { NextRequest } from "next/server";
+import { getAuthenticatedUser } from "@/server/utils/auth-utils";
 import { MemoryService } from "./memory.service";
 import { createMemorySchema, updateMemorySchema } from "./memory.validator";
 
@@ -12,26 +13,12 @@ import { createMemorySchema, updateMemorySchema } from "./memory.validator";
  */
 export class MemoryController {
   /**
-   * Helper method to retrieve the currently authenticated user from session headers.
-   */
-  private static async getAuthenticatedUser(req: NextRequest) {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-
-    if (!session || !session.user) {
-      throw ApiError.unauthorized("Authentication required");
-    }
-
-    return session.user;
-  }
-
-  /**
    * Handles GET /api/memories
+
    * Fetches all memories for the authenticated user.
    */
   static listMemories = asyncHandler(async (req: NextRequest) => {
-    const user = await MemoryController.getAuthenticatedUser(req);
+    const user = await getAuthenticatedUser(req);
     const memories = await MemoryService.getUserMemories(user.id);
     return ApiResponse.success(memories);
   });
@@ -41,7 +28,7 @@ export class MemoryController {
    * Manually creates a new memory for the authenticated user.
    */
   static createMemory = asyncHandler(async (req: NextRequest) => {
-    const user = await MemoryController.getAuthenticatedUser(req);
+    const user = await getAuthenticatedUser(req);
     const body = await req.json();
 
     const validation = createMemorySchema.safeParse(body);
@@ -65,7 +52,7 @@ export class MemoryController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> },
     ) => {
-      await MemoryController.getAuthenticatedUser(req);
+      await getAuthenticatedUser(req);
       const { id } = await params;
       const body = await req.json();
 
@@ -91,7 +78,7 @@ export class MemoryController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> },
     ) => {
-      await MemoryController.getAuthenticatedUser(req);
+      await getAuthenticatedUser(req);
       const { id } = await params;
       await MemoryService.deleteMemory(id);
       return ApiResponse.success(null, "Memory deleted successfully");

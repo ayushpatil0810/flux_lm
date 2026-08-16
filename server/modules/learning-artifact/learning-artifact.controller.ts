@@ -4,6 +4,7 @@ import { ApiResponse } from "@/server/utils/api-response";
 import { asyncHandler } from "@/server/utils/async-handler";
 import { getZodFieldErrors } from "@/server/utils/zod-error";
 import { NextRequest } from "next/server";
+import { getAuthenticatedUser } from "@/server/utils/auth-utils";
 import { LearningArtifactService } from "./learning-artifact.service";
 import { createArtifactSchema } from "./learning-artifact.validator";
 
@@ -11,16 +12,10 @@ import { createArtifactSchema } from "./learning-artifact.validator";
  * Controller class handling HTTP requests for Learning Artifacts.
  */
 export class LearningArtifactController {
-  private static async getAuthenticatedUser(req: NextRequest) {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-
-    if (!session || !session.user) {
-      throw ApiError.unauthorized("Authentication required");
-    }
-
-    return session.user;
+  private static async getContext(req: NextRequest, params: Promise<{ id: string; artifactId: string }>) {
+    const user = await getAuthenticatedUser(req);
+    const { id: workspaceId, artifactId } = await params;
+    return { user, workspaceId, artifactId };
   }
 
   /**
@@ -32,7 +27,7 @@ export class LearningArtifactController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> },
     ) => {
-      const user = await LearningArtifactController.getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       const { id: workspaceId } = await params;
       const artifacts = await LearningArtifactService.listArtifactsForWorkspace(
         workspaceId,
@@ -51,8 +46,7 @@ export class LearningArtifactController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string; artifactId: string }> },
     ) => {
-      const user = await LearningArtifactController.getAuthenticatedUser(req);
-      const { id: workspaceId, artifactId } = await params;
+      const { user, workspaceId, artifactId } = await LearningArtifactController.getContext(req, params);
       const artifact = await LearningArtifactService.getArtifactForWorkspace(
         workspaceId,
         artifactId,
@@ -71,7 +65,7 @@ export class LearningArtifactController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> },
     ) => {
-      const user = await LearningArtifactController.getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       const { id: workspaceId } = await params;
       const body = await req.json();
 
@@ -101,8 +95,7 @@ export class LearningArtifactController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string; artifactId: string }> },
     ) => {
-      const user = await LearningArtifactController.getAuthenticatedUser(req);
-      const { id: workspaceId, artifactId } = await params;
+      const { user, workspaceId, artifactId } = await LearningArtifactController.getContext(req, params);
       await LearningArtifactService.deleteArtifactForWorkspace(
         workspaceId,
         artifactId,

@@ -5,6 +5,7 @@ import { asyncHandler } from "@/server/utils/async-handler";
 import { NextRequest } from "next/server";
 import { WorkspaceService } from "./workspace.service";
 import { getZodFieldErrors } from "@/server/utils/zod-error";
+import { getAuthenticatedUser } from "@/server/utils/auth-utils";
 import {
   createWorkspaceSchema,
   updateWorkspaceSchema,
@@ -16,33 +17,15 @@ import {
  */
 export class WorkspaceController {
   /**
-   * Helper method to retrieve the currently authenticated user from session headers.
-   *
-   * @param req - Incoming NextRequest object containing headers.
-   * @returns The authenticated User object.
-   * @throws {ApiError} 401 Unauthorized if no active session is found.
-   */
-  private static async getAuthenticatedUser(req: NextRequest) {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-
-    if (!session || !session.user) {
-      throw ApiError.unauthorized("Authentication required");
-    }
-
-    return session.user;
-  }
-
-  /**
    * Handles GET /api/workspaces
+
    * Fetches all workspaces created by the authenticated user.
    *
    * @param req - Incoming NextRequest object.
    * @returns NextResponse with array of user workspaces.
    */
   static listWorkspaces = asyncHandler(async (req: NextRequest) => {
-    const user = await WorkspaceController.getAuthenticatedUser(req);
+    const user = await getAuthenticatedUser(req);
     const workspaces = await WorkspaceService.getUserWorkspaces(user.id);
     return ApiResponse.success(workspaces);
   });
@@ -60,7 +43,7 @@ export class WorkspaceController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> },
     ) => {
-      const user = await WorkspaceController.getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       const { id } = await params;
       const ws = await WorkspaceService.getWorkspaceById(id, user.id);
       return ApiResponse.success(ws);
@@ -75,7 +58,7 @@ export class WorkspaceController {
    * @returns NextResponse with status 201 and created workspace object.
    */
   static createWorkspace = asyncHandler(async (req: NextRequest) => {
-    const user = await WorkspaceController.getAuthenticatedUser(req);
+    const user = await getAuthenticatedUser(req);
     const body = await req.json();
 
     const validation = createWorkspaceSchema.safeParse(body);
@@ -103,7 +86,7 @@ export class WorkspaceController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> },
     ) => {
-      const user = await WorkspaceController.getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       const { id } = await params;
       const body = await req.json();
 
@@ -137,7 +120,7 @@ export class WorkspaceController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string }> },
     ) => {
-      const user = await WorkspaceController.getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       const { id } = await params;
       await WorkspaceService.deleteWorkspace(id, user.id);
       return ApiResponse.success(null, "Workspace deleted successfully");

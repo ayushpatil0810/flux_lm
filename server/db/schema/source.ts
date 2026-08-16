@@ -10,7 +10,7 @@ import {
   timestamp,
   unique,
 } from "drizzle-orm/pg-core";
-import { workspace } from "./workspace";
+import { workspace, workspaceEntityBase } from "./workspace";
 import { timestamps } from "./utils";
 
 export const sourceTypeEnum = pgEnum("source_type", [
@@ -31,19 +31,13 @@ export const sourceStatusEnum = pgEnum("source_status", [
 export const source = pgTable(
   "source",
   {
-    id: text("id")
-      .primaryKey()
-      .$defaultFn(() => createId()),
-    workspaceId: text("workspace_id")
-      .notNull()
-      .references(() => workspace.id, { onDelete: "cascade" }),
+    ...workspaceEntityBase,
     type: sourceTypeEnum("type").notNull(),
     title: text("title").notNull(),
     content: text("content"),
     url: text("url"),
     status: sourceStatusEnum("status").default("PENDING").notNull(),
     metadata: jsonb("metadata"),
-    ...timestamps,
   },
   (table) => [
     index("source_workspaceId_idx").on(table.workspaceId),

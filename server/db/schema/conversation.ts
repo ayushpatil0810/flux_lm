@@ -6,10 +6,8 @@ import {
   jsonb,
   pgEnum,
   pgTable,
-  text,
-  timestamp,
-} from "drizzle-orm/pg-core";
-import { workspace } from "./workspace";
+import { text, timestamp } from "drizzle-orm/pg-core";
+import { workspace, workspaceEntityBase } from "./workspace";
 import { timestamps } from "./utils";
 
 export const messageRoleEnum = pgEnum("message_role", [
@@ -20,17 +18,11 @@ export const messageRoleEnum = pgEnum("message_role", [
 export const conversation = pgTable(
   "conversation",
   {
-    id: text("id")
-      .primaryKey()
-      .$defaultFn(() => createId()),
-    workspaceId: text("workspace_id")
-      .notNull()
-      .references(() => workspace.id, { onDelete: "cascade" }),
+    ...workspaceEntityBase,
     title: text("title"),
     summary: text("summary"),
     summaryMessageCount: integer("summary_message_count").default(0).notNull(),
     summarizedAt: timestamp("summarized_at"),
-    ...timestamps,
   },
   (table) => [
     index("conversation_workspaceId_idx").on(table.workspaceId),
