@@ -78,6 +78,10 @@ export const generateArtifactFunction = inngest.createFunction(
 
     await step.run("generate", async () => {
       log.info({ artifactId }, "Processing learning artifact generation");
+      const { LearningArtifactService } = await import(
+        "@/server/modules/learning-artifact/learning-artifact.service"
+      );
+      await LearningArtifactService.processArtifactById(artifactId);
       return { artifactId };
     });
 
