@@ -38,7 +38,27 @@ export const createSourceSchema = z.object({
     .trim(),
   content: z.string().optional(),
   url: z.string().url("Invalid URL format").optional().or(z.literal("")),
+  status: sourceStatusSchema.optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
+});
+
+export const importWebsiteSourceSchema = z.object({
+  workspaceId: z.string().min(1, "Workspace ID is required"),
+  url: z.string().url("Invalid URL format"),
+  title: z
+    .string()
+    .max(200, "Title cannot exceed 200 characters")
+    .trim()
+    .optional(),
+});
+
+export const importPdfSourceSchema = z.object({
+  workspaceId: z.string().min(1, "Workspace ID is required"),
+  title: z
+    .string()
+    .max(200, "Title cannot exceed 200 characters")
+    .trim()
+    .optional(),
 });
 
 /**
@@ -69,5 +89,19 @@ export const bulkDeleteSourcesSchema = z.object({
 
 export type ListSourcesQuery = z.infer<typeof listSourcesQuerySchema>;
 export type CreateSourceInput = z.infer<typeof createSourceSchema>;
+export type ImportWebsiteSourceInput = z.infer<
+  typeof importWebsiteSourceSchema
+>;
+export interface ImportPdfSourceInput {
+  workspaceId: string;
+  title?: string;
+  file: {
+    data: Buffer;
+    filename: string;
+    contentType?: string;
+  };
+}
 export type UpdateSourceInput = z.infer<typeof updateSourceSchema>;
 export type BulkDeleteSourcesInput = z.infer<typeof bulkDeleteSourcesSchema>;
+
+

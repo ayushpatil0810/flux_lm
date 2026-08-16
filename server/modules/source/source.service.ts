@@ -1,9 +1,13 @@
+import { parseDocument, scrapeUrl } from "@/lib/firecrawl";
+import { uploadToStorage } from "@/lib/storage";
 import { WorkspaceService } from "@/server/modules/workspace/workspace.service";
 import { ApiError } from "@/server/utils/api-error";
 import { SourceRepository } from "./source.repository";
 import {
   BulkDeleteSourcesInput,
   CreateSourceInput,
+  ImportPdfSourceInput,
+  ImportWebsiteSourceInput,
   ListSourcesQuery,
   UpdateSourceInput,
 } from "./source.validator";
@@ -52,6 +56,42 @@ export class SourceService {
   }
 
   /**
+   * Enqueues source processing in the background (e.g. via Inngest for AI/RAG workflows: chunking & embeddings).
+   *
+   * @param payload - Payload containing sourceId and workspaceId.
+   */
+  static async enqueueSourceProcessing(payload: {
+    sourceId: string;
+    workspaceId: string;
+  }) {
+    // TODO: Trigger Inngest event for background processing workflow
+    // e.g. await inngest.send({ name: "source/process", data: payload });
+    console.log(
+      `[SourceService] Enqueued background processing for source ID: ${payload.sourceId}`,
+    );
+  }
+
+  /**
+   * Creates a source record with PENDING status and triggers background processing workflow.
+   *
+   * @param data - Source creation payload.
+   * @returns Newly created source record.
+   */
+  static async createAndProcessSource(data: CreateSourceInput) {
+    const sourceRecord = await SourceRepository.create({
+      ...data,
+      status: data.status || "PENDING",
+    });
+
+    await SourceService.enqueueSourceProcessing({
+      sourceId: sourceRecord.id,
+      workspaceId: sourceRecord.workspaceId,
+    });
+
+    return sourceRecord;
+  }
+
+  /**
    * Creates a new source after verifying user ownership of the parent workspace.
    *
    * @param userId - Creator user identifier.
@@ -62,7 +102,102 @@ export class SourceService {
     // Verify workspace access
     await WorkspaceService.getWorkspaceById(input.workspaceId, userId);
 
-    return await SourceRepository.create(input);
+    return await SourceService.createAndProcessSource(input);
+  }
+
+  /**
+   * Imports a website source by scraping content from the target URL via Firecrawl
+   * and enqueuing background processing.
+   *
+   * @param userId - Requesting user identifier.
+   * @param input - Validated payload containing workspaceId, URL, and optional title.
+   * @returns Newly created website source record with PENDING status.
+   * @throws {ApiError} If workspace access is denied or website scraping fails.
+   */
+  static async importWebsiteSource(
+    userId: string,
+    input: ImportWebsiteSourceInput,
+  ) {
+    // Verify workspace access
+    await WorkspaceService.getWorkspaceById(input.workspaceId, userId);
+
+    let scraped;
+    try {
+      scraped = await scrapeUrl(input.url);
+    } catch (error: any) {
+      throw ApiError.badRequest(
+        `Failed to scrape website: ${error?.message || "Unknown error"}`,
+      );
+    }
+
+    const title = input.title?.trim() || scraped.title || input.url;
+
+    return await SourceService.createAndProcessSource({
+      workspaceId: input.workspaceId,
+      type: "WEBSITE",
+      title,
+      content: scraped.markdown,
+      url: input.url,
+      status: "PENDING",
+      metadata: {
+        ...scraped.metadata,
+        importedFrom: input.url,
+        ...(scraped.description ? { description: scraped.description } : {}),
+      },
+    });
+  }
+
+  /**
+   * Imports a PDF file source by parsing text/markdown via Firecrawl, uploading the PDF binary
+   * to Cloudflare R2 storage, and enqueuing background processing workflow.
+   *
+   * @param userId - Requesting user identifier.
+   * @param input - Payload containing workspaceId, file data/filename, and optional title.
+   * @returns Newly created PDF source record with PENDING status.
+   * @throws {ApiError} If workspace access is denied or PDF parsing fails.
+   */
+  static async importPdfSource(userId: string, input: ImportPdfSourceInput) {
+    // Verify workspace access
+    await WorkspaceService.getWorkspaceById(input.workspaceId, userId);
+
+    let parsedPdf;
+    try {
+      parsedPdf = await parseDocument({
+        data: input.file.data,
+        filename: input.file.filename,
+        contentType: input.file.contentType || "application/pdf",
+      });
+    } catch (error: any) {
+      throw ApiError.badRequest(
+        `Failed to parse PDF document: ${error?.message || "Unknown error"}`,
+      );
+    }
+
+    // Upload raw PDF file to Cloudflare R2 storage bucket
+    const fileKey = `workspaces/${input.workspaceId}/pdf/${Date.now()}-${input.file.filename}`;
+    const storageResult = await uploadToStorage({
+      key: fileKey,
+      body: input.file.data,
+      contentType: input.file.contentType || "application/pdf",
+    });
+
+    const title = input.title?.trim() || input.file.filename;
+
+    return await SourceService.createAndProcessSource({
+      workspaceId: input.workspaceId,
+      type: "PDF",
+      title,
+      content: parsedPdf.markdown,
+      url: storageResult.url,
+      status: "PENDING",
+      metadata: {
+        ...parsedPdf.metadata,
+        storageKey: storageResult.key,
+        bucket: storageResult.bucket,
+        originalFilename: input.file.filename,
+        ...(parsedPdf.summary ? { summary: parsedPdf.summary } : {}),
+      },
+    });
   }
 
   /**
@@ -123,3 +258,4 @@ export class SourceService {
     };
   }
 }
+

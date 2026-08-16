@@ -97,6 +97,7 @@ export class SourceRepository {
         title: input.title,
         content: input.content,
         url: input.url || null,
+        status: input.status || "PENDING",
         metadata: input.metadata || null,
       })
       .returning();

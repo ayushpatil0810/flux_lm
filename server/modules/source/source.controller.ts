@@ -8,6 +8,7 @@ import { SourceService } from "./source.service";
 import {
   bulkDeleteSourcesSchema,
   createSourceSchema,
+  importWebsiteSourceSchema,
   listSourcesQuerySchema,
   updateSourceSchema,
 } from "./source.validator";
@@ -102,6 +103,71 @@ export class SourceController {
 
     const newSource = await SourceService.createSource(user.id, validation.data);
     return ApiResponse.created(newSource, "Source created successfully");
+  });
+
+  /**
+   * Handles POST /api/sources/import/website
+   * Imports a website source by scraping content from a URL via Firecrawl.
+   */
+  static importWebsiteSource = asyncHandler(async (req: NextRequest) => {
+    const user = await SourceController.getAuthenticatedUser(req);
+    const body = await req.json();
+
+    const validation = importWebsiteSourceSchema.safeParse(body);
+    if (!validation.success) {
+      throw ApiError.badRequest(
+        "Validation failed",
+        getZodFieldErrors(validation.error),
+      );
+    }
+
+    const imported = await SourceService.importWebsiteSource(
+      user.id,
+      validation.data,
+    );
+    return ApiResponse.created(
+      imported,
+      "Website source imported successfully",
+    );
+  });
+
+  /**
+   * Handles POST /api/sources/import/pdf
+   * Imports a PDF file source by parsing text and uploading binary to Cloudflare R2.
+   */
+  static importPdfSource = asyncHandler(async (req: NextRequest) => {
+    const user = await SourceController.getAuthenticatedUser(req);
+    const formData = await req.formData();
+
+    const file = formData.get("file") as File | null;
+    const workspaceId = formData.get("workspaceId") as string | null;
+    const title = (formData.get("title") as string | null) || undefined;
+
+    if (!file) {
+      throw ApiError.badRequest("PDF file is required");
+    }
+
+    if (!workspaceId) {
+      throw ApiError.badRequest("Workspace ID is required");
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const imported = await SourceService.importPdfSource(user.id, {
+      workspaceId,
+      title,
+      file: {
+        data: buffer,
+        filename: file.name,
+        contentType: file.type || "application/pdf",
+      },
+    });
+
+    return ApiResponse.created(
+      imported,
+      "PDF source imported successfully",
+    );
   });
 
   /**
