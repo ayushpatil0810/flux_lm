@@ -51,6 +51,8 @@ export class SourceController {
       type: searchParams.get("type") || undefined,
       status: searchParams.get("status") || undefined,
       q: searchParams.get("q") || undefined,
+      limit: searchParams.get("limit") || undefined,
+      offset: searchParams.get("offset") || undefined,
     };
 
     const validation = listSourcesQuerySchema.safeParse(queryParams);
@@ -151,6 +153,18 @@ export class SourceController {
 
     if (!workspaceId) {
       throw ApiError.badRequest("Workspace ID is required");
+    }
+
+    // Validate file size: reject files over 20 MB before reading them into memory
+    const MAX_PDF_BYTES = 20 * 1024 * 1024; // 20 MB
+    if (file.size > MAX_PDF_BYTES) {
+      throw ApiError.badRequest("PDF file must be smaller than 20 MB");
+    }
+
+    // Validate MIME type — browser-reported type only; unpdf will reject non-PDF bytes
+    const ALLOWED_MIME_TYPES = ["application/pdf"];
+    if (file.type && !ALLOWED_MIME_TYPES.includes(file.type)) {
+      throw ApiError.badRequest("Only PDF files are accepted");
     }
 
     const arrayBuffer = await file.arrayBuffer();

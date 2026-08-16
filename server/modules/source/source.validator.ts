@@ -23,6 +23,10 @@ export const listSourcesQuerySchema = z.object({
   type: sourceTypeSchema.optional(),
   status: sourceStatusSchema.optional(),
   q: z.string().optional(),
+  /** Maximum number of sources to return (default 50, max 100). */
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+  /** Number of sources to skip (for offset-based pagination). */
+  offset: z.coerce.number().int().min(0).default(0),
 });
 
 /**

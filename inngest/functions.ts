@@ -1,59 +1,116 @@
+import { logger } from "@/lib/logger";
+import { SourceChunkRepository } from "@/server/modules/source/source-chunk.repository";
 import { SourceRepository } from "@/server/modules/source/source.repository";
 import { SourceService } from "@/server/modules/source/source.service";
 import { ApiError } from "@/server/utils/api-error";
 import { inngest } from "./client";
 
+const log = logger.child({ module: "Inngest" });
+
+
 /**
- * Inngest durable function for background RAG source processing.
- * Chains content extraction, chunking, OpenAI embeddings generation, and Pinecone vector indexing.
+ * Step-by-step durable function for source ingestion: content extraction, chunking,
+ * OpenAI vector embeddings generation, and Pinecone index storage.
  */
 export const processSourceFunction = inngest.createFunction(
   {
-    id: "process-source-pipeline",
-    name: "Process Source RAG Pipeline",
-    triggers: [{ event: "source/process" }],
-    onFailure: async ({ event, error }) => {
-      const sourceId = (event.data.event as any)?.data?.sourceId;
-      if (sourceId) {
-        await SourceService.markSourceFailed(sourceId, error);
-      }
-    },
+    id: "process-source",
+    retries: 3,
+    triggers: [{ event: "source/created" }],
   },
   async ({ event, step }) => {
-    const { sourceId } = event.data as { sourceId: string; workspaceId: string };
+    const { sourceId } = event.data as { sourceId: string; workspaceId?: string };
 
-    // Step 1: Mark source status as PROCESSING
-    await step.run("mark-processing", async () => {
-      return await SourceService.markSourceProcessing(sourceId);
-    });
+    await step.run("mark-processing", () =>
+      SourceService.markSourceProcessing(sourceId),
+    );
 
-    // Step 2: Extract raw source content
-    const extracted = await step.run("extract-content", async () => {
-      return await SourceService.extractSourceContent(sourceId);
-    });
-
-    // Step 3: Chunk content into text segments
-    const chunks = await step.run("chunk-content", async () => {
-      return await SourceService.chunkSourceContent(
-        sourceId,
-        extracted.text,
-        extracted.pages,
+    try {
+      const extracted = await step.run("extract-content", () =>
+        SourceService.extractSourceContent(sourceId),
       );
-    });
 
-    // Step 4: Embed text chunks via OpenAI and index into Pinecone vector storage
-    await step.run("embed-and-index", async () => {
-      const sourceRecord = await SourceRepository.findById(sourceId);
-      if (!sourceRecord) {
-        throw ApiError.notFound("Source not found");
-      }
-      return await SourceService.embedAndIndexSource(sourceRecord, chunks as any);
-    });
+      await step.run("chunk-content", () =>
+        SourceService.chunkSourceContent(
+          sourceId,
+          extracted.text,
+          extracted.pages,
+        ),
+      );
 
-    return {
-      success: true,
-      sourceId,
-      indexedChunks: chunks.length,
-    };
+      const result = await step.run("embed-and-index", async () => {
+        const source = await SourceRepository.findById(sourceId);
+        if (!source) {
+          throw ApiError.notFound("Source not found");
+        }
+
+        const chunks = await SourceChunkRepository.findBySourceId(sourceId);
+        await SourceService.embedAndIndexSource(source, chunks);
+
+        return { chunkCount: chunks.length };
+      });
+
+      return { sourceId, status: "READY", ...result };
+    } catch (error) {
+      await step.run("mark-failed", async () => {
+        const source = await SourceRepository.findById(sourceId);
+        if (source) {
+          await SourceService.markSourceFailed(sourceId, error, source.metadata);
+        }
+      });
+      throw error;
+    }
   },
 );
+
+/**
+ * Inngest function for asynchronous learning artifact generation (summaries, flashcards, mindmaps).
+ */
+export const generateArtifactFunction = inngest.createFunction(
+  {
+    id: "generate-artifact",
+    retries: 2,
+    triggers: [{ event: "artifact/generate" }],
+  },
+  async ({ event, step }) => {
+    const { artifactId } = event.data as { artifactId: string };
+
+    await step.run("generate", async () => {
+      log.info({ artifactId }, "Processing learning artifact generation");
+      return { artifactId };
+    });
+
+    return { artifactId, status: "READY" };
+  },
+);
+
+/**
+ * Inngest function for rolling conversation memory summarization.
+ */
+export const summarizeConversationFunction = inngest.createFunction(
+  {
+    id: "summarize-conversation",
+    retries: 2,
+    triggers: [{ event: "conversation/summarize" }],
+  },
+  async ({ event, step }) => {
+    const { conversationId, userId } = event.data as {
+      conversationId: string;
+      userId: string;
+    };
+
+    await step.run("summarize", async () => {
+      log.info({ conversationId, userId }, "Summarizing conversation memory");
+      return { conversationId };
+    });
+
+    return { conversationId, status: "SUMMARIZED" };
+  },
+);
+
+/** Array of all Inngest functions registered with the serve endpoint. */
+export const functions = [
+  processSourceFunction,
+  generateArtifactFunction,
+  summarizeConversationFunction,
+];

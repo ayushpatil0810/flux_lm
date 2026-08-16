@@ -1,12 +1,15 @@
 import { RAG_MIN_SCORE, RAG_TOP_K } from "@/lib/constants";
 import { env } from "@/lib/env";
+import { logger } from "@/lib/logger";
 import { Pinecone, RecordMetadata } from "@pinecone-database/pinecone";
+
+const log = logger.child({ module: "Pinecone" });
 
 /**
  * Singleton Pinecone Client instance initialized with env.PINECONE_API_KEY.
  */
 export const pinecone = new Pinecone({
-  apiKey: env.PINECONE_API_KEY || "",
+  apiKey: env.PINECONE_API_KEY ?? "",
 });
 
 /**
@@ -44,7 +47,7 @@ export async function upsertVectors(
 ) {
   if (vectors.length === 0) return;
   if (!env.PINECONE_API_KEY) {
-    console.warn("[Pinecone] PINECONE_API_KEY is not configured in env");
+    log.warn("PINECONE_API_KEY is not configured — skipping vector upsert");
     return;
   }
 
@@ -97,7 +100,7 @@ export async function querySimilarity(
   options: VectorQueryOptions,
 ): Promise<ScoredChunkResult[]> {
   if (!env.PINECONE_API_KEY) {
-    console.warn("[Pinecone] PINECONE_API_KEY is not configured in env");
+    log.warn("PINECONE_API_KEY is not configured — returning empty similarity results");
     return [];
   }
 
@@ -156,4 +159,8 @@ export async function deleteVectorsBySourceId(
       sourceId: { $eq: sourceId },
     },
   });
+}
+
+if (!env.PINECONE_API_KEY) {
+  log.warn("PINECONE_API_KEY is not configured — vector search features will be disabled");
 }

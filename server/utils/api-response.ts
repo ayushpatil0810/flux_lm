@@ -1,5 +1,9 @@
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import { ApiError } from "./api-error";
+
+const log = logger.child({ module: "ApiResponse" });
+
 
 export class ApiResponse {
   static success<T>(data: T, message?: string, statusCode = 200) {
@@ -36,7 +40,7 @@ export class ApiResponse {
       );
     }
 
-    console.error("Unhandled Server Error:", error);
+    log.error({ err: error }, "Unhandled server error");
 
     const message =
       error instanceof Error ? error.message : "An unexpected error occurred";

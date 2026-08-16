@@ -1,4 +1,6 @@
 import { chunkPages, chunkText } from "@/lib/chunker";
+import { env } from "@/lib/env";
+import { logger } from "@/lib/logger";
 import { scrapeUrl } from "@/lib/firecrawl";
 import { generateEmbeddings } from "@/lib/openai";
 import { parsePdf } from "@/lib/pdf";
@@ -20,6 +22,27 @@ import {
   ListSourcesQuery,
   UpdateSourceInput,
 } from "./source.validator";
+
+const log = logger.child({ module: "SourceService" });
+
+/**
+ * Returns a user-facing error message that is safe to expose via the API.
+ *
+ * - In development: appends the raw library error for easier debugging.
+ * - In production: returns only the generic public message to avoid leaking
+ *   internal infrastructure details (service names, stack traces, etc.).
+ *
+ * @param error - Caught error from an external library call.
+ * @param publicMessage - Safe, generic message to show in all environments.
+ */
+function sanitizeExternalError(error: unknown, publicMessage: string): string {
+  if (env.NODE_ENV !== "production") {
+    const detail = error instanceof Error ? error.message : String(error);
+    return `${publicMessage}: ${detail}`;
+  }
+  return publicMessage;
+}
+
 
 /**
  * Service class encapsulating business logic and access control for Source management.
@@ -73,28 +96,29 @@ export class SourceService {
     sourceId: string;
     workspaceId: string;
   }) {
-    console.log(
-      `[SourceService] Dispatching Inngest event 'source/process' for source ID: ${payload.sourceId}`,
+    log.info(
+      { sourceId: payload.sourceId },
+      "Dispatching Inngest event 'source/created'",
     );
 
     try {
       await inngest.send({
-        name: "source/process",
+        name: "source/created",
         data: {
           sourceId: payload.sourceId,
           workspaceId: payload.workspaceId,
         },
       });
     } catch (inngestError) {
-      console.warn(
-        `[SourceService] Failed to send Inngest event, falling back to local async processing:`,
-        inngestError,
+      log.warn(
+        { err: inngestError, sourceId: payload.sourceId },
+        "Failed to send Inngest event, falling back to local async processing",
       );
       // Fallback to local background execution if Inngest is unreachable
       SourceService.processSourcePipeline(payload.sourceId).catch((err) => {
-        console.error(
-          `[SourceService] Processing pipeline failed for source ID ${payload.sourceId}:`,
-          err,
+        log.error(
+          { err, sourceId: payload.sourceId },
+          "Processing pipeline failed",
         );
       });
     }
@@ -153,9 +177,9 @@ export class SourceService {
     let scraped;
     try {
       scraped = await scrapeUrl(input.url);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw ApiError.badRequest(
-        `Failed to scrape website: ${error?.message || "Unknown error"}`,
+        sanitizeExternalError(error, "Failed to scrape website"),
       );
     }
 
@@ -192,9 +216,9 @@ export class SourceService {
     let parsedPdf;
     try {
       parsedPdf = await parsePdf(input.file.data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw ApiError.badRequest(
-        `Failed to parse PDF document: ${error?.message || "Unknown error"}`,
+        sanitizeExternalError(error, "Failed to parse PDF document"),
       );
     }
 
@@ -266,9 +290,9 @@ export class SourceService {
     let ytResult;
     try {
       ytResult = await getYoutubeTranscript(input.url);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw ApiError.badRequest(
-        `Failed to fetch YouTube transcript: ${error?.message || "Unknown error"}`,
+        sanitizeExternalError(error, "Failed to fetch YouTube transcript"),
       );
     }
 
@@ -386,6 +410,9 @@ export class SourceService {
         sourceId,
         index: chunk.index,
         content: chunk.content,
+        // NOTE: This is a character-length approximation (~4 chars per GPT token).
+        // It is stored for informational purposes only and is not used in any
+        // context-window or billing logic. For accurate counts, use tiktoken.
         tokenCount: Math.ceil(chunk.content.length / 4),
         metadata: chunk.metadata,
       })),

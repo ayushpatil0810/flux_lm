@@ -1,4 +1,5 @@
 import { env } from "@/lib/env";
+import { logger } from "@/lib/logger";
 import {
   DeleteObjectCommand,
   GetObjectCommand,
@@ -7,11 +8,13 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-const R2_ACCOUNT_ID = env.R2_ACCOUNT_ID || "";
-const R2_ACCESS_KEY_ID = env.R2_ACCESS_KEY_ID || "";
-const R2_SECRET_ACCESS_KEY = env.R2_SECRET_ACCESS_KEY || "";
-const R2_BUCKET_NAME = env.R2_BUCKET_NAME || "";
-const R2_PUBLIC_URL = env.R2_PUBLIC_URL || "";
+const log = logger.child({ module: "Storage" });
+
+const R2_ACCOUNT_ID = env.R2_ACCOUNT_ID ?? "";
+const R2_ACCESS_KEY_ID = env.R2_ACCESS_KEY_ID ?? "";
+const R2_SECRET_ACCESS_KEY = env.R2_SECRET_ACCESS_KEY ?? "";
+const R2_BUCKET_NAME = env.R2_BUCKET_NAME ?? "";
+const R2_PUBLIC_URL = env.R2_PUBLIC_URL ?? "";
 
 const endpoint =
   env.R2_ENDPOINT ||
@@ -48,12 +51,6 @@ export async function uploadToStorage({
   body,
   contentType,
 }: UploadFileOptions) {
-  if (!R2_BUCKET_NAME) {
-    console.warn(
-      "[Storage] R2_BUCKET_NAME is not configured in env",
-    );
-  }
-
   // Convert ArrayBuffer to Buffer if needed
   const bodyBuffer =
     body instanceof ArrayBuffer ? Buffer.from(body) : (body as Buffer | Uint8Array);
@@ -106,4 +103,8 @@ export async function deleteFromStorage(key: string) {
   });
 
   return await r2Client.send(command);
+}
+
+if (!R2_BUCKET_NAME) {
+  log.warn("R2_BUCKET_NAME is not configured — PDF storage uploads will fail at runtime");
 }

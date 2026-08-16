@@ -1,4 +1,8 @@
+import { logger } from "@/lib/logger";
 import { YoutubeTranscript } from "youtube-transcript";
+
+const log = logger.child({ module: "YouTube" });
+
 
 export interface YoutubeTranscriptResult {
   videoId: string;
@@ -80,10 +84,7 @@ export async function fetchYoutubeMetadata(videoId: string) {
       };
     }
   } catch (error) {
-    console.warn(
-      `[YouTube] Failed to fetch oEmbed metadata for ${videoId}:`,
-      error,
-    );
+      log.warn({ err: error, videoId }, "Failed to fetch oEmbed metadata");
   }
 
   return {

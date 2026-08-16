@@ -1,11 +1,14 @@
 import { env } from "@/lib/env";
+import { logger } from "@/lib/logger";
 import { Firecrawl } from "firecrawl";
+
+const log = logger.child({ module: "Firecrawl" });
 
 /**
  * Singleton Firecrawl API client initialized with env.FIRECRAWL_API_KEY.
  */
 export const firecrawl = new Firecrawl({
-  apiKey: env.FIRECRAWL_API_KEY || "",
+  apiKey: env.FIRECRAWL_API_KEY ?? "",
 });
 
 /**
@@ -15,12 +18,6 @@ export const firecrawl = new Firecrawl({
  * @returns Object containing extracted markdown, page title, description, and raw metadata.
  */
 export async function scrapeUrl(url: string) {
-  if (!env.FIRECRAWL_API_KEY) {
-    console.warn(
-      "[Firecrawl] FIRECRAWL_API_KEY is not configured in env",
-    );
-  }
-
   const result = await firecrawl.scrape(url, {
     formats: ["markdown"],
     onlyMainContent: true,
@@ -43,12 +40,6 @@ export async function scrapeUrl(url: string) {
  * @returns Search results containing web page data and markdown content.
  */
 export async function searchWeb(query: string, limit = 5) {
-  if (!env.FIRECRAWL_API_KEY) {
-    console.warn(
-      "[Firecrawl] FIRECRAWL_API_KEY is not configured in env",
-    );
-  }
-
   const results = await firecrawl.search(query, {
     limit,
     scrapeOptions: {
@@ -71,12 +62,6 @@ export async function parseDocument(file: {
   filename: string;
   contentType?: string;
 }) {
-  if (!env.FIRECRAWL_API_KEY) {
-    console.warn(
-      "[Firecrawl] FIRECRAWL_API_KEY is not configured in env",
-    );
-  }
-
   const result = await firecrawl.parse(file, {
     formats: ["markdown"],
   });
@@ -86,4 +71,8 @@ export async function parseDocument(file: {
     summary: result.summary || "",
     metadata: result.metadata || {},
   };
+}
+
+if (!env.FIRECRAWL_API_KEY) {
+  log.warn("FIRECRAWL_API_KEY is not configured — website scraping will fail at runtime");
 }

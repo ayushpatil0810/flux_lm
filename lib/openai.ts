@@ -1,12 +1,16 @@
 import { CHAT_MODEL, EMBEDDING_MODEL } from "@/lib/constants";
 import { env } from "@/lib/env";
+import { logger } from "@/lib/logger";
 import OpenAI from "openai";
+
+const log = logger.child({ module: "OpenAI" });
 
 /**
  * Singleton OpenAI client instance initialized with env.OPENAI_API_KEY.
+ * The SDK will raise an AuthenticationError on the first API call when the key is absent.
  */
 export const openai = new OpenAI({
-  apiKey: env.OPENAI_API_KEY || "",
+  apiKey: env.OPENAI_API_KEY ?? "",
 });
 
 /**
@@ -16,10 +20,6 @@ export const openai = new OpenAI({
  * @returns Array of 1536 floating point numbers.
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
-  if (!env.OPENAI_API_KEY) {
-    console.warn("[OpenAI] OPENAI_API_KEY is not configured in env");
-  }
-
   const sanitizedText = text.replace(/\n/g, " ");
 
   const response = await openai.embeddings.create({
@@ -38,9 +38,6 @@ export async function generateEmbedding(text: string): Promise<number[]> {
  */
 export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
   if (texts.length === 0) return [];
-  if (!env.OPENAI_API_KEY) {
-    console.warn("[OpenAI] OPENAI_API_KEY is not configured in env");
-  }
 
   const sanitizedInputs = texts.map((t) => t.replace(/\n/g, " "));
 
@@ -67,10 +64,6 @@ export async function generateChatCompletion(
     maxTokens?: number;
   } = {},
 ): Promise<string> {
-  if (!env.OPENAI_API_KEY) {
-    console.warn("[OpenAI] OPENAI_API_KEY is not configured in env");
-  }
-
   const response = await openai.chat.completions.create({
     model: options.model || CHAT_MODEL,
     messages,
@@ -95,14 +88,14 @@ export async function streamChatCompletion(
     temperature?: number;
   } = {},
 ) {
-  if (!env.OPENAI_API_KEY) {
-    console.warn("[OpenAI] OPENAI_API_KEY is not configured in env");
-  }
-
   return await openai.chat.completions.create({
     model: options.model || CHAT_MODEL,
     messages,
     temperature: options.temperature ?? 0.3,
     stream: true,
   });
+}
+
+if (!env.OPENAI_API_KEY) {
+  log.warn("OPENAI_API_KEY is not configured — AI features will fail at runtime");
 }

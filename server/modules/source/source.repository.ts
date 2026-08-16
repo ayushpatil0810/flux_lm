@@ -1,6 +1,6 @@
 import { db } from "@/server/db";
 import { source } from "@/server/db/schema";
-import { and, desc, eq, ilike, inArray, or } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray } from "drizzle-orm";
 import {
   CreateSourceInput,
   ListSourcesQuery,
@@ -12,11 +12,12 @@ import {
  */
 export class SourceRepository {
   /**
-   * Queries sources associated with a workspace ID, supporting filtering by type, status, search query (q), and ordered by createdAt desc.
+   * Queries sources associated with a workspace ID, supporting filtering by type,
+   * status, and title search (q). Returns paginated results ordered by createdAt desc.
    *
    * @param workspaceId - Workspace unique identifier.
-   * @param filters - Optional filters (type, status, search query q).
-   * @returns Array of source records.
+   * @param filters - Optional filters (type, status, search query q, limit, offset).
+   * @returns Array of source summary records (no content field).
    */
   static async findByWorkspaceId(
     workspaceId: string,
@@ -33,20 +34,29 @@ export class SourceRepository {
     }
 
     if (filters.q) {
-      const searchPattern = `%${filters.q}%`;
-      conditions.push(
-        or(
-          ilike(source.title, searchPattern),
-          ilike(source.content, searchPattern),
-        )!,
-      );
+      conditions.push(ilike(source.title, `%${filters.q}%`));
     }
 
+    const limit = filters.limit ?? 50;
+    const offset = filters.offset ?? 0;
+
     return await db
-      .select()
+      .select({
+        id: source.id,
+        workspaceId: source.workspaceId,
+        type: source.type,
+        title: source.title,
+        url: source.url,
+        status: source.status,
+        metadata: source.metadata,
+        createdAt: source.createdAt,
+        updatedAt: source.updatedAt,
+      })
       .from(source)
       .where(and(...conditions))
-      .orderBy(desc(source.createdAt));
+      .orderBy(desc(source.createdAt))
+      .limit(limit)
+      .offset(offset);
   }
 
   /**
