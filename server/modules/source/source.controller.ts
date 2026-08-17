@@ -1,4 +1,3 @@
-import { auth } from "@/server/auth";
 import { ApiError } from "@/server/utils/api-error";
 import { ApiResponse } from "@/server/utils/api-response";
 import { asyncHandler } from "@/server/utils/async-handler";

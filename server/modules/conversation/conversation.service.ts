@@ -89,6 +89,24 @@ export class ConversationService {
     // Verify existence & ownership
     await ConversationService.getConversationById(conversationId, userId);
 
+    const result = await ConversationRepository.addMessage({
+      conversationId,
+      role: input.role,
+      content: input.content,
+      citations: input.citations,
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { messageCount, ...message } = result;
+    return message;
+  }
+
+  /**
+   * Internal method to add a message and return the message record with messageCount.
+   */
+  static async addMessageInternal(conversationId: string, userId: string, input: AddMessageInput) {
+    // Verify existence & ownership
+    await ConversationService.getConversationById(conversationId, userId);
+
     return await ConversationRepository.addMessage({
       conversationId,
       role: input.role,
@@ -202,7 +220,7 @@ export class ConversationService {
         // Note: AI SDK v3.x onFinish provides `text`, `toolCalls`, `toolResults` etc.
         const allCitations = [...citations]; 
         
-        const addedMessage = await ConversationService.addMessage(conversation.id, userId, {
+        const addedMessage = await ConversationService.addMessageInternal(conversation.id, userId, {
           role: "ASSISTANT",
           content: assistantText,
           citations: allCitations.length > 0 ? allCitations : undefined,

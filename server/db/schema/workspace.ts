@@ -7,15 +7,7 @@ import { learningArtifact } from "./learning-artifact";
 import { source } from "./source";
 import { timestamps } from "./utils";
 
-export const workspaceEntityBase = {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  workspaceId: text("workspace_id")
-    .notNull()
-    .references(() => workspace.id, { onDelete: "cascade" }),
-  ...timestamps,
-};
+import { CHAT_MODEL } from "@/lib/constants";
 
 export const workspace = pgTable(
   "workspace",
@@ -29,11 +21,21 @@ export const workspace = pgTable(
     title: text("title").notNull(),
     description: text("description"),
     icon: text("icon"),
-    defaultModel: text("default_model").default("gpt-4o-mini").notNull(),
+    defaultModel: text("default_model").default(CHAT_MODEL).notNull(),
     ...timestamps,
   },
   (table) => [index("workspace_userId_idx").on(table.userId)],
 );
+
+export const workspaceEntityBase = {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  workspaceId: text("workspace_id")
+    .notNull()
+    .references(() => workspace.id, { onDelete: "cascade" }),
+  ...timestamps,
+};
 
 export const workspaceRelations = relations(workspace, ({ one, many }) => ({
   user: one(user, {

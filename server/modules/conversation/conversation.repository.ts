@@ -196,41 +196,4 @@ export class ConversationRepository {
     return messages.reverse();
   }
 
-  /**
-   * Retrieves messages by conversation ID.
-   * Alias for findMessages.
-   * 
-   * @param conversationId - Conversation unique identifier.
-   * @param limit - Optional maximum number of recent messages to return.
-   * @returns Array of message records.
-   */
-  static async findMessagesByConversationId(conversationId: string, limit?: number) {
-    return this.findMessages(conversationId, limit);
-  }
-
-  /**
-   * Counts the number of messages in a conversation.
-   *
-   * @param conversationId - Conversation unique identifier.
-   * @returns The total number of messages.
-   */
-  static async countMessagesByConversationId(conversationId: string) {
-    const [result] = await db
-      .select({ count: count() })
-      .from(message)
-      .where(eq(message.conversationId, conversationId));
-
-    return result?.count || 0;
-  }
-
-  /**
-   * Creates a message record.
-   * Alias for addMessage.
-   * 
-   * @param input - Message payload.
-   * @returns Inserted message record.
-   */
-  static async createMessageRecord(input: RepositoryAddMessageInput) {
-    return this.addMessage(input);
-  }
 }
