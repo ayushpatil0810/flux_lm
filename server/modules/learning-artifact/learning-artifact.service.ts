@@ -1,5 +1,6 @@
 import { ApiError } from "@/server/utils/api-error";
 import { inngest } from "@/inngest/client";
+import { INNGEST_EVENTS } from "@/inngest/events";
 import { WorkspaceService } from "@/server/modules/workspace/workspace.service";
 import { LearningArtifactRepository } from "./learning-artifact.repository";
 import { CreateArtifactInput } from "./learning-artifact.validator";
@@ -72,7 +73,7 @@ export class LearningArtifactService {
     });
 
     await inngest.send({
-      name: "artifact/generate",
+      name: INNGEST_EVENTS.ARTIFACT_GENERATE,
       data: {
         artifactId: artifact.id,
         workspaceId,

@@ -9,6 +9,7 @@ import { buildChatSystemPrompt, retrieveWorkspaceContext, getLastUserMessageText
 import { webSearchTool } from "./conversation.tools";
 import { searchUserMemories, addMemoriesFromMessages } from "@/lib/mem0";
 import { inngest } from "@/inngest/client";
+import { INNGEST_EVENTS } from "@/inngest/events";
 
 /**
  * Service class encapsulating business logic and rules for Conversation management.
@@ -218,7 +219,7 @@ export class ConversationService {
         const messageCount = addedMessage.messageCount;
         if (messageCount > 0 && messageCount % CONVERSATION_SUMMARY_INTERVAL === 0) {
           await inngest.send({
-            name: "conversation/summarize",
+            name: INNGEST_EVENTS.CONVERSATION_SUMMARIZE,
             data: { conversationId: conversation.id, userId },
           });
         }

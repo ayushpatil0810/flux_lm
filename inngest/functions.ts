@@ -4,6 +4,7 @@ import { SourceService } from "@/server/modules/source/source.service";
 import { ApiError } from "@/server/utils/api-error";
 import { ConversationService } from "@/server/modules/conversation/conversation.service";
 import { inngest } from "./client";
+import { INNGEST_EVENTS } from "./events";
 
 const log = logger.child({ module: "Inngest" });
 
@@ -16,7 +17,7 @@ export const processSourceFunction = inngest.createFunction(
   {
     id: "process-source",
     retries: 3,
-    triggers: [{ event: "source/created" }],
+    triggers: [{ event: INNGEST_EVENTS.SOURCE_CREATED }],
   },
   async ({ event, step }) => {
     const { sourceId } = event.data as { sourceId: string; workspaceId?: string };
@@ -64,7 +65,7 @@ export const generateArtifactFunction = inngest.createFunction(
   {
     id: "generate-artifact",
     retries: 2,
-    triggers: [{ event: "artifact/generate" }],
+    triggers: [{ event: INNGEST_EVENTS.ARTIFACT_GENERATE }],
   },
   async ({ event, step }) => {
     const { artifactId } = event.data as { artifactId: string };
@@ -89,7 +90,7 @@ export const summarizeConversationFunction = inngest.createFunction(
   {
     id: "summarize-conversation",
     retries: 2,
-    triggers: [{ event: "conversation/summarize" }],
+    triggers: [{ event: INNGEST_EVENTS.CONVERSATION_SUMMARIZE }],
   },
   async ({ event, step }) => {
     const { conversationId, userId } = event.data as {

@@ -8,6 +8,7 @@ import { deleteVectorsBySourceId, deleteVectorsBySourceIds, upsertVectors } from
 import { uploadToStorage } from "@/lib/storage";
 import { getYoutubeTranscript } from "@/lib/youtube";
 import { inngest } from "@/inngest/client";
+import { INNGEST_EVENTS } from "@/inngest/events";
 import { WorkspaceService } from "@/server/modules/workspace/workspace.service";
 import { ApiError } from "@/server/utils/api-error";
 import { SourceChunkRepository } from "./source-chunk.repository";
@@ -103,7 +104,7 @@ export class SourceService {
 
     try {
       await inngest.send({
-        name: "source/created",
+        name: INNGEST_EVENTS.SOURCE_CREATED,
         data: {
           sourceId: payload.sourceId,
           workspaceId: payload.workspaceId,
