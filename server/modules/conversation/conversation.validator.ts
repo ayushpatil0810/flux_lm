@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CHAT_MODELS } from "@/lib/constants";
 
 /**
  * Zod validation schema for querying conversations.
@@ -55,7 +56,7 @@ export const uiMessageSchema = z
 export const streamChatSchema = z.object({
   conversationId: z.string().optional(),
   messages: z.array(uiMessageSchema).min(1, "messages array is required"),
-  model: z.string().optional(),
+  model: z.enum(CHAT_MODELS).optional(),
   webSearch: z.boolean().optional(),
 });
 

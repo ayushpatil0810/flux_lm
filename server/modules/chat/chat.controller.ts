@@ -21,7 +21,7 @@ export class ChatController {
       { params }: { params: Promise<{ id: string }> },
     ) => {
       const user = await getAuthenticatedUser(req);
-      checkRateLimit(`chat:${user.id}`, { maxRequests: 15, windowMs: 60 * 1000 });
+      await checkRateLimit(`chat:${user.id}`, { maxRequests: 15, windowMs: 60 * 1000 });
       const { id: workspaceId } = await params;
       const body = await req.json();
 

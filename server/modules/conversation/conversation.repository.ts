@@ -105,19 +105,17 @@ export class ConversationRepository {
    *
    * @param id - Conversation unique identifier.
    * @param summary - Rolling summary string.
-   * @param summaryMessageCount - Number of messages processed into this summary.
    * @returns Updated conversation record.
    */
   static async updateSummary(
     id: string,
     summary: string,
-    summaryMessageCount: number,
   ) {
     const [updated] = await db
       .update(conversation)
       .set({
         summary,
-        summaryMessageCount,
+        summaryMessageCount: 0,
         summarizedAt: new Date(),
         updatedAt: new Date(),
       })

@@ -342,15 +342,12 @@ export class SourceService {
   static async markSourceFailed(
     sourceId: string,
     error: unknown,
-    existingMetadata?: unknown,
+    existingMetadata?: any,
   ) {
     const message =
       error instanceof Error ? error.message : "Source processing failed";
 
-    const metadata =
-      existingMetadata && typeof existingMetadata === "object"
-        ? (existingMetadata as Record<string, unknown>)
-        : {};
+    const metadata = existingMetadata ?? {};
 
     return await SourceRepository.update(sourceId, {
       status: "FAILED",
@@ -377,10 +374,7 @@ export class SourceService {
       throw ApiError.badRequest(`Source ${sourceId} has no extractable content`);
     }
 
-    const metadata =
-      sourceRecord.metadata && typeof sourceRecord.metadata === "object"
-        ? (sourceRecord.metadata as Record<string, unknown>)
-        : {};
+    const metadata = sourceRecord.metadata ?? {};
 
     return {
       sourceId: sourceRecord.id,
@@ -447,13 +441,13 @@ export class SourceService {
       workspaceId: string;
       title: string;
       type: "PDF" | "WEBSITE" | "YOUTUBE" | "TEXT" | "MARKDOWN";
-      metadata?: unknown;
+      metadata?: any;
     },
     chunks: Array<{
       id: string;
       index: number;
       content: string;
-      metadata?: unknown;
+      metadata?: any;
     }>,
   ) {
 
@@ -469,10 +463,7 @@ export class SourceService {
       for (let j = 0; j < batch.length; j += 1) {
         const chunk = batch[j]!;
         const embedding = embeddings[j]!;
-        const chunkMetadata =
-          chunk.metadata && typeof chunk.metadata === "object"
-            ? (chunk.metadata as Record<string, unknown>)
-            : {};
+        const chunkMetadata = chunk.metadata ?? {};
 
         pineconeItems.push({
           id: chunk.id,
@@ -485,8 +476,8 @@ export class SourceService {
             sourceTitle: sourceRecord.title,
             sourceType: sourceRecord.type,
             text: chunk.content.slice(0, 35000),
-            ...(typeof chunkMetadata.page === "number"
-              ? { page: chunkMetadata.page }
+            ...(typeof (chunkMetadata as any).page === "number"
+              ? { page: (chunkMetadata as any).page }
               : {}),
           },
         });
@@ -495,10 +486,7 @@ export class SourceService {
 
     await upsertVectors(pineconeItems);
 
-    const metadata =
-      sourceRecord.metadata && typeof sourceRecord.metadata === "object"
-        ? (sourceRecord.metadata as Record<string, unknown>)
-        : {};
+    const metadata = sourceRecord.metadata ?? {};
 
     return await SourceRepository.update(sourceRecord.id, {
       status: "READY",

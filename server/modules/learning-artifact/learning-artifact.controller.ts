@@ -67,7 +67,7 @@ export class LearningArtifactController {
       { params }: { params: Promise<{ id: string }> },
     ) => {
       const user = await getAuthenticatedUser(req);
-      checkRateLimit(`artifact:${user.id}`, { maxRequests: 10, windowMs: 60 * 1000 });
+      await checkRateLimit(`artifact:${user.id}`, { maxRequests: 10, windowMs: 60 * 1000 });
       const { id: workspaceId } = await params;
       const body = await req.json();
 

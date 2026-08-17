@@ -40,6 +40,10 @@ const envSchema = z.object({
   // Inngest Background Workflows
   INNGEST_EVENT_KEY: z.string().optional(),
   INNGEST_SIGNING_KEY: z.string().optional(),
+
+  // Upstash Redis
+  UPSTASH_REDIS_REST_URL: z.string().optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
 });
 
 const parseEnv = () => {

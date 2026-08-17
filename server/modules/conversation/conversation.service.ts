@@ -217,7 +217,7 @@ export class ConversationService {
 
         // Check if we need to summarize
         const messageCount = addedMessage.messageCount;
-        if (messageCount > 0 && messageCount % CONVERSATION_SUMMARY_INTERVAL === 0) {
+        if (messageCount === CONVERSATION_SUMMARY_INTERVAL) {
           await inngest.send({
             name: INNGEST_EVENTS.CONVERSATION_SUMMARIZE,
             data: { conversationId: conversation.id, userId },
@@ -278,8 +278,7 @@ export class ConversationService {
 
     const updated = await ConversationRepository.updateSummary(
       conversation.id,
-      summary.trim(),
-      messages.length
+      summary.trim()
     );
 
     const recentMessages = messages.slice(-16).map((message) => ({
