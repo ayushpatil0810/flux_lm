@@ -6,7 +6,9 @@ import {
   jsonb,
   pgEnum,
   pgTable,
-import { text, timestamp } from "drizzle-orm/pg-core";
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { workspace, workspaceEntityBase } from "./workspace";
 import { timestamps } from "./utils";
 

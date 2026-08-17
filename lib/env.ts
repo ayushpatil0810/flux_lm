@@ -31,10 +31,11 @@ const envSchema = z.object({
   R2_ENDPOINT: z.string().optional(),
   R2_PUBLIC_URL: z.string().optional(),
 
-  // AI & RAG (OpenAI & Pinecone)
+  // AI & RAG (OpenAI, Pinecone, Mem0)
   OPENAI_API_KEY: z.string().optional(),
   PINECONE_API_KEY: z.string().optional(),
   PINECONE_INDEX: z.string().optional(),
+  MEM0_API_KEY: z.string().optional(),
 
   // Inngest Background Workflows
   INNGEST_EVENT_KEY: z.string().optional(),

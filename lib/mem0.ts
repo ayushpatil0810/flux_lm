@@ -1,9 +1,10 @@
 import { MemoryClient } from "mem0ai";
 import { logger } from "./logger";
+import { env } from "@/lib/env";
 
 // Initialize the Mem0 client using the API key from environment variables.
 const client = new MemoryClient({
-  apiKey: process.env.MEM0_API_KEY || "",
+  apiKey: env.MEM0_API_KEY || "",
 });
 
 /**
@@ -11,7 +12,7 @@ const client = new MemoryClient({
  * Returns an array of memory objects if found.
  */
 export async function searchUserMemories(userId: string, query: string) {
-  if (!process.env.MEM0_API_KEY) {
+  if (!env.MEM0_API_KEY) {
     logger.warn({ userId }, "[Mem0] MEM0_API_KEY not set. Skipping search.");
     return [] as { memory: string }[];
   }
@@ -36,7 +37,7 @@ export async function addMemoriesFromMessages(
   messages: { role: string; content: string }[],
   metadata?: Record<string, unknown>
 ) {
-  if (!process.env.MEM0_API_KEY) {
+  if (!env.MEM0_API_KEY) {
     logger.warn({ userId }, "[Mem0] MEM0_API_KEY not set. Skipping addition.");
     return;
   }
@@ -62,7 +63,7 @@ export async function addMemoriesFromMessages(
  * Retrieves all memories for a specific user.
  */
 export async function getUserMemories(userId: string) {
-  if (!process.env.MEM0_API_KEY) {
+  if (!env.MEM0_API_KEY) {
     logger.warn({ userId }, "[Mem0] MEM0_API_KEY not set. Skipping list.");
     return [];
   }
@@ -80,7 +81,7 @@ export async function getUserMemories(userId: string) {
  * Manually adds a specific memory for a user.
  */
 export async function addMemory(userId: string, text: string) {
-  if (!process.env.MEM0_API_KEY) {
+  if (!env.MEM0_API_KEY) {
     logger.warn({ userId }, "[Mem0] MEM0_API_KEY not set. Skipping add.");
     return null;
   }
@@ -98,7 +99,7 @@ export async function addMemory(userId: string, text: string) {
  * Updates a specific memory by its ID.
  */
 export async function updateUserMemory(memoryId: string, text: string) {
-  if (!process.env.MEM0_API_KEY) {
+  if (!env.MEM0_API_KEY) {
     logger.warn({ memoryId }, "[Mem0] MEM0_API_KEY not set. Skipping update.");
     return null;
   }
@@ -116,7 +117,7 @@ export async function updateUserMemory(memoryId: string, text: string) {
  * Deletes a specific memory by its ID.
  */
 export async function deleteUserMemory(memoryId: string) {
-  if (!process.env.MEM0_API_KEY) {
+  if (!env.MEM0_API_KEY) {
     logger.warn({ memoryId }, "[Mem0] MEM0_API_KEY not set. Skipping delete.");
     return null;
   }

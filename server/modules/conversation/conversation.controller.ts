@@ -162,30 +162,4 @@ export class ConversationController {
       return ApiResponse.created(newMessage, "Message added successfully");
     },
   );
-
-  /**
-   * Handles POST /api/workspaces/[id]/chat
-   * Streams a RAG-enhanced AI chat response.
-   */
-  static streamWorkspaceChat = asyncHandler(
-    async (
-      req: NextRequest,
-      { params }: { params: Promise<{ id: string }> },
-    ) => {
-      const user = await getAuthenticatedUser(req);
-      const { id: workspaceId } = await params;
-      const body = await req.json();
-
-      // Ensure minimal validation, expecting { messages: UIMessage[], conversationId?, model?, webSearch? }
-      if (!body.messages || !Array.isArray(body.messages)) {
-        throw ApiError.badRequest("messages array is required");
-      }
-
-      return await ConversationService.streamWorkspaceChat(
-        workspaceId,
-        user.id,
-        body
-      );
-    }
-  );
 }
