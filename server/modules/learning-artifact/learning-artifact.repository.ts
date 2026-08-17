@@ -1,22 +1,26 @@
 import { db } from "@/server/db";
-import { learningArtifact } from "@/server/db/schema";
+import {
+  learningArtifact,
+  LearningArtifactContent,
+  LearningArtifactMetadata,
+} from "@/server/db/schema";
 import { and, desc, eq } from "drizzle-orm";
 
 export interface CreateLearningArtifactInput {
   workspaceId: string;
   type: "SUMMARY" | "TAKEAWAYS" | "FLASHCARDS" | "QUIZ" | "MINDMAP" | "REPORT";
   title: string;
-  content?: unknown;
+  content?: LearningArtifactContent;
   sourceIds?: string[];
   status?: "PENDING" | "PROCESSING" | "READY" | "FAILED";
-  metadata?: Record<string, unknown>;
+  metadata?: LearningArtifactMetadata;
 }
 
 export interface UpdateLearningArtifactInput {
   title?: string;
-  content?: unknown;
+  content?: LearningArtifactContent;
   status?: "PENDING" | "PROCESSING" | "READY" | "FAILED";
-  metadata?: Record<string, unknown>;
+  metadata?: LearningArtifactMetadata;
 }
 
 /**

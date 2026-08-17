@@ -130,7 +130,7 @@ export class LearningArtifactService {
           processingError: undefined,
         },
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : "Artifact generation failed";
 

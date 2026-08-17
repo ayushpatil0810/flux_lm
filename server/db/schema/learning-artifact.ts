@@ -9,6 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { workspace, workspaceEntityBase } from "./workspace";
 import { timestamps } from "./utils";
+import { LearningArtifactContent, LearningArtifactMetadata } from "./types";
 
 export const artifactTypeEnum = pgEnum("artifact_type", [
   "SUMMARY",
@@ -32,10 +33,10 @@ export const learningArtifact = pgTable(
     ...workspaceEntityBase,
     type: artifactTypeEnum("type").notNull(),
     title: text("title").notNull(),
-    content: jsonb("content"),
+    content: jsonb("content").$type<LearningArtifactContent>(),
     sourceIds: text("source_ids").array(),
     status: artifactStatusEnum("status").default("PENDING").notNull(),
-    metadata: jsonb("metadata"),
+    metadata: jsonb("metadata").$type<LearningArtifactMetadata>(),
   },
   (table) => [
     index("learning_artifact_workspaceId_idx").on(table.workspaceId),

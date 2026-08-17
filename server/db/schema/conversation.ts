@@ -11,6 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { workspace, workspaceEntityBase } from "./workspace";
 import { timestamps } from "./utils";
+import { CitationMetadata } from "./types";
 
 export const messageRoleEnum = pgEnum("message_role", [
   "USER",
@@ -46,7 +47,7 @@ export const message = pgTable(
       .references(() => conversation.id, { onDelete: "cascade" }),
     role: messageRoleEnum("role").notNull(),
     content: text("content").notNull(),
-    citations: jsonb("citations"),
+    citations: jsonb("citations").$type<CitationMetadata[]>(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [

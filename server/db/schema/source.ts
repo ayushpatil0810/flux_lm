@@ -12,6 +12,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { workspace, workspaceEntityBase } from "./workspace";
 import { timestamps } from "./utils";
+import { SourceChunkMetadata, SourceMetadata } from "./types";
 
 export const sourceTypeEnum = pgEnum("source_type", [
   "PDF",
@@ -37,7 +38,7 @@ export const source = pgTable(
     content: text("content"),
     url: text("url"),
     status: sourceStatusEnum("status").default("PENDING").notNull(),
-    metadata: jsonb("metadata"),
+    metadata: jsonb("metadata").$type<SourceMetadata>(),
   },
   (table) => [
     index("source_workspaceId_idx").on(table.workspaceId),
@@ -58,7 +59,7 @@ export const sourceChunk = pgTable(
     index: integer("index").notNull(),
     content: text("content").notNull(),
     tokenCount: integer("token_count"),
-    metadata: jsonb("metadata"),
+    metadata: jsonb("metadata").$type<SourceChunkMetadata>(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [

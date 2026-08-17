@@ -1,18 +1,15 @@
 import { db } from "@/server/db";
 import { conversation, message } from "@/server/db/schema";
 import { and, desc, eq, count } from "drizzle-orm";
+import {
+  CreateConversationInput,
+  AddMessageInput,
+} from "./conversation.validator";
 
-export interface CreateConversationInput {
-  workspaceId: string;
-  title?: string;
-}
-
-export interface AddMessageInput {
+export type { CreateConversationInput };
+export type RepositoryAddMessageInput = AddMessageInput & {
   conversationId: string;
-  role: "USER" | "ASSISTANT";
-  content: string;
-  citations?: unknown;
-}
+};
 
 /**
  * Repository class managing direct database operations for `conversation` and `message` tables via Drizzle ORM.
@@ -156,7 +153,7 @@ export class ConversationRepository {
    * @param input - Message payload containing conversationId, role, content, citations.
    * @returns Inserted message record.
    */
-  static async addMessage(input: AddMessageInput) {
+  static async addMessage(input: RepositoryAddMessageInput) {
     const [newMsg] = await db
       .insert(message)
       .values({
@@ -233,7 +230,7 @@ export class ConversationRepository {
    * @param input - Message payload.
    * @returns Inserted message record.
    */
-  static async createMessageRecord(input: AddMessageInput) {
+  static async createMessageRecord(input: RepositoryAddMessageInput) {
     return this.addMessage(input);
   }
 }

@@ -25,7 +25,7 @@ export class MemoryService {
         throw ApiError.internal("Memory creation returned no data, check MEM0_API_KEY");
       }
       return memory;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof ApiError) throw error;
       throw ApiError.internal("Failed to create memory");
     }
@@ -41,7 +41,7 @@ export class MemoryService {
         throw ApiError.internal("Memory update returned no data, check MEM0_API_KEY");
       }
       return updated;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof ApiError) throw error;
       throw ApiError.internal("Failed to update memory");
     }
@@ -57,7 +57,7 @@ export class MemoryService {
         throw ApiError.internal("Memory deletion returned no data, check MEM0_API_KEY");
       }
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof ApiError) throw error;
       throw ApiError.internal("Failed to delete memory");
     }
