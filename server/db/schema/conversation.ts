@@ -9,7 +9,7 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { workspace, workspaceEntityBase } from "./workspace";
+import { getWorkspaceEntityBase, workspace } from "./workspace";
 import { timestamps } from "./utils";
 import { CitationMetadata } from "./types";
 
@@ -21,7 +21,8 @@ export const messageRoleEnum = pgEnum("message_role", [
 export const conversation = pgTable(
   "conversation",
   {
-    ...workspaceEntityBase,
+    ...getWorkspaceEntityBase(),
+    ...timestamps,
     title: text("title"),
     summary: text("summary"),
     summaryMessageCount: integer("summary_message_count").default(0).notNull(),

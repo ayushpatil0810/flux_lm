@@ -10,7 +10,7 @@ import {
   timestamp,
   unique,
 } from "drizzle-orm/pg-core";
-import { workspace, workspaceEntityBase } from "./workspace";
+import { getWorkspaceEntityBase, workspace } from "./workspace";
 import { timestamps } from "./utils";
 import { SourceChunkMetadata, SourceMetadata } from "./types";
 
@@ -32,7 +32,8 @@ export const sourceStatusEnum = pgEnum("source_status", [
 export const source = pgTable(
   "source",
   {
-    ...workspaceEntityBase,
+    ...getWorkspaceEntityBase(),
+    ...timestamps,
     type: sourceTypeEnum("type").notNull(),
     title: text("title").notNull(),
     content: text("content"),

@@ -13,6 +13,7 @@ import { WorkspaceService } from "@/server/modules/workspace/workspace.service";
 import { ApiError } from "@/server/utils/api-error";
 import { SourceChunkRepository } from "./source-chunk.repository";
 import { SourceRepository } from "./source.repository";
+import { SourceMetadata, SourceChunkMetadata } from "@/server/db/schema";
 import {
   BulkDeleteSourcesInput,
   CreateSourceInput,
@@ -342,7 +343,7 @@ export class SourceService {
   static async markSourceFailed(
     sourceId: string,
     error: unknown,
-    existingMetadata?: any,
+    existingMetadata?: SourceMetadata | null,
   ) {
     const message =
       error instanceof Error ? error.message : "Source processing failed";
@@ -441,13 +442,13 @@ export class SourceService {
       workspaceId: string;
       title: string;
       type: "PDF" | "WEBSITE" | "YOUTUBE" | "TEXT" | "MARKDOWN";
-      metadata?: any;
+      metadata?: SourceMetadata | null;
     },
     chunks: Array<{
       id: string;
       index: number;
       content: string;
-      metadata?: any;
+      metadata?: SourceChunkMetadata | null;
     }>,
   ) {
 
@@ -476,8 +477,8 @@ export class SourceService {
             sourceTitle: sourceRecord.title,
             sourceType: sourceRecord.type,
             text: chunk.content.slice(0, 35000),
-            ...(typeof (chunkMetadata as any).page === "number"
-              ? { page: (chunkMetadata as any).page }
+            ...(typeof chunkMetadata.page === "number"
+              ? { page: chunkMetadata.page }
               : {}),
           },
         });

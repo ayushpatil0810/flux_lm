@@ -95,8 +95,7 @@ export class ConversationService {
       content: input.content,
       citations: input.citations,
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { messageCount, ...message } = result;
+    const { messageCount: _, ...message } = result;
     return message;
   }
 
@@ -152,6 +151,7 @@ export class ConversationService {
     // Enable web search if requested and tool is available (API keys can be checked inside the tool or implicitly allowed)
     const webSearchEnabled = input.webSearch === true;
 
+    // Cast is necessary because UI message payloads from the client might be broader than the strict SDK UIMessage type
     const userText = getLastUserMessageText(input.messages as unknown as UIMessage[]);
     if (!userText) {
       throw ApiError.badRequest("A user message is required");
@@ -169,7 +169,7 @@ export class ConversationService {
     }
 
     // Save the incoming user message
-    await ConversationService.addMessage(conversation.id, userId, {
+    await ConversationService.addMessageInternal(conversation.id, userId, {
       role: "USER",
       content: userText,
     });
@@ -209,6 +209,7 @@ export class ConversationService {
     const result = streamText({
       model: openai(chatModel),
       system: systemPrompt,
+      // Cast is necessary because UI message payloads from the client might be broader than the strict SDK UIMessage type
       messages: await convertToModelMessages(contextMessages as unknown as UIMessage[]),
       tools,
       stopWhen: webSearchEnabled ? isStepCount(3) : undefined,

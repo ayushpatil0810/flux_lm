@@ -49,11 +49,12 @@ if (typeof setInterval !== "undefined") {
 function getRatelimiter(config: RateLimitConfig): Ratelimit | null {
   if (!redisClient) return null;
 
-  const key = `${config.maxRequests}-${config.windowMs}`;
+  const key = JSON.stringify({ maxRequests: config.maxRequests, windowMs: config.windowMs });
   if (!ratelimiters.has(key)) {
+    const windowSeconds = Math.ceil(config.windowMs / 1000);
     const ratelimiter = new Ratelimit({
       redis: redisClient,
-      limiter: Ratelimit.slidingWindow(config.maxRequests, `${config.windowMs} ms`),
+      limiter: Ratelimit.slidingWindow(config.maxRequests, `${windowSeconds} s`),
     });
     ratelimiters.set(key, ratelimiter);
   }

@@ -9,6 +9,17 @@ import { timestamps } from "./utils";
 
 import { CHAT_MODEL } from "@/lib/constants";
 
+export function getWorkspaceEntityBase() {
+  return {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    workspaceId: text("workspace_id")
+      .notNull()
+      .references(() => workspace.id, { onDelete: "cascade" }),
+  };
+}
+
 export const workspace = pgTable(
   "workspace",
   {
@@ -26,16 +37,6 @@ export const workspace = pgTable(
   },
   (table) => [index("workspace_userId_idx").on(table.userId)],
 );
-
-export const workspaceEntityBase = {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  workspaceId: text("workspace_id")
-    .notNull()
-    .references(() => workspace.id, { onDelete: "cascade" }),
-  ...timestamps,
-};
 
 export const workspaceRelations = relations(workspace, ({ one, many }) => ({
   user: one(user, {
