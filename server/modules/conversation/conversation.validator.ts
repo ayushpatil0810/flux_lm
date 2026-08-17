@@ -59,9 +59,5 @@ export const streamChatSchema = z.object({
   webSearch: z.boolean().optional(),
 });
 
-export type ListConversationsQuery = z.infer<typeof listConversationsQuerySchema>;
-export type CreateConversationInput = z.infer<typeof createConversationSchema>;
-export type AddMessageInput = z.infer<typeof addMessageSchema>;
-export type ListMessagesQuery = z.infer<typeof listMessagesQuerySchema>;
-export type StreamChatInput = z.infer<typeof streamChatSchema>;
+export * from "./conversation.types";
 

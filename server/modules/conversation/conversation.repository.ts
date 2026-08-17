@@ -1,15 +1,10 @@
 import { db } from "@/server/db";
 import { conversation, message } from "@/server/db/schema";
-import { and, desc, eq, count } from "drizzle-orm";
+import { and, desc, eq, count, sql } from "drizzle-orm";
 import {
   CreateConversationInput,
-  AddMessageInput,
-} from "./conversation.validator";
-
-export type { CreateConversationInput };
-export type RepositoryAddMessageInput = AddMessageInput & {
-  conversationId: string;
-};
+  RepositoryAddMessageInput,
+} from "./conversation.types";
 
 /**
  * Repository class managing direct database operations for `conversation` and `message` tables via Drizzle ORM.
@@ -164,13 +159,20 @@ export class ConversationRepository {
       })
       .returning();
 
-    // Touch conversation updatedAt timestamp
-    await db
+    // Touch conversation updatedAt timestamp and increment summaryMessageCount
+    const [updatedConv] = await db
       .update(conversation)
-      .set({ updatedAt: new Date() })
-      .where(eq(conversation.id, input.conversationId));
+      .set({
+        updatedAt: new Date(),
+        summaryMessageCount: sql`${conversation.summaryMessageCount} + 1`,
+      })
+      .where(eq(conversation.id, input.conversationId))
+      .returning({ summaryMessageCount: conversation.summaryMessageCount });
 
-    return newMsg;
+    return {
+      ...newMsg,
+      messageCount: updatedConv?.summaryMessageCount ?? 0,
+    };
   }
 
   /**

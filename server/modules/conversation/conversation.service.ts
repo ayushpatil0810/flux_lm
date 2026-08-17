@@ -201,7 +201,7 @@ export class ConversationService {
         // Note: AI SDK v3.x onFinish provides `text`, `toolCalls`, `toolResults` etc.
         const allCitations = [...citations]; 
         
-        await ConversationService.addMessage(conversation.id, userId, {
+        const addedMessage = await ConversationService.addMessage(conversation.id, userId, {
           role: "ASSISTANT",
           content: assistantText,
           citations: allCitations.length > 0 ? allCitations : undefined,
@@ -215,7 +215,7 @@ export class ConversationService {
         }
 
         // Check if we need to summarize
-        const messageCount = await ConversationRepository.countMessagesByConversationId(conversation.id);
+        const messageCount = addedMessage.messageCount;
         if (messageCount > 0 && messageCount % CONVERSATION_SUMMARY_INTERVAL === 0) {
           await inngest.send({
             name: "conversation/summarize",

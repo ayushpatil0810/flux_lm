@@ -431,6 +431,12 @@ export class SourceService {
    * Step 3 of processing pipeline: Embeds text chunks via OpenAI (in batches of 50),
    * indexes vector embeddings into Pinecone, and updates source status to READY.
    *
+   * Storage Architecture Note:
+   * Chunk text content is stored in Pinecone vector metadata (`text: chunk.content.slice(0, 35000)`)
+   * to eliminate database joins during high-throughput RAG search retrieval.
+   * Full source content is retained in PostgreSQL `source.content` for source inspection,
+   * artifact generation (summaries/flashcards), and re-chunking/re-processing operations.
+   *
    * @param sourceRecord - Parent source record.
    * @param chunks - Array of chunk records saved in database.
    */
