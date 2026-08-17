@@ -144,14 +144,20 @@ export class SourceController {
       throw ApiError.badRequest("PDF file must be smaller than 20 MB");
     }
 
-    // Validate MIME type — browser-reported type only; unpdf will reject non-PDF bytes
-    const ALLOWED_MIME_TYPES = ["application/pdf"];
-    if (file.type && !ALLOWED_MIME_TYPES.includes(file.type)) {
-      throw ApiError.badRequest("Only PDF files are accepted");
-    }
-
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+
+    // Validate magic bytes (%PDF header: 0x25, 0x50, 0x44, 0x46)
+    const isPdfHeader =
+      buffer.length >= 4 &&
+      buffer[0] === 0x25 &&
+      buffer[1] === 0x50 &&
+      buffer[2] === 0x44 &&
+      buffer[3] === 0x46;
+
+    if (!isPdfHeader) {
+      throw ApiError.badRequest("Only valid PDF files are accepted");
+    }
 
     const imported = await SourceService.importPdfSource(user.id, {
       workspaceId,

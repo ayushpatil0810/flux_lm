@@ -208,12 +208,10 @@ export class ConversationService {
         });
 
         // Update the conversation's title if this is the first real exchange and title is default
-        if (conversation.title === "New Chat") {
-          await ConversationRepository.updateSummary(
-            conversation.id,
-            conversation.summary || "",
-            conversation.summaryMessageCount || 0
-          );
+        if (conversation.title === "New Chat" || conversation.title === "New chat") {
+          await ConversationRepository.update(conversation.id, {
+            title: buildConversationTitle(userText),
+          });
         }
 
         // Check if we need to summarize

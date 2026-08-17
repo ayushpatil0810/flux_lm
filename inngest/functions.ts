@@ -1,5 +1,4 @@
 import { logger } from "@/lib/logger";
-import { SourceChunkRepository } from "@/server/modules/source/source-chunk.repository";
 import { SourceRepository } from "@/server/modules/source/source.repository";
 import { SourceService } from "@/server/modules/source/source.service";
 import { ApiError } from "@/server/utils/api-error";
@@ -31,7 +30,7 @@ export const processSourceFunction = inngest.createFunction(
         SourceService.extractSourceContent(sourceId),
       );
 
-      await step.run("chunk-content", () =>
+      const chunks = await step.run("chunk-content", () =>
         SourceService.chunkSourceContent(
           sourceId,
           extracted.text,
@@ -40,13 +39,7 @@ export const processSourceFunction = inngest.createFunction(
       );
 
       const result = await step.run("embed-and-index", async () => {
-        const source = await SourceRepository.findById(sourceId);
-        if (!source) {
-          throw ApiError.notFound("Source not found");
-        }
-
-        const chunks = await SourceChunkRepository.findBySourceId(sourceId);
-        await SourceService.embedAndIndexSource(source, chunks);
+        await SourceService.embedAndIndexSource(extracted.source, chunks);
 
         return { chunkCount: chunks.length };
       });

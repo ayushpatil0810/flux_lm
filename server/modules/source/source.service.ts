@@ -4,7 +4,7 @@ import { logger } from "@/lib/logger";
 import { scrapeUrl } from "@/lib/firecrawl";
 import { generateEmbeddings } from "@/lib/openai";
 import { parsePdf } from "@/lib/pdf";
-import { deleteVectorsBySourceId, upsertVectors } from "@/lib/pinecone";
+import { deleteVectorsBySourceId, deleteVectorsBySourceIds, upsertVectors } from "@/lib/pinecone";
 import { uploadToStorage } from "@/lib/storage";
 import { getYoutubeTranscript } from "@/lib/youtube";
 import { inngest } from "@/inngest/client";
@@ -115,11 +115,19 @@ export class SourceService {
         "Failed to send Inngest event, falling back to local async processing",
       );
       // Fallback to local background execution if Inngest is unreachable
-      SourceService.processSourcePipeline(payload.sourceId).catch((err) => {
+      SourceService.processSourcePipeline(payload.sourceId).catch(async (err) => {
         log.error(
           { err, sourceId: payload.sourceId },
-          "Processing pipeline failed",
+          "Processing pipeline failed in local fallback",
         );
+        try {
+          await SourceService.markSourceFailed(payload.sourceId, err);
+        } catch (markErr) {
+          log.error(
+            { err: markErr, sourceId: payload.sourceId },
+            "Failed to mark source as FAILED after fallback error",
+          );
+        }
       });
     }
   }
@@ -427,12 +435,20 @@ export class SourceService {
    * @param chunks - Array of chunk records saved in database.
    */
   static async embedAndIndexSource(
-    sourceRecord: Awaited<ReturnType<typeof SourceRepository.findById>>,
-    chunks: Awaited<ReturnType<typeof SourceChunkRepository.findBySourceId>>,
+    sourceRecord: {
+      id: string;
+      workspaceId: string;
+      title: string;
+      type: "PDF" | "WEBSITE" | "YOUTUBE" | "TEXT" | "MARKDOWN";
+      metadata?: unknown;
+    },
+    chunks: Array<{
+      id: string;
+      index: number;
+      content: string;
+      metadata?: unknown;
+    }>,
   ) {
-    if (!sourceRecord) {
-      throw ApiError.notFound("Source not found");
-    }
 
     const batchSize = 50;
     const pineconeItems = [];
@@ -533,6 +549,18 @@ export class SourceService {
   }
 
   /**
+   * Removes source vectors from Pinecone and deletes chunks from database for multiple sources in bulk.
+   *
+   * @param workspaceId - Workspace unique identifier.
+   * @param sourceIds - Array of source unique identifiers.
+   */
+  static async removeSourcesFromIndex(workspaceId: string, sourceIds: string[]) {
+    if (sourceIds.length === 0) return;
+    await deleteVectorsBySourceIds(sourceIds);
+    await SourceChunkRepository.deleteBySourceIds(sourceIds);
+  }
+
+  /**
    * Returns all chunks for a source plus total count.
    *
    * @param sourceId - Source unique identifier.
@@ -591,9 +619,7 @@ export class SourceService {
     // Verify workspace access
     await WorkspaceService.getWorkspaceById(input.workspaceId, userId);
 
-    for (const sourceId of input.ids) {
-      await SourceService.removeSourceFromIndex(input.workspaceId, sourceId);
-    }
+    await SourceService.removeSourcesFromIndex(input.workspaceId, input.ids);
 
     const deleted = await SourceRepository.deleteMany(
       input.workspaceId,

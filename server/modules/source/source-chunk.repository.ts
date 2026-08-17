@@ -1,6 +1,6 @@
 import { db } from "@/server/db";
 import { sourceChunk } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 export interface CreateSourceChunkInput {
   sourceId: string;
@@ -84,6 +84,21 @@ export class SourceChunkRepository {
     return await db
       .delete(sourceChunk)
       .where(eq(sourceChunk.sourceId, sourceId))
+      .returning();
+  }
+
+  /**
+   * Deletes all chunks associated with an array of source IDs in a single query.
+   *
+   * @param sourceIds - Array of parent source unique identifiers.
+   * @returns Deleted source chunk records.
+   */
+  static async deleteBySourceIds(sourceIds: string[]) {
+    if (sourceIds.length === 0) return [];
+
+    return await db
+      .delete(sourceChunk)
+      .where(inArray(sourceChunk.sourceId, sourceIds))
       .returning();
   }
 }

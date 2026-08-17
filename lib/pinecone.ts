@@ -161,6 +161,28 @@ export async function deleteVectorsBySourceId(
   });
 }
 
+/**
+ * Deletes all vectors matching an array of source IDs in a single bulk operation.
+ *
+ * @param sourceIds - Array of source unique identifiers.
+ * @param namespace - Optional namespace.
+ */
+export async function deleteVectorsBySourceIds(
+  sourceIds: string[],
+  namespace?: string,
+) {
+  if (!env.PINECONE_API_KEY || sourceIds.length === 0) return;
+
+  const index = getPineconeIndex();
+  const targetIndex = namespace ? index.namespace(namespace) : index;
+
+  await targetIndex.deleteMany({
+    filter: {
+      sourceId: { $in: sourceIds },
+    },
+  });
+}
+
 if (!env.PINECONE_API_KEY) {
   log.warn("PINECONE_API_KEY is not configured — vector search features will be disabled");
 }

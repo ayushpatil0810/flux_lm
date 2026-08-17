@@ -62,10 +62,6 @@ export async function retrieveWorkspaceContext(
 
     for (const match of matches) {
         const score = match.score ?? 0;
-        if (score < RAG_MIN_SCORE) {
-            continue;
-        }
-
         const metadata = match.metadata as
             | Record<string, unknown>
             | undefined;

@@ -86,6 +86,29 @@ export class ConversationRepository {
   }
 
   /**
+   * Updates fields of an existing conversation record (e.g. title).
+   *
+   * @param id - Conversation unique identifier.
+   * @param input - Partial conversation fields to update.
+   * @returns Updated conversation record or null.
+   */
+  static async update(
+    id: string,
+    input: { title?: string; summary?: string },
+  ) {
+    const [updated] = await db
+      .update(conversation)
+      .set({
+        ...input,
+        updatedAt: new Date(),
+      })
+      .where(eq(conversation.id, id))
+      .returning();
+
+    return updated || null;
+  }
+
+  /**
    * Updates conversation rolling summary, summary message count, and timestamp.
    *
    * @param id - Conversation unique identifier.
