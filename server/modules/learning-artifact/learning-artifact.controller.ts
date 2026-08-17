@@ -5,6 +5,7 @@ import { asyncHandler } from "@/server/utils/async-handler";
 import { getZodFieldErrors } from "@/server/utils/zod-error";
 import { NextRequest } from "next/server";
 import { getAuthenticatedUser } from "@/server/utils/auth-utils";
+import { checkRateLimit } from "@/server/utils/rate-limiter";
 import { LearningArtifactService } from "./learning-artifact.service";
 import { createArtifactSchema } from "./learning-artifact.validator";
 
@@ -66,6 +67,7 @@ export class LearningArtifactController {
       { params }: { params: Promise<{ id: string }> },
     ) => {
       const user = await getAuthenticatedUser(req);
+      checkRateLimit(`artifact:${user.id}`, { maxRequests: 10, windowMs: 60 * 1000 });
       const { id: workspaceId } = await params;
       const body = await req.json();
 

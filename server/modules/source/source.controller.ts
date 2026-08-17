@@ -5,6 +5,7 @@ import { asyncHandler } from "@/server/utils/async-handler";
 import { getZodFieldErrors } from "@/server/utils/zod-error";
 import { NextRequest } from "next/server";
 import { getAuthenticatedUser } from "@/server/utils/auth-utils";
+import { checkRateLimit } from "@/server/utils/rate-limiter";
 import { SourceService } from "./source.service";
 import {
   bulkDeleteSourcesSchema,
@@ -98,6 +99,7 @@ export class SourceController {
    */
   static importWebsiteSource = asyncHandler(async (req: NextRequest) => {
     const user = await getAuthenticatedUser(req);
+    checkRateLimit(`source_import:${user.id}`, { maxRequests: 15, windowMs: 60 * 1000 });
     const body = await req.json();
 
     const validation = importWebsiteSourceSchema.safeParse(body);
@@ -124,6 +126,7 @@ export class SourceController {
    */
   static importPdfSource = asyncHandler(async (req: NextRequest) => {
     const user = await getAuthenticatedUser(req);
+    checkRateLimit(`source_import:${user.id}`, { maxRequests: 15, windowMs: 60 * 1000 });
     const formData = await req.formData();
 
     const file = formData.get("file") as File | null;
@@ -181,6 +184,7 @@ export class SourceController {
    */
   static importTextSource = asyncHandler(async (req: NextRequest) => {
     const user = await getAuthenticatedUser(req);
+    checkRateLimit(`source_import:${user.id}`, { maxRequests: 15, windowMs: 60 * 1000 });
     const body = await req.json();
 
     const validation = importTextSourceSchema.safeParse(body);
@@ -207,6 +211,7 @@ export class SourceController {
    */
   static importYoutubeSource = asyncHandler(async (req: NextRequest) => {
     const user = await getAuthenticatedUser(req);
+    checkRateLimit(`source_import:${user.id}`, { maxRequests: 15, windowMs: 60 * 1000 });
     const body = await req.json();
 
     const validation = importYoutubeSourceSchema.safeParse(body);
