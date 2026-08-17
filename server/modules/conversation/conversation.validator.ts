@@ -31,7 +31,37 @@ export const listMessagesQuerySchema = z.object({
   limit: z.coerce.number().positive().max(100).optional(),
 });
 
+/**
+ * Zod validation schema for UI messages in streaming chat requests.
+ */
+export const uiMessageSchema = z
+  .object({
+    id: z.string().optional(),
+    role: z.enum(["system", "user", "assistant"]),
+    parts: z.array(
+      z
+        .object({
+          type: z.string(),
+          text: z.string().optional(),
+        })
+        .passthrough(),
+    ),
+  })
+  .passthrough();
+
+/**
+ * Zod validation schema for workspace streaming chat requests.
+ */
+export const streamChatSchema = z.object({
+  conversationId: z.string().optional(),
+  messages: z.array(uiMessageSchema).min(1, "messages array is required"),
+  model: z.string().optional(),
+  webSearch: z.boolean().optional(),
+});
+
 export type ListConversationsQuery = z.infer<typeof listConversationsQuerySchema>;
 export type CreateConversationInput = z.infer<typeof createConversationSchema>;
 export type AddMessageInput = z.infer<typeof addMessageSchema>;
 export type ListMessagesQuery = z.infer<typeof listMessagesQuerySchema>;
+export type StreamChatInput = z.infer<typeof streamChatSchema>;
+

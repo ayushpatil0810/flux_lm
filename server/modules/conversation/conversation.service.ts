@@ -1,6 +1,6 @@
 import { ApiError } from "@/server/utils/api-error";
 import { ConversationRepository } from "./conversation.repository";
-import { CreateConversationInput, AddMessageInput } from "./conversation.validator";
+import { CreateConversationInput, AddMessageInput, StreamChatInput } from "./conversation.validator";
 import { WorkspaceService } from "../workspace/workspace.service";
 import { streamText, convertToModelMessages, type UIMessage, isStepCount, generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
@@ -122,23 +122,18 @@ export class ConversationService {
   static async streamWorkspaceChat(
     workspaceId: string,
     userId: string,
-    input: {
-      conversationId?: string;
-      messages: UIMessage[];
-      model?: string;
-      webSearch?: boolean;
-    },
+    input: StreamChatInput,
   ) {
     const workspace = await WorkspaceService.getWorkspaceById(workspaceId, userId);
     
     // Find model to use (from input, workspace default, or fallback to CHAT_MODEL)
-    const requestedModel = input.model ?? (workspace as any).defaultModel;
+    const requestedModel = input.model ?? workspace.defaultModel;
     const chatModel = CHAT_MODELS.find((model) => model === requestedModel) ?? CHAT_MODEL;
     
     // Enable web search if requested and tool is available (API keys can be checked inside the tool or implicitly allowed)
     const webSearchEnabled = input.webSearch === true;
 
-    const userText = getLastUserMessageText(input.messages);
+    const userText = getLastUserMessageText(input.messages as unknown as UIMessage[]);
     if (!userText) {
       throw ApiError.badRequest("A user message is required");
     }
@@ -195,7 +190,7 @@ export class ConversationService {
     const result = streamText({
       model: openai(chatModel),
       system: systemPrompt,
-      messages: await convertToModelMessages(contextMessages),
+      messages: await convertToModelMessages(contextMessages as unknown as UIMessage[]),
       tools,
       stopWhen: webSearchEnabled ? isStepCount(3) : undefined,
       onFinish: async ({ response, text }) => {
@@ -252,7 +247,7 @@ export class ConversationService {
     
     // Use the workspace's default model or fallback
     const workspace = await WorkspaceService.getWorkspaceById(conversation.workspaceId, userId);
-    const requestedModel = (workspace as any).defaultModel;
+    const requestedModel = workspace.defaultModel;
     const chatModel = CHAT_MODELS.find((model) => model === requestedModel) ?? CHAT_MODEL;
 
     const messages = await ConversationRepository.findMessages(conversationId);

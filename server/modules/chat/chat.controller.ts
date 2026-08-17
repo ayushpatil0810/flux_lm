@@ -1,8 +1,10 @@
 import { ApiError } from "@/server/utils/api-error";
 import { asyncHandler } from "@/server/utils/async-handler";
+import { getZodFieldErrors } from "@/server/utils/zod-error";
 import { NextRequest } from "next/server";
 import { getAuthenticatedUser } from "@/server/utils/auth-utils";
 import { ConversationService } from "@/server/modules/conversation/conversation.service";
+import { streamChatSchema } from "@/server/modules/conversation/conversation.validator";
 
 /**
  * Controller class handling HTTP requests for chat interactions within workspaces.
@@ -21,14 +23,18 @@ export class ChatController {
       const { id: workspaceId } = await params;
       const body = await req.json();
 
-      if (!body.messages || !Array.isArray(body.messages)) {
-        throw ApiError.badRequest("messages array is required");
+      const validation = streamChatSchema.safeParse(body);
+      if (!validation.success) {
+        throw ApiError.badRequest(
+          "Validation failed",
+          getZodFieldErrors(validation.error),
+        );
       }
 
       return await ConversationService.streamWorkspaceChat(
         workspaceId,
         user.id,
-        body
+        validation.data,
       );
     }
   );
