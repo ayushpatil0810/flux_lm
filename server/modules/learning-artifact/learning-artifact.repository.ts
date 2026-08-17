@@ -4,22 +4,24 @@ import {
   LearningArtifactContent,
   LearningArtifactMetadata,
 } from "@/server/db/schema";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, type InferSelectModel } from "drizzle-orm";
+
+type ArtifactRecord = InferSelectModel<typeof learningArtifact>;
 
 export interface CreateLearningArtifactInput {
   workspaceId: string;
-  type: "SUMMARY" | "TAKEAWAYS" | "FLASHCARDS" | "QUIZ" | "MINDMAP" | "REPORT";
+  type: ArtifactRecord["type"];
   title: string;
   content?: LearningArtifactContent;
   sourceIds?: string[];
-  status?: "PENDING" | "PROCESSING" | "READY" | "FAILED";
+  status?: ArtifactRecord["status"];
   metadata?: LearningArtifactMetadata;
 }
 
 export interface UpdateLearningArtifactInput {
   title?: string;
   content?: LearningArtifactContent;
-  status?: "PENDING" | "PROCESSING" | "READY" | "FAILED";
+  status?: ArtifactRecord["status"];
   metadata?: LearningArtifactMetadata;
 }
 
@@ -36,16 +38,16 @@ export class LearningArtifactRepository {
    */
   static async findByWorkspaceId(
     workspaceId: string,
-    filters: { type?: string; status?: string } = {},
+    filters: { type?: ArtifactRecord["type"]; status?: ArtifactRecord["status"] } = {},
   ) {
     const conditions = [eq(learningArtifact.workspaceId, workspaceId)];
 
     if (filters.type) {
-      conditions.push(eq(learningArtifact.type, filters.type as any));
+      conditions.push(eq(learningArtifact.type, filters.type));
     }
 
     if (filters.status) {
-      conditions.push(eq(learningArtifact.status, filters.status as any));
+      conditions.push(eq(learningArtifact.status, filters.status));
     }
 
     return await db

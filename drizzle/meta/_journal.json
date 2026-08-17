@@ -8,13 +8,6 @@
       "when": 1786954617781,
       "tag": "0000_reset_summary_message_count",
       "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1786968084973,
-      "tag": "0001_test_hoisting",
-      "breakpoints": true
     }
   ]
 }

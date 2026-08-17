@@ -60,6 +60,24 @@ export class SourceRepository {
   }
 
   /**
+   * Queries sources associated with a workspace ID that have a READY status.
+   *
+   * @param workspaceId - Workspace unique identifier.
+   * @param sourceIds - Optional array of specific source IDs to include.
+   * @returns Array of source records.
+   */
+  static async findReadyByWorkspaceId(workspaceId: string, sourceIds?: string[]) {
+    const conditions = [
+      eq(source.workspaceId, workspaceId),
+      eq(source.status, "READY"),
+    ];
+    if (sourceIds && sourceIds.length > 0) {
+      conditions.push(inArray(source.id, sourceIds));
+    }
+    return db.select().from(source).where(and(...conditions));
+  }
+
+  /**
    * Queries a source record by its unique ID.
    *
    * @param id - Source unique identifier.

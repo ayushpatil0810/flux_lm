@@ -2,9 +2,7 @@ import { generateText, generateObject } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
 import { CHAT_MODEL } from "@/lib/constants";
-import { db } from "@/server/db";
-import { source } from "@/server/db/schema";
-import { and, eq, inArray } from "drizzle-orm";
+import { SourceRepository } from "@/server/modules/source/source.repository";
 import { ApiError } from "@/server/utils/api-error";
 
 
@@ -41,15 +39,7 @@ export async function gatherSourceContext(
   workspaceId: string,
   sourceIds?: string[],
 ) {
-  let conditions = [eq(source.workspaceId, workspaceId), eq(source.status, "READY")];
-  if (sourceIds && sourceIds.length > 0) {
-    conditions.push(inArray(source.id, sourceIds));
-  }
-
-  const selected = await db
-    .select()
-    .from(source)
-    .where(and(...conditions));
+  const selected = await SourceRepository.findReadyByWorkspaceId(workspaceId, sourceIds);
 
   if (selected.length === 0) {
     throw ApiError.badRequest(
@@ -82,8 +72,10 @@ export async function gatherSourceContext(
 /**
  * Generates structured or markdown content for a learning artifact using the AI SDK.
  */
+type ArtifactType = "SUMMARY" | "TAKEAWAYS" | "FLASHCARDS" | "QUIZ" | "MINDMAP" | "REPORT";
+
 export async function generateArtifactContent(
-  type: string,
+  type: ArtifactType,
   sourceText: string,
 ) {
   const system = [
