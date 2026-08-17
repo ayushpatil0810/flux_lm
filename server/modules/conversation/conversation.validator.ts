@@ -19,10 +19,21 @@ export const createConversationSchema = z.object({
 /**
  * Zod validation schema for adding a message to a conversation.
  */
+const citationSchema = z.object({
+  sourceId: z.string(),
+  sourceTitle: z.string(),
+  sourceType: z.string(),
+  chunkId: z.string(),
+  chunkIndex: z.number(),
+  page: z.number().optional(),
+  excerpt: z.string().optional(),
+  score: z.number().optional(),
+});
+
 export const addMessageSchema = z.object({
   role: z.enum(["USER", "ASSISTANT"]),
   content: z.string().min(1, "content is required"),
-  citations: z.any().optional(),
+  citations: z.array(citationSchema).optional(),
 });
 
 /**

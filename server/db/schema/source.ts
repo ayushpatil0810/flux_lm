@@ -33,7 +33,6 @@ export const source = pgTable(
   "source",
   {
     ...getWorkspaceEntityBase(),
-    ...timestamps,
     type: sourceTypeEnum("type").notNull(),
     title: text("title").notNull(),
     content: text("content"),

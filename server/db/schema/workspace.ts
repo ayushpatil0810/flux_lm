@@ -1,11 +1,11 @@
 import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 import { index, pgTable, text } from "drizzle-orm/pg-core";
+import { timestamps } from "./utils";
 import { user } from "./auth";
 import { conversation } from "./conversation";
 import { learningArtifact } from "./learning-artifact";
 import { source } from "./source";
-import { timestamps } from "./utils";
 
 import { CHAT_MODEL } from "@/lib/constants";
 
@@ -17,6 +17,7 @@ export function getWorkspaceEntityBase() {
     workspaceId: text("workspace_id")
       .notNull()
       .references(() => workspace.id, { onDelete: "cascade" }),
+    ...timestamps,
   };
 }
 

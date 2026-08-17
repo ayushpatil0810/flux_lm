@@ -22,7 +22,6 @@ export const conversation = pgTable(
   "conversation",
   {
     ...getWorkspaceEntityBase(),
-    ...timestamps,
     title: text("title"),
     summary: text("summary"),
     summaryMessageCount: integer("summary_message_count").default(0).notNull(),

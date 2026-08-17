@@ -89,23 +89,15 @@ export class ConversationService {
     // Verify existence & ownership
     await ConversationService.getConversationById(conversationId, userId);
 
-    const result = await ConversationRepository.addMessage({
-      conversationId,
-      role: input.role,
-      content: input.content,
-      citations: input.citations,
-    });
+    const result = await ConversationService._insertMessage(conversationId, input);
     const { messageCount: _, ...message } = result;
     return message;
   }
 
   /**
-   * Internal method to add a message and return the message record with messageCount.
+   * Internal helper to insert a message without redundant workspace checks.
    */
-  static async addMessageInternal(conversationId: string, userId: string, input: AddMessageInput) {
-    // Verify existence & ownership
-    await ConversationService.getConversationById(conversationId, userId);
-
+  private static async _insertMessage(conversationId: string, input: AddMessageInput) {
     return await ConversationRepository.addMessage({
       conversationId,
       role: input.role,
@@ -169,7 +161,7 @@ export class ConversationService {
     }
 
     // Save the incoming user message
-    await ConversationService.addMessageInternal(conversation.id, userId, {
+    await ConversationService._insertMessage(conversation.id, {
       role: "USER",
       content: userText,
     });
@@ -221,7 +213,7 @@ export class ConversationService {
         // Note: AI SDK v3.x onFinish provides `text`, `toolCalls`, `toolResults` etc.
         const allCitations = [...citations]; 
         
-        const addedMessage = await ConversationService.addMessageInternal(conversation.id, userId, {
+        const addedMessage = await ConversationService._insertMessage(conversation.id, {
           role: "ASSISTANT",
           content: assistantText,
           citations: allCitations.length > 0 ? allCitations : undefined,

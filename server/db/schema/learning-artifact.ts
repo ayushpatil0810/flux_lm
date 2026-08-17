@@ -31,7 +31,6 @@ export const learningArtifact = pgTable(
   "learning_artifact",
   {
     ...getWorkspaceEntityBase(),
-    ...timestamps,
     type: artifactTypeEnum("type").notNull(),
     title: text("title").notNull(),
     content: jsonb("content").$type<LearningArtifactContent>(),
