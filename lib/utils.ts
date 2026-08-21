@@ -18,3 +18,27 @@ export function getInitials(name?: string | null, email?: string | null) {
   }
   return "U";
 }
+
+/** Formats a timestamp as a compact relative time ("just now", "3h ago"). */
+export function formatRelativeTime(value: string | Date): string {
+  const date = typeof value === "string" ? new Date(value) : value;
+  const diffMs = Date.now() - date.getTime();
+  const minutes = Math.round(diffMs / 60000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return formatDate(date);
+}
+
+/** Formats an ISO date string or Date as a short, human-readable date. */
+export function formatDate(value: string | Date): string {
+  const date = typeof value === "string" ? new Date(value) : value;
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}

@@ -18,7 +18,7 @@ export async function searchUserMemories(userId: string, query: string) {
   }
 
   try {
-    const response = await client.search(query, { filters: { userId } });
+    const response = await client.search(query, { filters: { user_id: userId } });
     return response.results.map((result) => ({
       memory: result.memory || "",
     }));
@@ -69,7 +69,7 @@ export async function getUserMemories(userId: string) {
   }
 
   try {
-    const response = await client.getAll({ filters: { userId } });
+    const response = await client.getAll({ filters: { user_id: userId } });
     return response.results;
   } catch (error) {
     logger.error({ userId, error }, "[Mem0] Failed to get user memories.");

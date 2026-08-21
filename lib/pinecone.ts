@@ -38,7 +38,7 @@ export interface PineconeVectorItem {
 /**
  * Upserts a batch of vector embeddings with metadata into Pinecone index.
  *
- * @param vectors - Array of vector objects containing id, values (1536-dim), metadata.
+ * @param vectors - Array of vector objects containing id, values (dim based on EMBEDDING_DIMENSIONS), metadata.
  * @param namespace - Optional namespace (defaults to workspaceId or default namespace).
  */
 export async function upsertVectors(

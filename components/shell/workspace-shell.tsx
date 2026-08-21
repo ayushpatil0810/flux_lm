@@ -1,0 +1,64 @@
+"use client";
+
+import * as React from "react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+
+import { ApiClientError, getErrorMessage } from "@/lib/api";
+import { useWorkspace } from "@/hooks/use-workspaces";
+import { ErrorState, LoadingState } from "@/components/shell/states";
+import { Button } from "@/components/ui/button";
+
+interface WorkspaceShellProps {
+  workspaceId?: string;
+  children: React.ReactNode;
+}
+
+/**
+ * Gate for workspace-scoped routes. Loads the workspace through the
+ * real API and renders the shell once known, an explicit not-found or
+ * error state otherwise. Children only render with a valid workspace.
+ */
+export function WorkspaceShell({
+  workspaceId: propWorkspaceId,
+  children,
+}: WorkspaceShellProps) {
+  const params = useParams();
+  const workspaceId =
+    propWorkspaceId ?? (params.workspaceId as string | undefined);
+  const { data: workspace, isPending, error, refetch } =
+    useWorkspace(workspaceId);
+
+  if (isPending) {
+    return <LoadingState label="Loading workspace" />;
+  }
+
+  if (error || !workspace) {
+    const notFound =
+      error instanceof ApiClientError && error.isNotFound;
+
+    return (
+      <div className="px-6 py-10 md:px-10">
+        {notFound ? (
+          <div className="max-w-md">
+            <h1 className="font-serif text-title">Workspace not found</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              It may have been deleted, or the link is wrong.
+            </p>
+            <Button asChild variant="outline" className="mt-5">
+              <Link href="/dashboard">Back to workspaces</Link>
+            </Button>
+          </div>
+        ) : (
+          <ErrorState
+            title="Could not load this workspace"
+            message={getErrorMessage(error)}
+            onRetry={() => refetch()}
+          />
+        )}
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}

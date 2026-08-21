@@ -1,4 +1,4 @@
-import { CHAT_MODEL, EMBEDDING_MODEL } from "@/lib/constants";
+import { CHAT_MODEL, EMBEDDING_MODEL, EMBEDDING_DIMENSIONS } from "@/lib/constants";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 import OpenAI from "openai";
@@ -14,16 +14,17 @@ export const openai = new OpenAI({
 });
 
 /**
- * Generates a single vector embedding (1536 dimensions) for a text string using OpenAI text-embedding-3-small.
+ * Generates a single vector embedding for a text string using OpenAI text-embedding-3-small.
  *
  * @param text - Input text string to embed.
- * @returns Array of 1536 floating point numbers.
+ * @returns Array of floating point numbers (dimension determined by EMBEDDING_DIMENSIONS).
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
   const sanitizedText = text.replace(/\n/g, " ");
 
   const response = await openai.embeddings.create({
     model: EMBEDDING_MODEL,
+    dimensions: EMBEDDING_DIMENSIONS,
     input: sanitizedText,
   });
 
@@ -43,6 +44,7 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
 
   const response = await openai.embeddings.create({
     model: EMBEDDING_MODEL,
+    dimensions: EMBEDDING_DIMENSIONS,
     input: sanitizedInputs,
   });
 

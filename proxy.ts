@@ -1,42 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { betterFetch } from "@better-fetch/fetch";
-
-type Session = {
-  session: {
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
-    userId: string;
-    expiresAt: Date;
-    token: string;
-    ipAddress?: string | null;
-    userAgent?: string | null;
-  };
-  user: {
-    id: string;
-    email: string;
-    emailVerified: boolean;
-    name: string;
-    createdAt: Date;
-    updatedAt: Date;
-    image?: string | null;
-  };
-};
+import { auth } from "@/server/auth";
 
 export async function proxy(request: NextRequest) {
-  const { data: session } = await betterFetch<Session>(
-    "/api/auth/get-session",
-    {
-      baseURL: request.nextUrl.origin,
-      headers: {
-        cookie: request.headers.get("cookie") || "",
-      },
-    },
-  );
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
 
-  const isDashboard = request.nextUrl.pathname.startsWith("/dashboard");
+  const isProtected =
+    request.nextUrl.pathname.startsWith("/dashboard") ||
+    request.nextUrl.pathname.startsWith("/workspace");
 
-  if (isDashboard && !session) {
+  if (isProtected && !session) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -52,5 +26,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/"],
+  matcher: ["/dashboard/:path*", "/workspace/:path*", "/login", "/"],
 };
