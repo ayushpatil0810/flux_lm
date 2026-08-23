@@ -12,6 +12,8 @@ import { DashboardTopbar } from '@/components/shell/dashboard-topbar'
 import { TopbarProvider } from '@/components/shell/topbar-context'
 import { WorkspacePanelProvider } from '@/components/shell/workspace-panel-context'
 
+import { WorkspaceContext } from '@/components/shell/workspace-context'
+
 interface ShellProps {
   children: React.ReactNode
 }
@@ -25,11 +27,13 @@ export function Shell({ children }: ShellProps) {
 
   const params = useParams()
   const workspaceId = params.workspaceId as string | undefined
-  const { data: workspace } = useWorkspace(workspaceId)
+  const workspaceQuery = useWorkspace(workspaceId)
+  const { data: workspace } = workspaceQuery
 
   return (
-    <TopbarProvider>
-      <WorkspacePanelProvider workspaceId={workspaceId}>
+    <WorkspaceContext.Provider value={workspaceQuery}>
+      <TopbarProvider>
+        <WorkspacePanelProvider workspaceId={workspaceId}>
         <SidebarProvider
           defaultOpen
           className="h-svh w-full overflow-hidden no-scrollbar"
@@ -73,5 +77,6 @@ export function Shell({ children }: ShellProps) {
         </SidebarProvider>
       </WorkspacePanelProvider>
     </TopbarProvider>
+    </WorkspaceContext.Provider>
   )
 }

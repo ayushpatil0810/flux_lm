@@ -8,7 +8,7 @@ import { SourcePreview } from "@/components/sources/source-preview";
 import { SidebarArtifacts } from "@/components/artifacts/sidebar-artifacts";
 import { ChatView } from "@/components/chat/chat-view";
 import { EditWorkspaceDialog } from "@/components/shell/edit-workspace-dialog";
-import { useWorkspace } from "@/hooks/use-workspaces";
+import { useWorkspaceContext } from "@/components/shell/workspace-context";
 import { useSources } from "@/hooks/use-sources";
 import { useArtifacts } from "@/hooks/use-artifacts";
 import { useWorkspacePanel } from "@/components/shell/workspace-panel-context";
@@ -27,12 +27,13 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
 
   const [settingsOpen, setSettingsOpen] = React.useState(false);
 
-  const { data: workspace } = useWorkspace(workspaceId);
-  const { data: sources } = useSources(workspaceId);
-  const { data: artifacts } = useArtifacts(workspaceId);
+  const { data: workspace } = useWorkspaceContext();
+  const { data: sources } = useSources(workspaceId, {}, { enabled: activePanel === "sources" });
+  const { data: artifacts } = useArtifacts(workspaceId, { enabled: activePanel === "artifacts" });
 
   const sourcesCount = sources?.length ?? 0;
   const artifactsCount = artifacts?.length ?? 0;
+  const noSources = sources !== undefined && sources.length === 0;
 
   const panelOpen = activePanel !== null;
 
@@ -81,7 +82,7 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
             <h1 className="truncate text-sm font-medium leading-none text-foreground">
               {workspace?.title ?? "Workspace"}
             </h1>
-            {(sourcesCount > 0 || artifactsCount > 0) && (
+            {(sources !== undefined || artifacts !== undefined) && (sourcesCount > 0 || artifactsCount > 0) && (
               <span className="hidden shrink-0 text-xs text-muted-foreground/50 sm:block">
                 {[
                   sourcesCount > 0 &&
@@ -118,12 +119,12 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
               </div>
               {/* Chat shrinks to a side panel on desktop */}
               <div className="flex min-h-0 shrink-0 flex-col md:w-[400px] lg:w-[450px]">
-                <ChatView workspaceId={workspaceId} />
+                <ChatView workspaceId={workspaceId} noSources={noSources} sourcesCount={sourcesCount} />
               </div>
             </>
           ) : (
             <div className="flex-1 min-w-0">
-              <ChatView workspaceId={workspaceId} />
+              <ChatView workspaceId={workspaceId} noSources={noSources} sourcesCount={sourcesCount} />
             </div>
           )}
         </div>

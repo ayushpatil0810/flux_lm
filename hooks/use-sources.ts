@@ -22,11 +22,16 @@ const PROCESSING_STATUSES = new Set(["PENDING", "PROCESSING"]);
  * imports appear to settle into Ready on their own. Keeps previous data
  * while filter changes refetch to avoid flashing empty states.
  */
-export function useSources(workspaceId: string, filters: SourceListFilters = {}) {
+export function useSources(
+  workspaceId: string,
+  filters: SourceListFilters = {},
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: queryKeys.sources.list(workspaceId, filters),
     queryFn: () =>
       apiFetch<Source[]>(endpoints.sources.list(workspaceId, filters)),
+    enabled: options?.enabled,
     retry: shouldRetry,
     placeholderData: keepPreviousData,
     refetchInterval: (query) => {

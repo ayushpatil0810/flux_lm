@@ -32,6 +32,8 @@ import {
 
 interface ChatViewProps {
   workspaceId: string;
+  noSources: boolean;
+  sourcesCount: number;
 }
 
 /**
@@ -39,7 +41,7 @@ interface ChatViewProps {
  * It uses the first available conversation for the workspace,
  * or starts a new one if none exists.
  */
-export function ChatView({ workspaceId }: ChatViewProps) {
+export function ChatView({ workspaceId, noSources, sourcesCount }: ChatViewProps) {
   const queryClient = useQueryClient();
   const { push } = useToast();
 
@@ -50,7 +52,6 @@ export function ChatView({ workspaceId }: ChatViewProps) {
   const activeConversationId = conversations && conversations.length > 0 ? conversations[0].id : undefined;
   
   const messagesQuery = useMessages(activeConversationId);
-  const { data: sources } = useSources(workspaceId);
 
   const [model, setModel] = React.useState<ChatModel | null>(null);
   const [webSearch, setWebSearch] = React.useState(false);
@@ -68,7 +69,6 @@ export function ChatView({ workspaceId }: ChatViewProps) {
 
   const effectiveModel: ChatModel =
     model ?? (workspace?.defaultModel === "gpt-4o" ? "gpt-4o" : "gpt-4o-mini");
-  const noSources = sources !== undefined && sources.length === 0;
 
   // Reset transient stream state when moving between conversations (if it ever happens).
   const [prevConversationId, setPrevConversationId] = React.useState(activeConversationId);
@@ -236,8 +236,8 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                 </h1>
                 <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
                   Answers grounded in your sources, with citations.
-                  {sources && sources.length > 0
-                    ? ` ${sources.length} ${sources.length === 1 ? "source" : "sources"} connected.`
+                  {sourcesCount > 0
+                    ? ` ${sourcesCount} ${sourcesCount === 1 ? "source" : "sources"} connected.`
                     : ""}
                 </p>
 

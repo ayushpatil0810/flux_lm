@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 import { ApiClientError, getErrorMessage } from "@/lib/api";
-import { useWorkspace } from "@/hooks/use-workspaces";
+import { useWorkspaceContext } from "@/components/shell/workspace-context";
 import { ErrorState, LoadingState } from "@/components/shell/states";
 import { Button } from "@/components/ui/button";
 
@@ -20,14 +20,9 @@ interface WorkspaceShellProps {
  * error state otherwise. Children only render with a valid workspace.
  */
 export function WorkspaceShell({
-  workspaceId: propWorkspaceId,
   children,
 }: WorkspaceShellProps) {
-  const params = useParams();
-  const workspaceId =
-    propWorkspaceId ?? (params.workspaceId as string | undefined);
-  const { data: workspace, isPending, error, refetch } =
-    useWorkspace(workspaceId);
+  const { data: workspace, isPending, error, refetch } = useWorkspaceContext();
 
   if (isPending) {
     return <LoadingState label="Loading workspace" />;

@@ -15,11 +15,15 @@ const PROCESSING_STATUSES = new Set(["PENDING", "PROCESSING"]);
  * Lists a workspace's artifacts, newest first. Polls gently while any
  * artifact is still being generated so it settles into Ready on its own.
  */
-export function useArtifacts(workspaceId: string) {
+export function useArtifacts(
+  workspaceId: string,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: queryKeys.artifacts.all(workspaceId),
     queryFn: () =>
       apiFetch<LearningArtifact[]>(endpoints.artifacts.list(workspaceId)),
+    enabled: options?.enabled,
     retry: shouldRetry,
     refetchInterval: (query) =>
       query.state.data?.some((artifact) =>

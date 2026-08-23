@@ -55,10 +55,7 @@ export function useCreateMemory() {
       }
     },
     onSettled: () => {
-      // Delay invalidation by 3s to allow Mem0 inference to finish
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: queryKeys.memories.all });
-      }, 3000);
+      queryClient.invalidateQueries({ queryKey: queryKeys.memories.all });
     },
   });
 }
