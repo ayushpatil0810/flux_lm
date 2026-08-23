@@ -10,12 +10,13 @@ import {
 } from "@/lib/api";
 
 /** Lists all workspaces owned by the current user. */
-export function useWorkspaces() {
+export function useWorkspaces(initialData?: Workspace[]) {
   return useQuery({
     queryKey: queryKeys.workspaces.all,
     queryFn: () => apiFetch<Workspace[]>(endpoints.workspaces.list()),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: shouldRetry,
+    initialData,
   });
 }
 
