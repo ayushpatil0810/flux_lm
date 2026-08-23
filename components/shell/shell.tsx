@@ -9,7 +9,6 @@ import { EditWorkspaceDialog } from '@/components/shell/edit-workspace-dialog'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/shell/app-sidebar'
 import { DashboardTopbar } from '@/components/shell/dashboard-topbar'
-import { TopbarProvider } from '@/components/shell/topbar-context'
 import { WorkspacePanelProvider } from '@/components/shell/workspace-panel-context'
 
 import { WorkspaceContext } from '@/components/shell/workspace-context'
@@ -32,8 +31,7 @@ export function Shell({ children }: ShellProps) {
 
   return (
     <WorkspaceContext.Provider value={workspaceQuery}>
-      <TopbarProvider>
-        <WorkspacePanelProvider key={workspaceId ?? "dashboard"}>
+      <WorkspacePanelProvider key={workspaceId ?? "dashboard"}>
         <SidebarProvider
           defaultOpen
           className="h-svh w-full overflow-hidden no-scrollbar"
@@ -76,7 +74,6 @@ export function Shell({ children }: ShellProps) {
           ) : null}
         </SidebarProvider>
       </WorkspacePanelProvider>
-    </TopbarProvider>
     </WorkspaceContext.Provider>
   )
 }

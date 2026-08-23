@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
 import { ApiClientError, getErrorMessage } from "@/lib/api";
 import { useWorkspaceContext } from "@/components/shell/workspace-context";
@@ -10,7 +9,6 @@ import { ErrorState, LoadingState } from "@/components/shell/states";
 import { Button } from "@/components/ui/button";
 
 interface WorkspaceShellProps {
-  workspaceId?: string;
   children: React.ReactNode;
 }
 

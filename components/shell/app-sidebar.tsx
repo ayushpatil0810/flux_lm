@@ -15,7 +15,7 @@ import {
   ClockIcon,
 } from '@/components/ui/icons'
 import { FluxLogo } from '@/components/ui/logo'
-import { useTheme } from 'next-themes'
+import { ThemeToggle } from '@/components/theme-toggle'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -125,30 +125,7 @@ function PanelNavItem({
   )
 }
 
-function DarkModeItem() {
-  const [mounted, setMounted] = React.useState(false)
-  const { resolvedTheme, setTheme } = useTheme()
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const isDark = mounted && resolvedTheme === 'dark'
-  const label = !mounted ? 'Dark Mode' : isDark ? 'Light Mode' : 'Dark Mode'
-
-  return (
-    <SidebarMenuItem className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full">
-      <SidebarMenuButton
-        tooltip={label}
-        className={menuButtonClassName}
-        onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      >
-        <ToggleIcon pressed={isDark} />
-        <span>{label}</span>
-      </SidebarMenuButton>
-    </SidebarMenuItem>
-  )
-}
+// Removed DarkModeItem in favor of ThemeToggle
 
 function ProfileItem() {
   const { data: session } = authClient.useSession()
@@ -338,7 +315,9 @@ export function AppSidebar({ workspace, onNavigate, onNewWorkspace, onWorkspaceS
 
       <SidebarFooter className="border-t border-sidebar-border px-3 py-3 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
         <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:w-full">
-          <DarkModeItem />
+          <SidebarMenuItem className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full mb-1 flex justify-center">
+            <ThemeToggle />
+          </SidebarMenuItem>
           <ProfileItem />
         </SidebarMenu>
       </SidebarFooter>

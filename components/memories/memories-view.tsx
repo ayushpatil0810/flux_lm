@@ -7,7 +7,6 @@ import { getErrorMessage, type MemoryItem } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { useDeleteMemory, useMemories } from "@/hooks/use-memories";
 import { useToast } from "@/components/providers/toast-provider";
-import { useTopbar } from "@/components/shell/topbar-context";
 import { EmptyState, ErrorState, LoadingState } from "@/components/shell/states";
 import { ConfirmDeleteDialog } from "@/components/sources/confirm-delete-dialog";
 import { Button } from "@/components/ui/button";
@@ -61,21 +60,9 @@ export function MemoriesView() {
       });
     }
   }
-  const topbarActions = React.useMemo(
-    () => (
-      <Button onClick={() => setAddOpen(true)} className="h-9 gap-1.5 px-3.5">
-        <Plus className="size-4" aria-hidden />
-        Add memory
-      </Button>
-    ),
-    [],
-  );
-
-  useTopbar({
-    title: "Memories",
-    description: "Facts and preferences Flux remembers from your conversations, across all workspaces.",
-    actions: topbarActions,
-  });
+  // The topbar context was removed, but users can still add memories
+  // via the empty state or we can add a button here if needed.
+  // For now, we'll let DashboardTopbar handle the static title/description.
 
   return (
     <>
@@ -101,7 +88,14 @@ export function MemoriesView() {
               }
             />
           ) : (
-            <ul className="border-y">
+            <>
+              <div className="mb-6 flex items-center justify-end">
+                <Button onClick={() => setAddOpen(true)} className="h-9 gap-1.5 px-3.5">
+                  <Plus className="size-4" aria-hidden />
+                  Add memory
+                </Button>
+              </div>
+              <ul className="border-y">
               {memories.map((memory, index) => {
                 const dateLine = memoryDateLine(memory);
                 return (
@@ -151,7 +145,8 @@ export function MemoriesView() {
                   </li>
                 );
               })}
-            </ul>
+              </ul>
+            </>
           )}
         </div>
       </div>

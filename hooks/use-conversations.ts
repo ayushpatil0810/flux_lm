@@ -27,6 +27,7 @@ export function useMessages(conversationId: string | undefined) {
     queryFn: () =>
       apiFetch<Message[]>(endpoints.conversations.messages(conversationId!)),
     enabled: Boolean(conversationId),
+    staleTime: 30 * 60 * 1000, // 30 minutes
     retry: shouldRetry,
   });
 }

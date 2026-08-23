@@ -181,19 +181,18 @@ function getLayoutedElements(
 export function MindmapFlow({ nodes: rawNodes, edges: rawEdges }: MindmapFlowProps) {
   const [direction, setDirection] = React.useState<"LR" | "TB">("LR");
 
-  const initialLayout = React.useMemo(
+  const layout = React.useMemo(
     () => getLayoutedElements(rawNodes, rawEdges, direction),
     [rawNodes, rawEdges, direction]
   );
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialLayout.nodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialLayout.edges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(layout.nodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(layout.edges);
 
   React.useEffect(() => {
-    const layout = getLayoutedElements(rawNodes, rawEdges, direction);
     setNodes(layout.nodes);
     setEdges(layout.edges);
-  }, [rawNodes, rawEdges, direction, setNodes, setEdges]);
+  }, [layout, setNodes, setEdges]);
 
   function toggleDirection() {
     setDirection((curr) => (curr === "LR" ? "TB" : "LR"));

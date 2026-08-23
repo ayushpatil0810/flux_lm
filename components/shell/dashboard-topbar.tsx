@@ -6,7 +6,6 @@ import { Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { SidebarTrigger } from '@/components/ui/sidebar'
-import { useTopbar } from '@/components/shell/topbar-context'
 
 interface DashboardTopbarProps {
   onNewWorkspace?: () => void
@@ -19,14 +18,12 @@ interface DashboardTopbarProps {
  */
 export function DashboardTopbar({ onNewWorkspace }: DashboardTopbarProps) {
   const pathname = usePathname()
-  const { config } = useTopbar()
-
   const isDashboard = pathname === '/dashboard' || pathname === '/'
   const isMemories = pathname.includes('/memories')
 
-  let title = config.title
-  let description = config.description
-  let actions = config.actions
+  let title: string | undefined
+  let description: string | undefined
+  let actions: React.ReactNode | undefined
 
   if (!title) {
     if (isDashboard) {
