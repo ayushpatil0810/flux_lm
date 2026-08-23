@@ -33,23 +33,10 @@ interface WorkspacePanelProviderProps {
  * workspaces always starts with a clean, closed panel.
  */
 export function WorkspacePanelProvider({
-  workspaceId,
   children,
-}: WorkspacePanelProviderProps) {
+}: { children: React.ReactNode }) {
   const [activePanel, setActivePanel] = React.useState<ActivePanel>(null);
   const [previewSource, setPreviewSource] = React.useState<Source | null>(null);
-
-  // Reset when moving to a different workspace.
-  const prevWorkspaceId = React.useRef(workspaceId);
-  if (workspaceId !== prevWorkspaceId.current) {
-    prevWorkspaceId.current = workspaceId;
-    // Perform the reset inline (during render) so it's synchronous.
-    // This is the React-approved pattern for derived state resets.
-    // eslint-disable-next-line react-hooks/rules-of-hooks -- intentional inline reset
-    setActivePanel(null);
-    // eslint-disable-next-line react-hooks/rules-of-hooks -- intentional inline reset
-    setPreviewSource(null);
-  }
 
   const toggle = React.useCallback(
     (panel: Exclude<ActivePanel, null>) => {
@@ -58,16 +45,19 @@ export function WorkspacePanelProvider({
     [],
   );
 
+  const value = React.useMemo(
+    () => ({
+      activePanel,
+      setActivePanel,
+      toggle,
+      previewSource,
+      setPreviewSource,
+    }),
+    [activePanel, previewSource, toggle]
+  );
+
   return (
-    <WorkspacePanelContext.Provider 
-      value={{ 
-        activePanel, 
-        setActivePanel, 
-        toggle,
-        previewSource,
-        setPreviewSource
-      }}
-    >
+    <WorkspacePanelContext.Provider value={value}>
       {children}
     </WorkspacePanelContext.Provider>
   );

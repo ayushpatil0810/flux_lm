@@ -38,8 +38,20 @@ export function useToast(): ToastContextValue {
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = React.useState<ToastItem[]>([]);
   const counter = React.useRef(0);
+  const timeouts = React.useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  React.useEffect(() => {
+    return () => {
+      timeouts.current.forEach((t) => clearTimeout(t));
+      timeouts.current.clear();
+    };
+  }, []);
 
   const dismiss = React.useCallback((id: string) => {
+    if (timeouts.current.has(id)) {
+      clearTimeout(timeouts.current.get(id)!);
+      timeouts.current.delete(id);
+    }
     setToasts((current) => current.filter((toast) => toast.id !== id));
   }, []);
 
@@ -51,7 +63,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       setToasts((current) => [...current.slice(-3), { ...options, id }]);
       const duration = options.duration ?? 5000;
       if (duration > 0) {
-        setTimeout(() => dismiss(id), duration);
+        const timeoutId = setTimeout(() => {
+          dismiss(id);
+        }, duration);
+        timeouts.current.set(id, timeoutId);
       }
     },
     [dismiss],

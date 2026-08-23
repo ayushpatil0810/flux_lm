@@ -33,7 +33,7 @@ export function Shell({ children }: ShellProps) {
   return (
     <WorkspaceContext.Provider value={workspaceQuery}>
       <TopbarProvider>
-        <WorkspacePanelProvider workspaceId={workspaceId}>
+        <WorkspacePanelProvider key={workspaceId ?? "dashboard"}>
         <SidebarProvider
           defaultOpen
           className="h-svh w-full overflow-hidden no-scrollbar"

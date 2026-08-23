@@ -109,7 +109,6 @@ export function useImportPdfSource(workspaceId: string) {
 }
 
 export function useRenameSource(workspaceId: string) {
-  const invalidate = useInvalidateSources(workspaceId);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: { sourceId: string; title: string }) =>
@@ -119,17 +118,29 @@ export function useRenameSource(workspaceId: string) {
       }),
     onMutate: async ({ sourceId, title }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
+      
+      const previous = queryClient.getQueriesData<Source[]>({ 
+        queryKey: queryKeys.sources.all(workspaceId) 
+      });
+
       queryClient.setQueriesData<Source[]>(
         { queryKey: queryKeys.sources.all(workspaceId) },
         (old) => old?.map((s) => (s.id === sourceId ? { ...s, title } : s))
       );
+      
+      return { previous };
     },
-    onSettled: invalidate,
+    onError: (err, newSource, context) => {
+      if (context?.previous) {
+        context.previous.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+    },
   });
 }
 
 export function useDeleteSource(workspaceId: string) {
-  const invalidate = useInvalidateSources(workspaceId);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (sourceId: string) =>
@@ -138,17 +149,29 @@ export function useDeleteSource(workspaceId: string) {
       }),
     onMutate: async (sourceId) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
+      
+      const previous = queryClient.getQueriesData<Source[]>({ 
+        queryKey: queryKeys.sources.all(workspaceId) 
+      });
+
       queryClient.setQueriesData<Source[]>(
         { queryKey: queryKeys.sources.all(workspaceId) },
         (old) => old?.filter((s) => s.id !== sourceId)
       );
+      
+      return { previous };
     },
-    onSettled: invalidate,
+    onError: (err, sourceId, context) => {
+      if (context?.previous) {
+        context.previous.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+    },
   });
 }
 
 export function useBulkDeleteSources(workspaceId: string) {
-  const invalidate = useInvalidateSources(workspaceId);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (ids: string[]) =>
@@ -158,11 +181,24 @@ export function useBulkDeleteSources(workspaceId: string) {
       }),
     onMutate: async (ids) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
+      
+      const previous = queryClient.getQueriesData<Source[]>({ 
+        queryKey: queryKeys.sources.all(workspaceId) 
+      });
+
       queryClient.setQueriesData<Source[]>(
         { queryKey: queryKeys.sources.all(workspaceId) },
         (old) => old?.filter((s) => !ids.includes(s.id))
       );
+      
+      return { previous };
     },
-    onSettled: invalidate,
+    onError: (err, ids, context) => {
+      if (context?.previous) {
+        context.previous.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+    },
   });
 }
