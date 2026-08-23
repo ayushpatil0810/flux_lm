@@ -13,7 +13,7 @@ import { CreateWorkspaceDialog } from "@/components/shell/create-workspace-dialo
 import { ConfirmDeleteDialog } from "@/components/sources/confirm-delete-dialog";
 
 export function DashboardClient({ initialWorkspaces }: { initialWorkspaces: Workspace[] }) {
-  const { data: workspaces, isPending } = useWorkspaces(initialWorkspaces);
+  const { data: workspaces } = useWorkspaces(initialWorkspaces);
   const deleteWorkspace = useDeleteWorkspace();
   const { push } = useToast();
   const [createOpen, setCreateOpen] = React.useState(false);
@@ -40,30 +40,7 @@ export function DashboardClient({ initialWorkspaces }: { initialWorkspaces: Work
   return (
     <div className="flex flex-col gap-10 px-4 py-6 md:px-8 md:py-10">
       <section className="flex flex-col gap-5">
-        {isPending ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="flex flex-col justify-between rounded-xl border bg-card/50 p-5 h-48 animate-pulse"
-              >
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between">
-                    <div className="size-10 rounded-lg bg-muted" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-5 w-1/2 rounded bg-muted" />
-                    <div className="h-3 w-3/4 rounded bg-muted/60" />
-                  </div>
-                </div>
-                <div className="mt-6 flex items-center justify-between border-t pt-4">
-                  <div className="h-3 w-16 rounded bg-muted/60" />
-                  <div className="h-4 w-24 rounded bg-muted" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : workspaces && workspaces.length > 0 ? (
+        {workspaces && workspaces.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {workspaces.map((ws) => (
               <div

@@ -31,7 +31,8 @@ export function useSources(
     queryKey: queryKeys.sources.list(workspaceId, filters),
     queryFn: () =>
       apiFetch<Source[]>(endpoints.sources.list(workspaceId, filters)),
-    enabled: options?.enabled,
+    enabled: options?.enabled ?? true,
+    staleTime: 60 * 1000,
     retry: shouldRetry,
     placeholderData: keepPreviousData,
     refetchInterval: (query) => {
@@ -137,6 +138,9 @@ export function useRenameSource(workspaceId: string) {
         });
       }
     },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.sources.all(workspaceId) });
+    },
   });
 }
 
@@ -167,6 +171,9 @@ export function useDeleteSource(workspaceId: string) {
           queryClient.setQueryData(queryKey, data);
         });
       }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.sources.all(workspaceId) });
     },
   });
 }
@@ -199,6 +206,9 @@ export function useBulkDeleteSources(workspaceId: string) {
           queryClient.setQueryData(queryKey, data);
         });
       }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.sources.all(workspaceId) });
     },
   });
 }

@@ -189,7 +189,12 @@ export function MindmapFlow({ nodes: rawNodes, edges: rawEdges }: MindmapFlowPro
   const [nodes, setNodes, onNodesChange] = useNodesState(layout.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(layout.edges);
 
+  const isFirstRender = React.useRef(true);
   React.useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     setNodes(layout.nodes);
     setEdges(layout.edges);
   }, [layout, setNodes, setEdges]);

@@ -15,7 +15,7 @@ import {
   type ChatRequestMessage,
   type Message,
 } from "@/lib/api";
-import { useWorkspace } from "@/hooks/use-workspaces";
+import { useWorkspaceContext } from "@/components/shell/workspace-context";
 import {
   useConversations,
   useMessages,
@@ -45,7 +45,7 @@ export function ChatView({ workspaceId, noSources, sourcesCount }: ChatViewProps
   const queryClient = useQueryClient();
   const { push } = useToast();
 
-  const { data: workspace } = useWorkspace(workspaceId);
+  const { data: workspace } = useWorkspaceContext();
   const { data: conversations, isPending: isConversationsPending } = useConversations(workspaceId);
   
   // Use the first conversation available in the workspace, or undefined if none.

@@ -1,12 +1,24 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import { LayoutGrid, List } from "lucide-react";
 
 import type { LearningArtifact, LearningArtifactContent } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { MindmapFlow } from "./mindmap-flow";
+
+const MindmapFlow = dynamic(
+  () => import("./mindmap-flow").then((mod) => mod.MindmapFlow),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-[580px] w-full items-center justify-center rounded-xl border border-border/80 bg-card/40 shadow-xs">
+        <div className="animate-spin h-6 w-6 rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    )
+  }
+);
 
 /**
  * Per-type renderers for generated artifact content. The generator's
