@@ -10,7 +10,6 @@ import { SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/shell/app-sidebar'
 import { DashboardTopbar } from '@/components/shell/dashboard-topbar'
 import { WorkspacePanelProvider } from '@/components/shell/workspace-panel-context'
-
 import { WorkspaceContext } from '@/components/shell/workspace-context'
 
 interface ShellProps {
@@ -18,7 +17,13 @@ interface ShellProps {
 }
 
 /**
- * Authenticated application shell adopting the reference dashboard layout.
+ * Authenticated application shell.
+ *
+ * - On workspace routes (/workspace/[id]): renders only the children inside
+ *   WorkspaceContext + WorkspacePanelProvider. The workspace view manages its
+ *   own layout (three-column topbar + panels).
+ * - On all other routes (dashboard, memories): renders the full sidebar layout
+ *   with AppSidebar and DashboardTopbar as before.
  */
 export function Shell({ children }: ShellProps) {
   const [createOpen, setCreateOpen] = React.useState(false)
@@ -29,9 +34,31 @@ export function Shell({ children }: ShellProps) {
   const workspaceQuery = useWorkspace(workspaceId)
   const { data: workspace } = workspaceQuery
 
+  // ── Workspace routes — no sidebar, workspace manages its own layout ─────────
+  if (workspaceId) {
+    return (
+      <WorkspaceContext.Provider value={workspaceQuery}>
+        <WorkspacePanelProvider>
+          <div className="flex h-svh w-full flex-col overflow-hidden bg-background">
+            {children}
+          </div>
+
+          {workspace ? (
+            <EditWorkspaceDialog
+              workspace={workspace}
+              open={editOpen}
+              onOpenChange={setEditOpen}
+            />
+          ) : null}
+        </WorkspacePanelProvider>
+      </WorkspaceContext.Provider>
+    )
+  }
+
+  // ── Dashboard / Memories routes — full sidebar layout ───────────────────────
   return (
     <WorkspaceContext.Provider value={workspaceQuery}>
-      <WorkspacePanelProvider key={workspaceId ?? "dashboard"}>
+      <WorkspacePanelProvider>
         <SidebarProvider
           defaultOpen
           className="h-svh w-full overflow-hidden no-scrollbar"
@@ -56,9 +83,7 @@ export function Shell({ children }: ShellProps) {
           />
 
           <main className="flex flex-1 flex-col overflow-hidden bg-background">
-            {workspaceId ? null : (
-              <DashboardTopbar onNewWorkspace={() => setCreateOpen(true)} />
-            )}
+            <DashboardTopbar onNewWorkspace={() => setCreateOpen(true)} />
             <div id="main-content" className="flex-1 overflow-y-auto no-scrollbar">
               {children}
             </div>

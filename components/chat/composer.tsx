@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ArrowUp, ChevronDown, Cpu, Globe, Square } from "lucide-react";
+import { ArrowUpIcon, CaretDownIcon as ChevronDown, CpuIcon as Cpu, LinkIcon as Globe, SquareIcon as Square } from "@/components/ui/icons";
 
 import type { ChatModel } from "@/lib/api";
 import { CHAT_MODELS } from "@/lib/constants";
@@ -174,7 +174,7 @@ export function Composer({
                       : "bg-muted text-muted-foreground/50"
                   )}
                 >
-                  <ArrowUp className="size-4" aria-hidden />
+                  <ArrowUpIcon className="size-4" aria-hidden />
                 </Button>
               )}
             </div>

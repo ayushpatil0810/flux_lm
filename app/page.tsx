@@ -1,22 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { HugeiconsIcon } from '@hugeicons/react';
 import {
-  ArrowRight,
-  ArrowUpRight,
-  Brain,
-  Check,
-  FileText,
-  Files,
-  Globe,
-  MessageSquare,
-  Plus,
-  Quote,
-  Sparkles,
-  SquarePlay,
-  StickyNote,
-} from "lucide-react";
+  ArrowRight01Icon as ArrowRight,
+  ArrowUpRight01Icon as ArrowUpRight,
+  BrainIcon as Brain,
+  CheckmarkBadge01Icon as Check,
+  File01Icon as FileText,
+  Copy01Icon as Files,
+  Globe02Icon as Globe,
+  Chat01Icon as MessageSquare,
+  PlusSignIcon as Plus,
+  QuoteIcon as Quote,
+  SparkleIcon as Sparkles,
+  PlaySquareIcon as SquarePlay,
+  Note01Icon as StickyNote,
+} from '@hugeicons/core-free-icons';
 
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeSwitch } from "@/components/ui/theme-switch";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
@@ -156,7 +157,7 @@ function Header() {
         </nav>
         <div className="flex items-center gap-2">
           <div className="hidden md:block">
-            <ThemeToggle />
+            <ThemeSwitch />
           </div>
           <Button
             asChild
@@ -169,7 +170,7 @@ function Header() {
           <Button asChild size="sm">
             <Link href="/dashboard">
               Get started
-              <ArrowRight aria-hidden="true" />
+              <HugeiconsIcon icon={ArrowRight} aria-hidden="true" />
             </Link>
           </Button>
         </div>
@@ -237,7 +238,7 @@ function Hero() {
           <Button asChild size="lg" className="w-full sm:w-auto">
             <Link href="/dashboard">
               Get started
-              <ArrowRight aria-hidden="true" />
+              <HugeiconsIcon icon={ArrowRight} aria-hidden="true" />
             </Link>
           </Button>
           <Button
@@ -256,7 +257,7 @@ function Hero() {
               key={point}
               className="flex items-center gap-2 text-sm text-muted-foreground"
             >
-              <Check aria-hidden="true" className="size-3.5 text-primary" />
+              <HugeiconsIcon icon={Check} aria-hidden="true" className="size-3.5 text-primary" />
               {point}
             </li>
           ))}
@@ -310,7 +311,7 @@ function ProductMock() {
                   key={source.title}
                   className="flex items-center gap-2.5 rounded-md px-2 py-2"
                 >
-                  <source.icon
+                  <HugeiconsIcon icon={source.icon}
                     aria-hidden="true"
                     className="size-3.5 shrink-0 text-muted-foreground"
                   />
@@ -326,7 +327,7 @@ function ProductMock() {
               ))}
             </ul>
             <div className="mt-3 flex items-center justify-center gap-1.5 rounded-md border border-dashed border-border px-2 py-2 text-xs text-muted-foreground">
-              <Plus aria-hidden="true" className="size-3.5" />
+              <HugeiconsIcon icon={Plus} aria-hidden="true" className="size-3.5" />
               Add source
             </div>
           </aside>
@@ -359,7 +360,7 @@ function ProductMock() {
 
             {/* Composer */}
             <div className="flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3">
-              <Sparkles
+              <HugeiconsIcon icon={Sparkles}
                 aria-hidden="true"
                 className="size-4 shrink-0 text-primary"
               />
@@ -367,7 +368,7 @@ function ProductMock() {
                 Ask a follow-up…
               </p>
               <div className="flex size-7 items-center justify-center rounded-md bg-foreground text-background">
-                <ArrowUpRight aria-hidden="true" className="size-3.5" />
+                <HugeiconsIcon icon={ArrowUpRight} aria-hidden="true" className="size-3.5" />
               </div>
             </div>
           </div>
@@ -399,7 +400,7 @@ function Features() {
               className="group rounded-xl border border-border bg-card p-6 transition-colors duration-200 hover:border-foreground/20"
             >
               <div className="flex size-9 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors duration-200 group-hover:border-primary/40 group-hover:text-primary">
-                <feature.icon aria-hidden="true" className="size-4" />
+                <HugeiconsIcon icon={feature.icon} aria-hidden="true" className="size-4" />
               </div>
               <h3 className="mt-5 text-base font-semibold tracking-[-0.01em]">
                 {feature.title}
@@ -413,7 +414,7 @@ function Features() {
           {/* Artifacts — wide card */}
           <article className="group rounded-xl border border-border bg-card p-6 transition-colors duration-200 hover:border-foreground/20 sm:col-span-2">
             <div className="flex size-9 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors duration-200 group-hover:border-primary/40 group-hover:text-primary">
-              <Sparkles aria-hidden="true" className="size-4" />
+              <HugeiconsIcon icon={Sparkles} aria-hidden="true" className="size-4" />
             </div>
             <h3 className="mt-5 text-base font-semibold tracking-[-0.01em]">
               Artifacts on demand
@@ -494,7 +495,7 @@ function Faq() {
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-left text-[15px] font-medium tracking-[-0.01em] transition-colors hover:text-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 [&::-webkit-details-marker]:hidden">
                 {item.q}
-                <Plus
+                <HugeiconsIcon icon={Plus}
                   aria-hidden="true"
                   className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-45"
                 />
@@ -533,7 +534,7 @@ function FinalCta() {
             <Button asChild size="lg">
               <Link href="/dashboard">
                 Get started
-                <ArrowRight aria-hidden="true" />
+                <HugeiconsIcon icon={ArrowRight} aria-hidden="true" />
               </Link>
             </Button>
           </div>

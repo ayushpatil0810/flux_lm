@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { usePathname } from 'next/navigation'
-import { Plus } from 'lucide-react'
+import { PlusIcon as Plus } from "@/components/ui/icons";
 
 import { Button } from '@/components/ui/button'
 import { SidebarTrigger } from '@/components/ui/sidebar'

@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import { Checkbox as CheckboxPrimitive } from "radix-ui"
-import { Check, Minus } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { CheckmarkBadge01Icon as Check, MinusSignIcon as Minus } from "@hugeicons/core-free-icons"
 
 import { cn } from "@/lib/utils"
 
@@ -19,12 +20,14 @@ const Checkbox = React.forwardRef<
     {...props}
   >
     <CheckboxPrimitive.Indicator className="flex items-center justify-center text-current">
-      <Check
+      <HugeiconsIcon
+        icon={Check}
         className="size-3.5 group-data-[state=indeterminate]:hidden"
         strokeWidth={3}
         aria-hidden
       />
-      <Minus
+      <HugeiconsIcon
+        icon={Minus}
         className="hidden size-3.5 group-data-[state=indeterminate]:block"
         strokeWidth={3}
         aria-hidden

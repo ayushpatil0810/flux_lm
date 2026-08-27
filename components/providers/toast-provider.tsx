@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { X } from "lucide-react";
+import { CloseIcon as X } from "@/components/ui/icons";
 
 import { cn } from "@/lib/utils";
 

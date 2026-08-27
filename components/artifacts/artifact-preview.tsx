@@ -1,9 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Loader2 } from "lucide-react";
+import { SpinnerGapIcon as Loader2, CloseIcon } from "@/components/ui/icons";
 
-import type { LearningArtifact } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { useArtifact, useDeleteArtifact } from "@/hooks/use-artifacts";
 import { useToast } from "@/components/providers/toast-provider";
@@ -14,44 +13,31 @@ import { Button } from "@/components/ui/button";
 import { ARTIFACT_TYPE_LABELS } from "./artifact-meta";
 import { ArtifactViewer } from "./artifact-viewers";
 import { getErrorMessage } from "@/lib/api";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
-interface ArtifactDetailModalProps {
+interface ArtifactPreviewProps {
   workspaceId: string;
-  artifactId: string | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  artifactId: string;
+  onClose: () => void;
 }
 
-export function ArtifactDetailModal({
+export function ArtifactPreview({
   workspaceId,
   artifactId,
-  open,
-  onOpenChange,
-}: ArtifactDetailModalProps) {
+  onClose,
+}: ArtifactPreviewProps) {
   const { push } = useToast();
-  // We unconditionally call the hook, but disable fetching when modal is closed or no ID is provided
-  // Note: Since react-query v5, passing `enabled` does the trick. We'll pass it if the hook supports it, 
-  // but to be safe with the current hook implementation, we pass an empty string if null, which might 404, 
-  // but it's only rendered when `open` is true anyway.
   const { data: artifact, isPending, isError, error, refetch } = useArtifact(
     workspaceId,
-    artifactId ?? "",
+    artifactId,
   );
   const deleteArtifact = useDeleteArtifact(workspaceId);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
 
   async function confirmDelete() {
-    if (!artifactId) return;
     try {
       await deleteArtifact.mutateAsync(artifactId);
       push({ title: "Artifact deleted" });
-      onOpenChange(false);
+      onClose();
       setDeleteOpen(false);
     } catch (deleteError) {
       setDeleteOpen(false);
@@ -63,42 +49,40 @@ export function ArtifactDetailModal({
     }
   }
 
-  // Prevent rendering content if not open or no ID
-  if (!open || !artifactId) {
-    return null;
-  }
+  const generating =
+    artifact?.status === "PENDING" || artifact?.status === "PROCESSING";
+
+  // Polling for generation
+  React.useEffect(() => {
+    if (!artifact) return;
+    if (generating) {
+      const timer = setInterval(() => refetch(), 2000);
+      return () => clearInterval(timer);
+    }
+  }, [artifact, generating, refetch]);
 
   let content;
 
   if (isPending) {
+    content = <LoadingState label="Loading artifact..." />;
+  } else if (isError) {
     content = (
-      <div className="py-12">
-        <LoadingState label="Loading artifact" />
-      </div>
+      <ErrorState
+        title="Could not load artifact"
+        message={getErrorMessage(error)}
+        onRetry={() => refetch()}
+      />
     );
-  } else if (isError || !artifact) {
+  } else if (!artifact) {
     content = (
-      <div className="py-12">
-        <ErrorState
-          title="Could not load this artifact"
-          message={getErrorMessage(error)}
-          onRetry={() => refetch()}
-        />
-      </div>
+      <ErrorState title="Not found" message="This artifact does not exist." />
     );
   } else {
-    const generating =
-      artifact.status === "PENDING" || artifact.status === "PROCESSING";
-    const processingError =
-      typeof artifact.metadata?.processingError === "string"
-        ? artifact.metadata.processingError
-        : null;
-
     content = (
-      <div className="flex flex-col h-full overflow-hidden">
-        <div className="border-b px-6 py-4 flex flex-wrap items-start justify-between gap-4 shrink-0">
+      <div className="flex h-full flex-col min-h-0 bg-background">
+        <div className="flex shrink-0 items-start justify-between gap-4 border-b border-border/40 px-5 py-4 bg-card/40">
           <div className="min-w-0">
-            <h1 className="font-serif text-xl font-semibold">{artifact.title}</h1>
+            <h1 className="font-serif text-lg font-semibold">{artifact.title}</h1>
             <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
               <span>{ARTIFACT_TYPE_LABELS[artifact.type]}</span>
               <span aria-hidden>·</span>
@@ -107,16 +91,27 @@ export function ArtifactDetailModal({
               <span>Created {formatDate(artifact.createdAt)}</span>
             </p>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setDeleteOpen(true)}
-          >
-            Delete
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDeleteOpen(true)}
+            >
+              Delete
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground"
+              onClick={onClose}
+              aria-label="Close preview"
+            >
+              <CloseIcon className="size-4" />
+            </Button>
+          </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="flex-1 overflow-y-auto px-4 py-4 min-h-0">
           {generating ? (
             <div
               role="status"
@@ -138,12 +133,10 @@ export function ArtifactDetailModal({
               role="alert"
               className="mx-auto max-w-2xl rounded-md border border-destructive/40 bg-destructive/5 px-5 py-4"
             >
-              <p className="text-sm font-medium text-destructive">
-                Generation failed
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {processingError ??
-                  "The artifact could not be generated. Try again with fewer sources, or different ones."}
+              <h3 className="font-medium text-destructive">Generation failed</h3>
+              <p className="mt-1 text-sm text-destructive/80">
+                There was an error creating this artifact. You may need to try
+                again with different sources.
               </p>
             </div>
           ) : (
@@ -156,14 +149,9 @@ export function ArtifactDetailModal({
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl p-0 h-[85vh] flex flex-col gap-0 outline-none">
-          <DialogHeader className="sr-only">
-            <DialogTitle>{artifact?.title ?? "Artifact details"}</DialogTitle>
-          </DialogHeader>
-          {content}
-        </DialogContent>
-      </Dialog>
+      <div className="flex h-full w-full flex-col min-h-0 bg-background overflow-hidden animate-in slide-in-from-left-4 duration-300">
+        {content}
+      </div>
 
       <ConfirmDeleteDialog
         open={deleteOpen}

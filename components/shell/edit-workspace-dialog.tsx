@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Trash2 } from "lucide-react";
+import { TrashIcon as Trash2 } from "@/components/ui/icons";
 
 import { getErrorMessage, getFieldErrors, type Workspace } from "@/lib/api";
 import {

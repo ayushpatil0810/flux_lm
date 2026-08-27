@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Loader2 } from "lucide-react";
+import { SpinnerGapIcon as Loader2 } from "@/components/ui/icons";
 
 import { Button } from "@/components/ui/button";
 

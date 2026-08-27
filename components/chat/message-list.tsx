@@ -3,7 +3,7 @@
 import * as React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { FileText, BookOpen } from "lucide-react";
+import { FileIcon as FileText, BookOpenIcon as BookOpen } from "@/components/ui/icons";
 
 import type { CitationMetadata, Message } from "@/lib/api";
 import { Button } from "@/components/ui/button";

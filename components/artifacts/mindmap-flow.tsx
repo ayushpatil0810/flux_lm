@@ -17,10 +17,9 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import dagre from "@dagrejs/dagre";
-import { LayoutGrid } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface RawNode {
   id: string;
@@ -40,25 +39,30 @@ interface MindmapFlowProps {
 
 /**
  * Custom node renderer for mind map topics.
- * Differentiates root/hub nodes with enhanced styling.
+ * Differentiates styling based on depth (root, depth 1, depth 2+).
  */
 function MindmapNode({
   data,
   selected,
 }: {
-  data: { label: string; isRoot?: boolean; childCount?: number };
+  data: { label: string; depth: number; childCount?: number; isDimmed: boolean };
   selected?: boolean;
 }) {
-  const isRoot = data.isRoot;
+  const { depth, isDimmed } = data;
+  const isRoot = depth === 0;
+  const isLevel1 = depth === 1;
 
   return (
     <div
       className={cn(
-        "group relative flex items-center justify-between gap-2.5 rounded-xl px-4 py-2.5 shadow-sm transition-all duration-200",
+        "group relative flex items-center justify-between gap-2.5 shadow-sm transition-all duration-300",
+        isDimmed && "opacity-30 blur-[0.5px]",
+        selected && !isDimmed && "ring-2 ring-primary ring-offset-2 ring-offset-background",
         isRoot
-          ? "bg-primary text-primary-foreground border-2 border-primary shadow-md font-semibold text-sm"
-          : "bg-card text-card-foreground border border-border/80 hover:border-primary/50 text-xs font-medium",
-        selected && "ring-2 ring-primary ring-offset-2 ring-offset-background"
+          ? "rounded-2xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-md"
+          : isLevel1
+            ? "rounded-xl border border-primary/30 border-l-2 border-l-primary/60 bg-card px-4 py-2 text-xs font-medium text-foreground hover:border-primary/50"
+            : "rounded-lg border border-border/50 bg-card/60 px-3 py-1.5 text-xs text-muted-foreground hover:border-border/80"
       )}
     >
       <Handle
@@ -92,20 +96,16 @@ const nodeTypes = {
   mindmapNode: MindmapNode,
 };
 
-function getLayoutedElements(
-  rawNodes: RawNode[],
-  rawEdges: RawEdge[],
-  direction: "LR" | "TB" = "LR"
-) {
+function getLayoutedElements(rawNodes: RawNode[], rawEdges: RawEdge[]) {
   const g = new dagre.graphlib.Graph();
   g.setGraph({
-    rankdir: direction,
-    ranksep: direction === "LR" ? 110 : 80,
-    nodesep: direction === "LR" ? 35 : 60,
+    rankdir: "LR",
+    ranksep: 110,
+    nodesep: 35,
   });
   g.setDefaultEdgeLabel(() => ({}));
 
-  // Identify root nodes (nodes with no incoming edges)
+  // Find root nodes (no incoming edges)
   const targetNodeIds = new Set(rawEdges.map((e) => e.target));
   const rootNodeIds = new Set(
     rawNodes.filter((n) => !targetNodeIds.has(n.id)).map((n) => n.id)
@@ -114,18 +114,41 @@ function getLayoutedElements(
     rootNodeIds.add(rawNodes[0].id);
   }
 
-  // Count outgoing children per node
+  // Calculate depths via BFS
+  const depths = new Map<string, number>();
+  const adj = new Map<string, string[]>();
+  rawEdges.forEach((e) => {
+    if (!adj.has(e.source)) adj.set(e.source, []);
+    adj.get(e.source)!.push(e.target);
+  });
+
+  const queue = Array.from(rootNodeIds).map((id) => ({ id, d: 0 }));
+  const visited = new Set<string>();
+  while (queue.length > 0) {
+    const { id, d } = queue.shift()!;
+    if (!visited.has(id)) {
+      visited.add(id);
+      depths.set(id, d);
+      for (const next of adj.get(id) || []) {
+        queue.push({ id: next, d: d + 1 });
+      }
+    }
+  }
+
+  // Ensure disconnected nodes get depth
+  rawNodes.forEach((n) => {
+    if (!depths.has(n.id)) depths.set(n.id, 0);
+  });
+
   const childCounts = new Map<string, number>();
   for (const edge of rawEdges) {
     childCounts.set(edge.source, (childCounts.get(edge.source) || 0) + 1);
   }
 
-  const isHorizontal = direction === "LR";
-
   rawNodes.forEach((node) => {
-    const isRoot = rootNodeIds.has(node.id);
+    const depth = depths.get(node.id) || 0;
     const width = Math.max(140, Math.min(node.label.length * 8 + 48, 240));
-    const height = isRoot ? 48 : 42;
+    const height = depth === 0 ? 48 : depth === 1 ? 42 : 36;
     g.setNode(node.id, { width, height });
   });
 
@@ -138,21 +161,22 @@ function getLayoutedElements(
   dagre.layout(g);
 
   const nodes: Node[] = rawNodes.map((node) => {
-    const isRoot = rootNodeIds.has(node.id);
+    const depth = depths.get(node.id) || 0;
     const nodeWithPos = g.node(node.id) || { x: 0, y: 0 };
     const width = Math.max(140, Math.min(node.label.length * 8 + 48, 240));
-    const height = isRoot ? 48 : 42;
+    const height = depth === 0 ? 48 : depth === 1 ? 42 : 36;
 
     return {
       id: node.id,
       type: "mindmapNode",
       data: {
         label: node.label,
-        isRoot,
+        depth,
         childCount: childCounts.get(node.id) || 0,
+        isDimmed: false,
       },
-      targetPosition: isHorizontal ? Position.Left : Position.Top,
-      sourcePosition: isHorizontal ? Position.Right : Position.Bottom,
+      targetPosition: Position.Left,
+      sourcePosition: Position.Right,
       position: {
         x: nodeWithPos.x - width / 2,
         y: nodeWithPos.y - height / 2,
@@ -160,30 +184,41 @@ function getLayoutedElements(
     };
   });
 
-  const edges: Edge[] = rawEdges.map((edge, i) => ({
-    id: edge.id || `e-${edge.source}-${edge.target}-${i}`,
-    source: edge.source,
-    target: edge.target,
-    type: "smoothstep",
-    animated: false,
-    style: { stroke: "var(--primary)", strokeWidth: 1.5, opacity: 0.65 },
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      width: 14,
-      height: 14,
-      color: "var(--primary)",
-    },
-  }));
+  const edges: Edge[] = rawEdges.map((edge, i) => {
+    const sourceDepth = depths.get(edge.source) || 0;
+    const isRootEdge = sourceDepth === 0;
+
+    return {
+      id: edge.id || `e-${edge.source}-${edge.target}-${i}`,
+      source: edge.source,
+      target: edge.target,
+      type: "bezier",
+      animated: false,
+      style: {
+        stroke: isRootEdge ? "var(--primary)" : "var(--border)",
+        strokeWidth: isRootEdge ? 2 : 1.5,
+        opacity: isRootEdge ? 0.5 : 0.7,
+      },
+      markerEnd: isRootEdge
+        ? {
+            type: MarkerType.ArrowClosed,
+            width: 14,
+            height: 14,
+            color: "var(--primary)",
+          }
+        : undefined,
+    };
+  });
 
   return { nodes, edges };
 }
 
 export function MindmapFlow({ nodes: rawNodes, edges: rawEdges }: MindmapFlowProps) {
-  const [direction, setDirection] = React.useState<"LR" | "TB">("LR");
+  const [viewMode, setViewMode] = React.useState<"flow" | "tree">("flow");
 
   const layout = React.useMemo(
-    () => getLayoutedElements(rawNodes, rawEdges, direction),
-    [rawNodes, rawEdges, direction]
+    () => getLayoutedElements(rawNodes, rawEdges),
+    [rawNodes, rawEdges]
   );
 
   const [nodes, setNodes, onNodesChange] = useNodesState(layout.nodes);
@@ -199,40 +234,112 @@ export function MindmapFlow({ nodes: rawNodes, edges: rawEdges }: MindmapFlowPro
     setEdges(layout.edges);
   }, [layout, setNodes, setEdges]);
 
-  function toggleDirection() {
-    setDirection((curr) => (curr === "LR" ? "TB" : "LR"));
-  }
+  // Subtree highlighting logic
+  const handleNodeClick = React.useCallback(
+    (_: React.MouseEvent, clickedNode: Node) => {
+      // Find all descendants of clicked node
+      const descendants = new Set<string>();
+      const queue = [clickedNode.id];
+      descendants.add(clickedNode.id);
+
+      while (queue.length > 0) {
+        const curr = queue.shift()!;
+        const children = edges
+          .filter((e) => e.source === curr)
+          .map((e) => e.target);
+        children.forEach((childId) => {
+          if (!descendants.has(childId)) {
+            descendants.add(childId);
+            queue.push(childId);
+          }
+        });
+      }
+
+      // If node has no children, reset dimming
+      if (descendants.size === 1) {
+        setNodes((nds) => nds.map((n) => ({ ...n, data: { ...n.data, isDimmed: false } })));
+        setEdges((eds) => eds.map((e) => ({ ...e, style: { ...e.style, opacity: e.source === '0' ? 0.5 : 0.7 } })));
+        return;
+      }
+
+      setNodes((nds) =>
+        nds.map((n) => ({
+          ...n,
+          data: { ...n.data, isDimmed: !descendants.has(n.id) },
+        }))
+      );
+      setEdges((eds) =>
+        eds.map((e) => {
+          const inTree = descendants.has(e.source) && descendants.has(e.target);
+          const defaultOpacity = e.markerEnd ? 0.5 : 0.7;
+          return {
+            ...e,
+            style: { ...e.style, opacity: inTree ? defaultOpacity : 0.1 },
+          };
+        })
+      );
+    },
+    [edges, setNodes, setEdges]
+  );
+
+  const handlePaneClick = React.useCallback(() => {
+    setNodes((nds) => nds.map((n) => ({ ...n, data: { ...n.data, isDimmed: false } })));
+    setEdges((eds) => eds.map((e) => ({ ...e, style: { ...e.style, opacity: e.markerEnd ? 0.5 : 0.7 } })));
+  }, [setNodes, setEdges]);
 
   return (
-    <div className="relative w-full h-[580px] rounded-xl border border-border/80 bg-card/40 backdrop-blur-xs overflow-hidden shadow-xs">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        fitView
-        fitViewOptions={{ padding: 0.2 }}
-        minZoom={0.2}
-        maxZoom={2}
-        proOptions={{ hideAttribution: true }}
-      >
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1} className="opacity-40" />
-        <Controls showInteractive={false} className="!border-border/60 !bg-card !shadow-md !rounded-lg" />
-        
-        <Panel position="top-right" className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={toggleDirection}
-            className="h-8 gap-1.5 rounded-lg border-border/60 bg-card/80 text-xs font-medium shadow-xs backdrop-blur-sm hover:bg-accent"
-            title="Toggle diagram layout direction"
+    <div className="relative w-full h-full min-h-[500px] rounded-xl border border-border/80 bg-card/40 backdrop-blur-xs overflow-hidden shadow-xs">
+      {viewMode === "tree" ? (
+        <div className="flex h-full w-full flex-col items-center justify-center">
+          <p className="text-sm text-muted-foreground">Outline view not implemented yet.</p>
+        </div>
+      ) : (
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onNodeClick={handleNodeClick}
+          onPaneClick={handlePaneClick}
+          fitView
+          fitViewOptions={{ padding: 0.2 }}
+          minZoom={0.2}
+          maxZoom={2}
+          proOptions={{ hideAttribution: true }}
+        >
+          <Background variant={BackgroundVariant.Lines} gap={32} size={0.5} className="opacity-20" />
+          <Controls showInteractive={false} className="!border-border/30 !bg-card !shadow-sm !rounded-xl" />
+        </ReactFlow>
+      )}
+
+      {/* Floating Panel for view toggle */}
+      <div className="absolute top-2 right-2 z-10 p-2">
+        <div className="flex rounded-lg overflow-hidden border border-border/40 bg-card/80 backdrop-blur-md shadow-sm">
+          <button
+            onClick={() => setViewMode("flow")}
+            className={cn(
+              "px-3 py-1.5 text-xs font-medium transition-colors",
+              viewMode === "flow"
+                ? "bg-primary/10 text-primary"
+                : "text-muted-foreground hover:bg-accent"
+            )}
           >
-            <LayoutGrid className="size-3.5 text-primary" />
-            <span>{direction === "LR" ? "Horizontal" : "Vertical"}</span>
-          </Button>
-        </Panel>
-      </ReactFlow>
+            Map
+          </button>
+          <button
+            onClick={() => setViewMode("tree")}
+            className={cn(
+              "px-3 py-1.5 text-xs font-medium border-l border-border/40 transition-colors",
+              viewMode === "tree"
+                ? "bg-primary/10 text-primary"
+                : "text-muted-foreground hover:bg-accent"
+            )}
+          >
+            Outline
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

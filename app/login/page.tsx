@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { SpinnerGapIcon as Loader2 } from "@/components/ui/icons";
 
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";

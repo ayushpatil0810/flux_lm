@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { X, ExternalLink, FileText } from "lucide-react";
+import { CloseIcon as X, ExternalLinkIcon as ExternalLink, FileIcon as FileText } from "@/components/ui/icons";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 

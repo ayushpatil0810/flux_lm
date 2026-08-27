@@ -3,57 +3,56 @@
 import * as React from "react";
 import type { Source } from "@/lib/api";
 
-export type ActivePanel = "sources" | "artifacts" | null;
-
 interface WorkspacePanelContextType {
-  activePanel: ActivePanel;
-  setActivePanel: (panel: ActivePanel) => void;
-  /** Toggles the given panel open/closed. */
-  toggle: (panel: Exclude<ActivePanel, null>) => void;
-
-  /** The source currently being previewed alongside the chat */
+  leftOpen: boolean;
+  setLeftOpen: (open: boolean) => void;
+  rightOpen: boolean;
+  setRightOpen: (open: boolean) => void;
   previewSource: Source | null;
   setPreviewSource: (source: Source | null) => void;
+  previewArtifactId: string | null;
+  setPreviewArtifactId: (id: string | null) => void;
 }
 
 const WorkspacePanelContext =
   React.createContext<WorkspacePanelContextType | null>(null);
 
-interface WorkspacePanelProviderProps {
-  workspaceId: string | undefined;
-  children: React.ReactNode;
-}
-
 /**
- * Provides the active left-panel state (sources | artifacts | null) to both
- * the app sidebar and the workspace view so they can stay in sync without
- * prop drilling through the layout.
- *
- * Resets to null when the workspaceId changes so navigating between
- * workspaces always starts with a clean, closed panel.
+ * Tracks whether the Sources (left) and Artifacts (right) panels are open,
+ * and which source or artifact (if any) is being previewed alongside the chat.
  */
 export function WorkspacePanelProvider({
   children,
-}: { children: React.ReactNode }) {
-  const [activePanel, setActivePanel] = React.useState<ActivePanel>(null);
-  const [previewSource, setPreviewSource] = React.useState<Source | null>(null);
+}: {
+  children: React.ReactNode;
+}) {
+  const [leftOpen, setLeftOpen] = React.useState(true);
+  const [rightOpen, setRightOpen] = React.useState(true);
+  const [previewSource, setPreviewSourceInternal] = React.useState<Source | null>(null);
+  const [previewArtifactId, setPreviewArtifactIdInternal] = React.useState<string | null>(null);
 
-  const toggle = React.useCallback(
-    (panel: Exclude<ActivePanel, null>) => {
-      setActivePanel((current) => (current === panel ? null : panel));
-    },
-    [],
-  );
+  const setPreviewSource = React.useCallback((source: Source | null) => {
+    setPreviewSourceInternal(source);
+    if (source) setPreviewArtifactIdInternal(null);
+  }, []);
+
+  const setPreviewArtifactId = React.useCallback((id: string | null) => {
+    setPreviewArtifactIdInternal(id);
+    if (id) setPreviewSourceInternal(null);
+  }, []);
 
   const value = React.useMemo(
     () => ({
-      activePanel,
-      setActivePanel,
-      toggle,
+      leftOpen,
+      setLeftOpen,
+      rightOpen,
+      setRightOpen,
       previewSource,
       setPreviewSource,
+      previewArtifactId,
+      setPreviewArtifactId,
     }),
-    [activePanel, previewSource, toggle]
+    [leftOpen, rightOpen, previewSource, previewArtifactId, setPreviewSource, setPreviewArtifactId],
   );
 
   return (
@@ -66,7 +65,10 @@ export function WorkspacePanelProvider({
 export function useWorkspacePanel(): WorkspacePanelContextType {
   const context = React.useContext(WorkspacePanelContext);
   if (!context) {
-    throw new Error("useWorkspacePanel must be used within WorkspacePanelProvider");
+    throw new Error(
+      "useWorkspacePanel must be used within WorkspacePanelProvider",
+    );
   }
   return context;
 }
+

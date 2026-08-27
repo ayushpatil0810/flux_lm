@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import dynamic from "next/dynamic";
-import { LayoutGrid, List } from "lucide-react";
+import { FadersHorizontalIcon as LayoutGrid, ListIcon as List } from "@/components/ui/icons";
 
 import type { LearningArtifact, LearningArtifactContent } from "@/lib/api";
 import { cn } from "@/lib/utils";

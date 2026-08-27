@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CheckmarkBadge01Icon as Check, ArrowUpDownIcon as ChevronsUpDown } from "@hugeicons/core-free-icons";
 
 import type { Workspace } from "@/lib/api";
 import { useWorkspaces } from "@/hooks/use-workspaces";
@@ -40,7 +41,7 @@ export function WorkspaceSwitcher({ workspace }: { workspace: Workspace }) {
             {workspace.title}
           </span>
         </span>
-        <ChevronsUpDown
+        <HugeiconsIcon icon={ChevronsUpDown}
           className="size-4 shrink-0 text-muted-foreground"
           aria-hidden
         />
@@ -55,7 +56,7 @@ export function WorkspaceSwitcher({ workspace }: { workspace: Workspace }) {
           >
             <span className="truncate">{entry.title}</span>
             {entry.id === workspace.id ? (
-              <Check className="size-4 shrink-0 text-primary" aria-hidden />
+              <HugeiconsIcon icon={Check} className="size-4 shrink-0 text-primary" aria-hidden />
             ) : null}
           </DropdownMenuItem>
         ))}

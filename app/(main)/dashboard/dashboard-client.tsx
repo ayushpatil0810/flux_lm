@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Folder, ArrowRight, Trash2, Plus } from "lucide-react";
+import { FolderIcon as Folder, ArrowRightIcon as ArrowRight, TrashIcon as Trash2, PlusIcon as Plus } from "@/components/ui/icons";
 
 import type { Workspace } from "@/lib/api";
 import { getErrorMessage } from "@/lib/api";

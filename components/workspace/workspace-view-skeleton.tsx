@@ -1,4 +1,5 @@
-import { Settings } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Settings01Icon as Settings } from "@hugeicons/core-free-icons";
 
 export function WorkspaceViewSkeleton() {
   return (
@@ -14,7 +15,7 @@ export function WorkspaceViewSkeleton() {
             disabled
             className="flex size-8 items-center justify-center rounded-md text-muted-foreground opacity-50"
           >
-            <Settings className="size-4" />
+            <HugeiconsIcon icon={Settings} className="size-4" />
           </button>
         </header>
 

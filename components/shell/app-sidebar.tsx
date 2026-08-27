@@ -5,8 +5,9 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LogOutIcon,
-} from 'lucide-react'
-import { BookOpen, Sparkles } from 'lucide-react'
+  BookOpenIcon as BookOpen,
+  SparklesIcon as Sparkles,
+} from '@/components/ui/icons'
 import {
   SidebarCollapseIcon,
   ToggleIcon,
@@ -15,7 +16,6 @@ import {
   ClockIcon,
 } from '@/components/ui/icons'
 import { FluxLogo } from '@/components/ui/logo'
-import { ThemeToggle } from '@/components/theme-toggle'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,6 +43,7 @@ import { authClient } from '@/lib/auth-client'
 import { useToast } from '@/components/providers/toast-provider'
 import type { Workspace } from '@/lib/api'
 import { WorkspaceSwitcher } from '@/components/shell/workspace-switcher'
+import { ThemeSwitch } from '@/components/ui/theme-switch'
 import { useWorkspacePanel } from '@/components/shell/workspace-panel-context'
 
 const menuButtonClassName = cn(
@@ -94,37 +95,7 @@ function NavItem({ item, onNavigate }: { item: NavigationItem; onNavigate?: () =
   )
 }
 
-/** A panel-toggle item: looks like a nav item but drives the workspace panel context. */
-function PanelNavItem({
-  panel,
-  label,
-  icon: Icon,
-  tooltip,
-}: {
-  panel: 'sources' | 'artifacts'
-  label: string
-  icon: React.ElementType
-  tooltip: string
-}) {
-  const { activePanel, toggle } = useWorkspacePanel()
-  const isActive = activePanel === panel
-
-  return (
-    <SidebarMenuButton
-      tooltip={tooltip}
-      className={cn(
-        menuButtonClassName,
-        isActive && 'bg-background font-medium text-sidebar-accent-foreground',
-      )}
-      onClick={() => toggle(panel)}
-      aria-pressed={isActive}
-    >
-      <Icon />
-      <span>{label}</span>
-    </SidebarMenuButton>
-  )
-}
-
+// Removed PanelNavItem as sidebar is no longer in workspace view
 // Removed DarkModeItem in favor of ThemeToggle
 
 function ProfileItem() {
@@ -259,43 +230,7 @@ export function AppSidebar({ workspace, onNavigate, onNewWorkspace, onWorkspaceS
       </SidebarHeader>
 
       <SidebarContent className="gap-4 overflow-x-hidden overflow-y-auto px-3 py-4 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:overflow-y-auto!">
-        {workspace && (
-          <SidebarGroup className="gap-2 p-0 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:w-full">
-            <SidebarGroupLabel className="h-auto px-3 py-1 text-base font-normal text-muted-foreground group-data-[collapsible=icon]:hidden">
-              Workspace
-            </SidebarGroupLabel>
-
-            {!collapsed && (
-              <div className="mb-2 mt-1 px-3">
-                <WorkspaceSwitcher workspace={workspace} />
-              </div>
-            )}
-
-            <SidebarGroupContent className="w-full text-sm group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
-              <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:w-full">
-                {/* Sources panel toggle */}
-                <SidebarMenuItem className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full">
-                  <PanelNavItem
-                    panel="sources"
-                    label="Sources"
-                    icon={BookOpen}
-                    tooltip="Sources"
-                  />
-                </SidebarMenuItem>
-
-                {/* Artifacts panel toggle */}
-                <SidebarMenuItem className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full">
-                  <PanelNavItem
-                    panel="artifacts"
-                    label="Artifacts"
-                    icon={Sparkles}
-                    tooltip="Artifacts"
-                  />
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
+        {/* Workspace section removed as sidebar is only used on dashboard now */}
 
         <SidebarGroup className="gap-2 p-0 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:w-full">
           <SidebarGroupLabel className="h-auto px-3 py-1 text-base font-normal text-muted-foreground group-data-[collapsible=icon]:hidden">
@@ -314,12 +249,14 @@ export function AppSidebar({ workspace, onNavigate, onNewWorkspace, onWorkspaceS
       </SidebarContent>
 
       <SidebarFooter className="border-t border-sidebar-border px-3 py-3 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
-        <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:w-full">
-          <SidebarMenuItem className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full mb-1 flex justify-center">
-            <ThemeToggle />
-          </SidebarMenuItem>
-          <ProfileItem />
-        </SidebarMenu>
+        <div className="flex items-center gap-1">
+          <div className="flex-1 min-w-0">
+            <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:w-full">
+              <ProfileItem />
+            </SidebarMenu>
+          </div>
+          <ThemeSwitch className="group-data-[collapsible=icon]:hidden shrink-0" />
+        </div>
       </SidebarFooter>
     </Sidebar>
   )

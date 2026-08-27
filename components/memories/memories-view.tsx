@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Loader2, MoreHorizontal, Plus } from "lucide-react";
+import { SpinnerGapIcon as Loader2, MoreHorizontalIcon as MoreHorizontal, PlusIcon as Plus } from "@/components/ui/icons";
 
 import { getErrorMessage, type MemoryItem } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
