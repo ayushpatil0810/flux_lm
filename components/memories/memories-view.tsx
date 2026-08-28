@@ -1,7 +1,9 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Loading02Icon, MoreHorizontalIcon, PlusSignIcon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
-import { SpinnerGapIcon as Loader2, MoreHorizontalIcon as MoreHorizontal, PlusIcon as Plus } from "@/components/ui/icons";
+;
 
 import { getErrorMessage, type MemoryItem } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
@@ -82,7 +84,7 @@ export function MemoriesView() {
               copy="As you chat, Flux quietly remembers facts and preferences that make later answers better. You can also add one yourself."
               action={
                 <Button onClick={() => setAddOpen(true)}>
-                  <Plus className="size-4" aria-hidden />
+                  <HugeiconsIcon icon={PlusSignIcon} strokeWidth={1.5} className="size-4" aria-hidden />
                   Add memory
                 </Button>
               }
@@ -91,7 +93,7 @@ export function MemoriesView() {
             <>
               <div className="mb-6 flex items-center justify-end">
                 <Button onClick={() => setAddOpen(true)} className="h-9 gap-1.5 px-3.5">
-                  <Plus className="size-4" aria-hidden />
+                  <HugeiconsIcon icon={PlusSignIcon} strokeWidth={1.5} className="size-4" aria-hidden />
                   Add memory
                 </Button>
               </div>
@@ -107,7 +109,7 @@ export function MemoriesView() {
                       <p className="text-sm leading-relaxed flex items-center gap-2">
                         {memory.memory}
                         {memory.isOptimistic && (
-                          <Loader2 className="size-3 animate-spin text-muted-foreground" aria-hidden />
+                          <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5} className="size-3 animate-spin text-muted-foreground" aria-hidden />
                         )}
                       </p>
                       {dateLine ? (
@@ -124,7 +126,7 @@ export function MemoriesView() {
                             size="icon"
                             aria-label="Memory options"
                           >
-                            <MoreHorizontal className="size-4" aria-hidden />
+                            <HugeiconsIcon icon={MoreHorizontalIcon} strokeWidth={1.5} className="size-4" aria-hidden />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">

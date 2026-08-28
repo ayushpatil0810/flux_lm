@@ -1,9 +1,11 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Loading02Icon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { SpinnerGapIcon as Loader2 } from "@/components/ui/icons";
+;
 
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -115,7 +117,7 @@ export default function LoginPage() {
               onClick={() => handleSocial("github")}
             >
               {socialPending === "github" ? (
-                <Loader2 className="size-4 animate-spin" aria-hidden />
+                <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5} className="size-4 animate-spin" aria-hidden />
               ) : null}
               Continue with GitHub
             </Button>
@@ -125,7 +127,7 @@ export default function LoginPage() {
               onClick={() => handleSocial("google")}
             >
               {socialPending === "google" ? (
-                <Loader2 className="size-4 animate-spin" aria-hidden />
+                <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5} className="size-4 animate-spin" aria-hidden />
               ) : null}
               Continue with Google
             </Button>

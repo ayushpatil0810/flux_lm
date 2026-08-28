@@ -1,7 +1,9 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Cancel01Icon, LinkSquare01Icon, File01Icon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
-import { CloseIcon as X, ExternalLinkIcon as ExternalLink, FileIcon as FileText } from "@/components/ui/icons";
+;
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -35,7 +37,7 @@ export function SourcePreview({ source, onClose }: SourcePreviewProps) {
       <header className="flex h-12 shrink-0 items-center justify-between border-b border-border/30 px-3">
         <div className="flex min-w-0 items-center gap-2.5">
           <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
-            <FileText className="size-3.5" aria-hidden />
+            <HugeiconsIcon icon={File01Icon} strokeWidth={1.5} className="size-3.5" aria-hidden />
           </div>
           <div className="min-w-0 flex-1">
             <h2 className="truncate text-sm font-medium leading-tight text-foreground">
@@ -54,7 +56,7 @@ export function SourcePreview({ source, onClose }: SourcePreviewProps) {
                     title={source.url}
                   >
                     <span>{displayUrl(source.url)}</span>
-                    <ExternalLink className="size-2.5" />
+                    <HugeiconsIcon icon={LinkSquare01Icon} strokeWidth={1.5} className="size-2.5" />
                   </a>
                 </>
               )}
@@ -68,7 +70,7 @@ export function SourcePreview({ source, onClose }: SourcePreviewProps) {
           aria-label="Close preview"
           className="ml-2 flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
         >
-          <X className="size-4" aria-hidden />
+          <HugeiconsIcon icon={Cancel01Icon} strokeWidth={1.5} className="size-4" aria-hidden />
         </button>
       </header>
 

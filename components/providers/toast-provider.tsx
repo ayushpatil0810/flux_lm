@@ -1,7 +1,9 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Cancel01Icon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
-import { CloseIcon as X } from "@/components/ui/icons";
+;
 
 import { cn } from "@/lib/utils";
 
@@ -113,7 +115,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 aria-label="Dismiss notification"
                 className="rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
               >
-                <X className="size-4" aria-hidden />
+                <HugeiconsIcon icon={Cancel01Icon} strokeWidth={1.5} className="size-4" aria-hidden />
               </button>
             </div>
           </div>

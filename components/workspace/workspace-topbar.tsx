@@ -1,4 +1,6 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Loading02Icon, Settings01Icon, SidebarLeftIcon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
 import Link from "next/link";
@@ -7,11 +9,7 @@ import { useUpdateWorkspace } from "@/hooks/use-workspaces";
 import { useWorkspaceContext } from "@/components/shell/workspace-context";
 import { useWorkspacePanel } from "@/components/shell/workspace-panel-context";
 import { FluxLogo } from "@/components/ui/logo";
-import {
-  SpinnerGapIcon,
-  GearIcon,
-  SidebarCollapseIcon,
-} from "@/components/ui/icons";
+;
 import { cn } from "@/lib/utils";
 
 interface WorkspaceTopbarProps {
@@ -81,7 +79,7 @@ export function WorkspaceTopbar({
           leftOpen && "bg-white/5 text-foreground",
         )}
       >
-        <SidebarCollapseIcon className="size-4 rotate-90" aria-hidden />
+        <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} className="size-4 rotate-90" aria-hidden />
       </button>
 
       {/* Logo — links to dashboard */}
@@ -125,7 +123,7 @@ export function WorkspaceTopbar({
         )}
 
         {updateWorkspace.isPending && (
-          <SpinnerGapIcon
+          <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5}
             className="size-3.5 shrink-0 animate-spin text-muted-foreground"
             aria-hidden
           />
@@ -145,7 +143,7 @@ export function WorkspaceTopbar({
         aria-label="Workspace settings"
         className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
       >
-        <GearIcon className="size-4" aria-hidden />
+        <HugeiconsIcon icon={Settings01Icon} strokeWidth={1.5} className="size-4" aria-hidden />
       </button>
 
       {/* Right panel toggle */}
@@ -158,7 +156,7 @@ export function WorkspaceTopbar({
           rightOpen && "bg-white/5 text-foreground",
         )}
       >
-        <SidebarCollapseIcon className="size-4 -rotate-90" aria-hidden />
+        <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} className="size-4 -rotate-90" aria-hidden />
       </button>
     </header>
   );

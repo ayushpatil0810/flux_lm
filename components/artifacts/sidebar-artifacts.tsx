@@ -1,4 +1,6 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Cancel01Icon, MoreHorizontalIcon, File01Icon, CheckmarkBadge01Icon, Cards01Icon, HelpCircleIcon, ListSettingIcon, ShieldCheckIcon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
 
@@ -23,16 +25,7 @@ import {
   ARTIFACT_TYPE_DESCRIPTIONS,
   ARTIFACT_TYPE_ORDER,
 } from "./artifact-meta";
-import {
-  CloseIcon,
-  MoreHorizontalIcon,
-  FileIcon,
-  SealCheckIcon,
-  ToggleIcon,
-  QuestionIcon,
-  FadersHorizontalIcon,
-  ShieldCheckIcon,
-} from "@/components/ui/icons";
+;
 
 // ── Type-to-icon mapping ────────────────────────────────────────────────────
 
@@ -40,12 +33,12 @@ const ARTIFACT_TYPE_ICONS: Record<
   ArtifactType,
   React.FC<{ className?: string }>
 > = {
-  SUMMARY: FileIcon,
-  TAKEAWAYS: SealCheckIcon,
-  FLASHCARDS: ToggleIcon,
-  QUIZ: QuestionIcon,
-  MINDMAP: FadersHorizontalIcon,
-  REPORT: ShieldCheckIcon,
+  SUMMARY: (props) => <HugeiconsIcon icon={File01Icon} strokeWidth={1.5} {...props} />,
+  TAKEAWAYS: (props) => <HugeiconsIcon icon={CheckmarkBadge01Icon} strokeWidth={1.5} {...props} />,
+  FLASHCARDS: (props) => <HugeiconsIcon icon={Cards01Icon} strokeWidth={1.5} {...props} />,
+  QUIZ: (props) => <HugeiconsIcon icon={HelpCircleIcon} strokeWidth={1.5} {...props} />,
+  MINDMAP: (props) => <HugeiconsIcon icon={ListSettingIcon} strokeWidth={1.5} {...props} />,
+  REPORT: (props) => <HugeiconsIcon icon={ShieldCheckIcon} strokeWidth={1.5} {...props} />,
 };
 
 // ── Panel ───────────────────────────────────────────────────────────────────
@@ -113,7 +106,7 @@ export function SidebarArtifacts({
               aria-label="Close artifacts panel"
               className="ml-1 flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
             >
-              <CloseIcon className="size-3.5" aria-hidden />
+              <HugeiconsIcon icon={Cancel01Icon} strokeWidth={1.5} className="size-3.5" aria-hidden />
             </button>
           ) : null}
         </div>
@@ -121,11 +114,11 @@ export function SidebarArtifacts({
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         {/* Generate section */}
-        <div className="px-3 pb-2">
-          <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
-            Generate
+        <div className="px-3 pb-4 pt-2">
+          <p className="mb-3 pl-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+            Generate New
           </p>
-          <div className="flex flex-col gap-1.5">
+          <div className="grid grid-cols-1 gap-2.5">
             {ARTIFACT_TYPE_ORDER.map((type) => {
               const Icon = ARTIFACT_TYPE_ICONS[type];
               return (
@@ -133,16 +126,25 @@ export function SidebarArtifacts({
                   key={type}
                   type="button"
                   onClick={() => setActiveType(type)}
-                  className="flex w-full items-center gap-3 rounded-xl border border-border/40 bg-card/60 px-3 py-2.5 text-left transition-colors hover:border-primary/40 hover:bg-primary/5"
+                  className="group relative flex w-full items-center gap-3.5 overflow-hidden rounded-xl border border-border/50 bg-card/40 p-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
                 >
-                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <Icon className="size-4" aria-hidden />
+                  {/* Subtle noise texture */}
+                  <div 
+                    className="pointer-events-none absolute inset-0 opacity-[0.02] mix-blend-overlay" 
+                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} 
+                  />
+                  {/* Hover glow effect */}
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                  
+                  <div className="relative z-10 flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-primary/10 text-primary shadow-sm transition-transform duration-300 group-hover:scale-110">
+                    <Icon className="size-4.5" aria-hidden />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[13px] font-medium leading-tight">
+                  
+                  <div className="relative z-10 min-w-0 flex-1">
+                    <p className="text-[13px] font-semibold tracking-tight text-foreground/90 transition-colors group-hover:text-primary">
                       {ARTIFACT_TYPE_LABELS[type]}
                     </p>
-                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                    <p className="mt-0.5 truncate text-[11.5px] leading-relaxed text-muted-foreground/80">
                       {ARTIFACT_TYPE_DESCRIPTIONS[type]}
                     </p>
                   </div>
@@ -204,7 +206,7 @@ export function SidebarArtifacts({
                           size="icon"
                           className="size-7 opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100"
                         >
-                          <MoreHorizontalIcon className="size-4" />
+                          <HugeiconsIcon icon={MoreHorizontalIcon} strokeWidth={1.5} className="size-4" />
                           <span className="sr-only">More</span>
                         </Button>
                       </DropdownMenuTrigger>

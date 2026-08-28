@@ -1,9 +1,11 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { File01Icon, BookOpen01Icon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { FileIcon as FileText, BookOpenIcon as BookOpen } from "@/components/ui/icons";
+;
 
 import type { CitationMetadata, Message } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -178,7 +180,7 @@ function CitationList({ citations }: { citations: CitationMetadata[] }) {
           className="group relative cursor-default"
         >
           <div className="flex items-center gap-1.5 rounded-md border border-border/60 px-2 py-1 text-xs text-muted-foreground transition-colors hover:border-border hover:text-foreground">
-            <BookOpen className="size-3" aria-hidden />
+            <HugeiconsIcon icon={BookOpen01Icon} strokeWidth={1.5} className="size-3" aria-hidden />
             <span className="font-medium text-primary">{i + 1}</span>
             <span className="max-w-[160px] truncate">
               {citation.sourceTitle}
@@ -187,7 +189,7 @@ function CitationList({ citations }: { citations: CitationMetadata[] }) {
 
           <div className="absolute bottom-full left-0 z-50 mb-2 hidden w-72 rounded-lg border border-border/60 bg-popover p-3 text-popover-foreground shadow-lg group-hover:block animate-in fade-in slide-in-from-bottom-1">
             <div className="flex items-center gap-2 border-b border-border/60 pb-2">
-              <FileText className="size-3.5 text-primary" aria-hidden />
+              <HugeiconsIcon icon={File01Icon} strokeWidth={1.5} className="size-3.5 text-primary" aria-hidden />
               <p className="truncate text-xs font-medium">
                 {citation.sourceTitle}
               </p>

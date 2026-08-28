@@ -1,5 +1,7 @@
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Loading02Icon } from '@hugeicons/core-free-icons';
 import * as React from "react";
-import { SpinnerGapIcon as Loader2 } from "@/components/ui/icons";
+;
 
 import { Button } from "@/components/ui/button";
 
@@ -13,7 +15,7 @@ export function LoadingState({ label = "Loading" }: { label?: string }) {
       role="status"
       className="flex min-h-[240px] flex-col items-center justify-center gap-3 text-sm text-muted-foreground"
     >
-      <Loader2 className="size-4 animate-spin" aria-hidden />
+      <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5} className="size-4 animate-spin" aria-hidden />
       <span>{label}</span>
     </div>
   );

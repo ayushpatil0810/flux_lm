@@ -1,7 +1,9 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowUp01Icon, ArrowDown01Icon, CpuIcon, Link01Icon, Layers01Icon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
-import { ArrowUpIcon, CaretDownIcon as ChevronDown, CpuIcon as Cpu, LinkIcon as Globe, SquareIcon as Square } from "@/components/ui/icons";
+;
 
 import type { ChatModel } from "@/lib/api";
 import { CHAT_MODELS } from "@/lib/constants";
@@ -109,9 +111,9 @@ export function Composer({
                     aria-label="Choose model"
                     className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <Cpu className="size-3.5" aria-hidden />
+                    <HugeiconsIcon icon={CpuIcon} strokeWidth={1.5} className="size-3.5" aria-hidden />
                     <span>{MODEL_LABELS[model]}</span>
-                    <ChevronDown className="size-3 text-muted-foreground/70" aria-hidden />
+                    <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={1.5} className="size-3 text-muted-foreground/70" aria-hidden />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-44">
@@ -144,7 +146,7 @@ export function Composer({
                     : "text-muted-foreground hover:bg-accent hover:text-foreground",
                 )}
               >
-                <Globe className="size-3.5" aria-hidden />
+                <HugeiconsIcon icon={Link01Icon} strokeWidth={1.5} className="size-3.5" aria-hidden />
                 <span>Web search</span>
               </button>
             </div>
@@ -159,7 +161,7 @@ export function Composer({
                   aria-label="Stop generating"
                   className="size-8 rounded-full"
                 >
-                  <Square className="size-3 fill-current" aria-hidden />
+                  <HugeiconsIcon icon={Layers01Icon} strokeWidth={1.5} className="size-3 fill-current" aria-hidden />
                 </Button>
               ) : (
                 <Button
@@ -174,7 +176,7 @@ export function Composer({
                       : "bg-muted text-muted-foreground/50"
                   )}
                 >
-                  <ArrowUpIcon className="size-4" aria-hidden />
+                  <HugeiconsIcon icon={ArrowUp01Icon} strokeWidth={1.5} className="size-4" aria-hidden />
                 </Button>
               )}
             </div>

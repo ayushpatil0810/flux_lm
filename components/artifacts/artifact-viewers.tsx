@@ -1,8 +1,10 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ListSettingIcon, ListIcon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
 import dynamic from "next/dynamic";
-import { FadersHorizontalIcon as LayoutGrid, ListIcon as List } from "@/components/ui/icons";
+;
 
 import type { LearningArtifact, LearningArtifactContent } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -524,7 +526,7 @@ function MindmapViewer({ content }: { content: LearningArtifactContent }) {
             onClick={() => setViewMode("flow")}
             className="h-7 gap-1.5 px-2.5 text-xs font-medium"
           >
-            <LayoutGrid className="size-3.5" />
+            <HugeiconsIcon icon={ListSettingIcon} strokeWidth={1.5} className="size-3.5" />
             Interactive Diagram
           </Button>
           <Button
@@ -533,7 +535,7 @@ function MindmapViewer({ content }: { content: LearningArtifactContent }) {
             onClick={() => setViewMode("tree")}
             className="h-7 gap-1.5 px-2.5 text-xs font-medium"
           >
-            <List className="size-3.5" />
+            <HugeiconsIcon icon={ListIcon} strokeWidth={1.5} className="size-3.5" />
             Outline View
           </Button>
         </div>

@@ -1,7 +1,9 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Loading02Icon, Cancel01Icon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
-import { SpinnerGapIcon as Loader2, CloseIcon } from "@/components/ui/icons";
+;
 
 import { formatDate } from "@/lib/utils";
 import { useArtifact, useDeleteArtifact } from "@/hooks/use-artifacts";
@@ -106,7 +108,7 @@ export function ArtifactPreview({
               onClick={onClose}
               aria-label="Close preview"
             >
-              <CloseIcon className="size-4" />
+              <HugeiconsIcon icon={Cancel01Icon} strokeWidth={1.5} className="size-4" />
             </Button>
           </div>
         </div>
@@ -117,7 +119,7 @@ export function ArtifactPreview({
               role="status"
               className="flex min-h-[240px] flex-col items-center justify-center gap-3 text-center"
             >
-              <Loader2
+              <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5}
                 className="size-4 animate-spin text-muted-foreground"
                 aria-hidden
               />

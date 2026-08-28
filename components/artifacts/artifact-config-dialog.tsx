@@ -1,4 +1,6 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Loading02Icon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
 
@@ -22,7 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SpinnerGapIcon } from "@/components/ui/icons";
+;
 import { cn } from "@/lib/utils";
 
 // ── Per-type config schemas ─────────────────────────────────────────────────
@@ -406,7 +408,7 @@ export function ArtifactConfigDialog({
               >
                 {createArtifact.isPending ? (
                   <>
-                    <SpinnerGapIcon className="size-4 animate-spin" aria-hidden />
+                    <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5} className="size-4 animate-spin" aria-hidden />
                     Starting…
                   </>
                 ) : (

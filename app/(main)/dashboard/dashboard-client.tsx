@@ -1,8 +1,10 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Folder01Icon, ArrowRight01Icon, Delete01Icon, PlusSignIcon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
 import Link from "next/link";
-import { FolderIcon as Folder, ArrowRightIcon as ArrowRight, TrashIcon as Trash2, PlusIcon as Plus } from "@/components/ui/icons";
+;
 
 import type { Workspace } from "@/lib/api";
 import { getErrorMessage } from "@/lib/api";
@@ -50,7 +52,7 @@ export function DashboardClient({ initialWorkspaces }: { initialWorkspaces: Work
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <Folder className="size-5" />
+                      <HugeiconsIcon icon={Folder01Icon} strokeWidth={1.5} className="size-5" />
                     </div>
                     <Button
                       variant="ghost"
@@ -62,7 +64,7 @@ export function DashboardClient({ initialWorkspaces }: { initialWorkspaces: Work
                       }}
                       title="Delete workspace"
                     >
-                      <Trash2 className="size-4" />
+                      <HugeiconsIcon icon={Delete01Icon} strokeWidth={1.5} className="size-4" />
                     </Button>
                   </div>
                   <div>
@@ -84,7 +86,7 @@ export function DashboardClient({ initialWorkspaces }: { initialWorkspaces: Work
                     className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
                   >
                     Enter Workspace
-                    <ArrowRight className="size-4" />
+                    <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={1.5} className="size-4" />
                   </Link>
                 </div>
               </div>
@@ -93,7 +95,7 @@ export function DashboardClient({ initialWorkspaces }: { initialWorkspaces: Work
         ) : (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/70 p-12 text-center bg-card/30">
             <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-4">
-              <Folder className="size-6" />
+              <HugeiconsIcon icon={Folder01Icon} strokeWidth={1.5} className="size-6" />
             </div>
             <h3 className="font-serif text-xl font-medium tracking-tight">
               No workspaces yet
@@ -105,7 +107,7 @@ export function DashboardClient({ initialWorkspaces }: { initialWorkspaces: Work
               onClick={() => setCreateOpen(true)}
               className="mt-6 gap-1.5"
             >
-              <Plus className="size-4" />
+              <HugeiconsIcon icon={PlusSignIcon} strokeWidth={1.5} className="size-4" />
               New Workspace
             </Button>
           </div>

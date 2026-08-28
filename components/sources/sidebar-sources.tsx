@@ -1,4 +1,6 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Cancel01Icon, MoreHorizontalIcon, FileUploadIcon, Link01Icon, PlayCircle02Icon, File01Icon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
 
@@ -21,14 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { sourceSubtitle } from "./source-meta";
-import {
-  CloseIcon,
-  MoreHorizontalIcon,
-  FileArrowUpIcon,
-  LinkIcon,
-  PlayCircleIcon,
-  FileIcon,
-} from "@/components/ui/icons";
+;
 import {
   Dialog,
   DialogContent,
@@ -54,25 +49,25 @@ const IMPORT_TYPES: {
     id: "pdf",
     label: "PDF",
     hint: "Upload a file",
-    Icon: FileArrowUpIcon,
+    Icon: (props) => <HugeiconsIcon icon={FileUploadIcon} strokeWidth={1.5} {...props} />,
   },
   {
     id: "website",
     label: "Website",
     hint: "Any web page",
-    Icon: LinkIcon,
+    Icon: (props) => <HugeiconsIcon icon={Link01Icon} strokeWidth={1.5} {...props} />,
   },
   {
     id: "youtube",
     label: "YouTube",
     hint: "Video transcript",
-    Icon: PlayCircleIcon,
+    Icon: (props) => <HugeiconsIcon icon={PlayCircle02Icon} strokeWidth={1.5} {...props} />,
   },
   {
     id: "text",
     label: "Note",
     hint: "Plain text",
-    Icon: FileIcon,
+    Icon: (props) => <HugeiconsIcon icon={File01Icon} strokeWidth={1.5} {...props} />,
   },
 ];
 
@@ -190,28 +185,40 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
               aria-label="Close sources panel"
               className="ml-1 flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
             >
-              <CloseIcon className="size-3.5" aria-hidden />
+              <HugeiconsIcon icon={Cancel01Icon} strokeWidth={1.5} className="size-3.5" aria-hidden />
             </button>
           ) : null}
         </div>
       </div>
 
       {/* Upload type cards */}
-      <div className="shrink-0 px-3 pb-3">
+      <div className="shrink-0 px-3 pb-4 pt-2">
         <div className="grid grid-cols-2 gap-2">
           {IMPORT_TYPES.map(({ id, label, hint, Icon }) => (
             <button
               key={id}
               type="button"
               onClick={() => setImportType(id)}
-              className="flex flex-col items-center gap-1.5 rounded-xl border border-border/40 bg-card/60 px-2 py-3 text-center transition-colors hover:border-primary/40 hover:bg-primary/5"
+              className="group relative flex flex-col items-center gap-2 overflow-hidden rounded-xl border border-border/50 bg-card/40 px-2 py-3.5 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
             >
-              <div className="flex size-8 items-center justify-center rounded-lg bg-white/5 text-muted-foreground">
-                <Icon className="size-4" aria-hidden />
+              {/* Subtle noise texture */}
+              <div 
+                className="pointer-events-none absolute inset-0 opacity-[0.02] mix-blend-overlay" 
+                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} 
+              />
+              {/* Hover glow effect */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              
+              <div className="relative z-10 flex size-9 items-center justify-center rounded-[10px] bg-primary/10 text-primary shadow-sm transition-transform duration-300 group-hover:scale-110">
+                <Icon className="size-4.5" aria-hidden />
               </div>
-              <div>
-                <p className="text-[12px] font-medium leading-tight">{label}</p>
-                <p className="text-[11px] text-muted-foreground">{hint}</p>
+              <div className="relative z-10">
+                <p className="text-[12px] font-semibold tracking-tight text-foreground/90 transition-colors group-hover:text-primary">
+                  {label}
+                </p>
+                <p className="mt-0.5 text-[11px] text-muted-foreground/80">
+                  {hint}
+                </p>
               </div>
             </button>
           ))}
@@ -281,7 +288,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                             className="size-7 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 data-[state=open]:opacity-100"
                             aria-label={`Options for ${source.title}`}
                           >
-                            <MoreHorizontalIcon className="size-4" aria-hidden />
+                            <HugeiconsIcon icon={MoreHorizontalIcon} strokeWidth={1.5} className="size-4" aria-hidden />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">

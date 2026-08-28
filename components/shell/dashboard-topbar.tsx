@@ -1,8 +1,10 @@
 "use client"
+import { HugeiconsIcon } from '@hugeicons/react';
+import { PlusSignIcon } from '@hugeicons/core-free-icons';
 
 import * as React from 'react'
 import { usePathname } from 'next/navigation'
-import { PlusIcon as Plus } from "@/components/ui/icons";
+;
 
 import { Button } from '@/components/ui/button'
 import { SidebarTrigger } from '@/components/ui/sidebar'
@@ -31,7 +33,7 @@ export function DashboardTopbar({ onNewWorkspace }: DashboardTopbarProps) {
       description = 'Select or configure an active knowledge workspace.'
       actions = onNewWorkspace ? (
         <Button onClick={onNewWorkspace} className="h-9 gap-1.5 px-3.5">
-          <Plus className="size-4" />
+          <HugeiconsIcon icon={PlusSignIcon} strokeWidth={1.5} className="size-4" />
           New Workspace
         </Button>
       ) : null

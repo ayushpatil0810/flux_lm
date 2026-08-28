@@ -1,8 +1,10 @@
 "use client";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Delete01Icon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { TrashIcon as Trash2 } from "@/components/ui/icons";
+;
 
 import { getErrorMessage, getFieldErrors, type Workspace } from "@/lib/api";
 import {
@@ -233,7 +235,7 @@ export function EditWorkspaceDialog({
               onClick={() => setDeleteOpen(true)}
               className="flex items-center gap-1.5 text-xs text-muted-foreground/60 transition-colors hover:text-destructive"
             >
-              <Trash2 className="size-3.5" aria-hidden />
+              <HugeiconsIcon icon={Delete01Icon} strokeWidth={1.5} className="size-3.5" aria-hidden />
               Delete workspace
             </button>
 

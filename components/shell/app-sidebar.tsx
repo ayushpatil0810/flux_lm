@@ -1,20 +1,12 @@
 "use client"
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Logout01Icon, BookOpen01Icon, SparkleIcon, SidebarLeftIcon, Cards01Icon, UserIcon, Home01Icon, Clock01Icon } from '@hugeicons/core-free-icons';
 
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import {
-  LogOutIcon,
-  BookOpenIcon as BookOpen,
-  SparklesIcon as Sparkles,
-} from '@/components/ui/icons'
-import {
-  SidebarCollapseIcon,
-  ToggleIcon,
-  UserIcon,
-  HomeIcon,
-  ClockIcon,
-} from '@/components/ui/icons'
+
+
 import { FluxLogo } from '@/components/ui/logo'
 import {
   DropdownMenu,
@@ -125,7 +117,7 @@ function ProfileItem() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <SidebarMenuButton tooltip="Profile" className={menuButtonClassName}>
-            <UserIcon />
+            <HugeiconsIcon icon={UserIcon} strokeWidth={1.5} />
             <span>Profile</span>
           </SidebarMenuButton>
         </DropdownMenuTrigger>
@@ -148,7 +140,7 @@ function ProfileItem() {
             disabled={isSigningOut}
             onClick={handleSignOut}
           >
-            <LogOutIcon className="mr-2 h-4 w-4" />
+            <HugeiconsIcon icon={Logout01Icon} strokeWidth={1.5} className="mr-2 h-4 w-4" />
             {isSigningOut ? 'Signing out...' : 'Log out'}
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -172,7 +164,7 @@ function CollapseControl({
         className="flex size-9.5 shrink-0 items-center justify-center rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
         aria-label="Collapse sidebar"
       >
-        <SidebarCollapseIcon className="-rotate-90" />
+        <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} className="-rotate-90" />
       </button>
     )
   }
@@ -189,7 +181,7 @@ function CollapseControl({
           className="flex size-10 items-center justify-center rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
           aria-label="Expand sidebar"
         >
-          <SidebarCollapseIcon className="rotate-90" />
+          <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} className="rotate-90" />
         </button>
       </div>
     </div>
@@ -208,8 +200,8 @@ export function AppSidebar({ workspace, onNavigate, onNewWorkspace, onWorkspaceS
   const collapsed = state === 'collapsed'
 
   const generalNavItems: NavigationItem[] = [
-    { name: 'Workspaces', href: '/dashboard', icon: HomeIcon },
-    { name: 'Memories', href: '/dashboard/memories', icon: ClockIcon },
+    { name: 'Workspaces', href: '/dashboard', icon: (props) => <HugeiconsIcon icon={Home01Icon} strokeWidth={1.5} {...props} /> },
+    { name: 'Memories', href: '/dashboard/memories', icon: (props) => <HugeiconsIcon icon={Clock01Icon} strokeWidth={1.5} {...props} /> },
   ]
 
   return (
