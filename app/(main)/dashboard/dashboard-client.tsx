@@ -47,18 +47,27 @@ export function DashboardClient({ initialWorkspaces }: { initialWorkspaces: Work
             {workspaces.map((ws) => (
               <div
                 key={ws.id}
-                className="group relative flex flex-col justify-between rounded-xl border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-md"
+                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/50 bg-card/40 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 cursor-pointer"
               >
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                {/* Subtle noise texture */}
+                <div 
+                  className="pointer-events-none absolute inset-0 opacity-[0.02] mix-blend-overlay" 
+                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} 
+                />
+                {/* Hover glow effect */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                
+                <div className="relative z-20 flex flex-col gap-4 pointer-events-none">
+                  <div className="flex items-center justify-between pointer-events-none">
+                    <div className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm transition-transform duration-300 group-hover:scale-110 pointer-events-none">
                       <HugeiconsIcon icon={Folder01Icon} strokeWidth={1.5} className="size-5" />
                     </div>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="size-8 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10"
+                      className="relative z-20 size-8 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10 pointer-events-auto"
                       onClick={(e) => {
+                        e.preventDefault();
                         e.stopPropagation();
                         setDeleteTarget(ws);
                       }}
@@ -68,27 +77,27 @@ export function DashboardClient({ initialWorkspaces }: { initialWorkspaces: Work
                     </Button>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg tracking-tight">
+                    <h3 className="font-semibold text-lg tracking-tight text-foreground/90 transition-colors group-hover:text-primary">
                       {ws.title}
                     </h3>
-                    <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
+                    <p className="text-[13px] text-muted-foreground/80 line-clamp-2 mt-1.5 leading-relaxed">
                       {ws.description || "No description provided."}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-6 flex items-center justify-between border-t pt-4">
-                  <span className="text-xs text-muted-foreground font-mono">
-                    {ws.id.substring(0, 8)}...
-                  </span>
-                  <Link
-                    href={`/workspace/${ws.id}`}
-                    className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                  >
-                    Enter Workspace
+                <div className="relative z-10 mt-6 flex items-center justify-end pointer-events-none">
+                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-primary opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                    Open
                     <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={1.5} className="size-4" />
-                  </Link>
+                  </span>
                 </div>
+
+                <Link 
+                  href={`/workspace/${ws.id}`} 
+                  className="absolute inset-0 z-10" 
+                  aria-label={`Open ${ws.title}`} 
+                />
               </div>
             ))}
           </div>

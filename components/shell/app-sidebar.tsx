@@ -1,6 +1,6 @@
 "use client"
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Logout01Icon, BookOpen01Icon, SparkleIcon, SidebarLeftIcon, Cards01Icon, UserIcon, Home01Icon, Clock01Icon } from '@hugeicons/core-free-icons';
+import { Logout01Icon, BookOpen01Icon, SparkleIcon, SidebarLeftIcon, Cards01Icon, UserIcon, Home01Icon, Clock01Icon, SidebarRightIcon } from '@hugeicons/core-free-icons';
 
 import * as React from 'react'
 import Link from 'next/link'
@@ -164,7 +164,7 @@ function CollapseControl({
         className="flex size-9.5 shrink-0 items-center justify-center rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
         aria-label="Collapse sidebar"
       >
-        <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} className="-rotate-90" />
+        <HugeiconsIcon icon={SidebarRightIcon} strokeWidth={1.5} />
       </button>
     )
   }
@@ -181,7 +181,7 @@ function CollapseControl({
           className="flex size-10 items-center justify-center rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
           aria-label="Expand sidebar"
         >
-          <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} className="rotate-90" />
+          <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} />
         </button>
       </div>
     </div>

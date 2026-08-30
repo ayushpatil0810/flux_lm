@@ -16,11 +16,20 @@ export const CHUNK_SIZE = 1000;
 /** Character overlap between consecutive chunks at split boundaries. */
 export const CHUNK_OVERLAP = 100;
 
-/** Number of Pinecone chunks to retrieve per chat query. */
+/** Number of Pinecone chunks to retrieve per chat query (baseline / per sub-search in advanced pipeline). */
 export const RAG_TOP_K = 6;
 
 /** Minimum cosine similarity score for a retrieved chunk to be included in context. */
 export const RAG_MIN_SCORE = 0.35;
+
+/** Candidates fetched per sub-search in the advanced RAG pipeline (query + HyDE vectors). */
+export const RAG_CANDIDATE_FETCH_K = 12;
+
+/** Final chunks surfaced to the LLM after RRF fusion and deduplication. */
+export const RAG_FINAL_TOP_K = 8;
+
+/** Fast chat model used for query enhancement and HyDE passage generation. */
+export const RAG_HYDE_MODEL = "gpt-4o-mini";
 
 /** Enqueue a conversation summary job every N persisted messages. */
 export const CONVERSATION_SUMMARY_INTERVAL = 8;

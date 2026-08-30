@@ -1,6 +1,4 @@
-import { RAG_MIN_SCORE, RAG_TOP_K } from "@/lib/constants";
-import { generateEmbedding } from "@/lib/openai";
-import { querySimilarity } from "@/lib/pinecone";
+import { retrieveWorkspaceContextAdvanced } from "@/lib/rag";
 import type { UIMessage } from "ai";
 
 export function getTextFromUIMessage(message: UIMessage) {
@@ -50,47 +48,7 @@ export async function retrieveWorkspaceContext(
     workspaceId: string,
     query: string,
 ): Promise<RetrievedChunk[]> {
-    const embedding = await generateEmbedding(query);
-    const matches = await querySimilarity({
-        vector: embedding,
-        workspaceId,
-        topK: RAG_TOP_K,
-        minScore: RAG_MIN_SCORE,
-    });
-
-    const chunks: RetrievedChunk[] = [];
-
-    for (const match of matches) {
-        const score = match.score ?? 0;
-        const metadata = match.metadata as
-            | Record<string, unknown>
-            | undefined;
-        if (
-            !metadata ||
-            typeof metadata.sourceId !== "string" ||
-            typeof metadata.sourceTitle !== "string" ||
-            typeof metadata.sourceType !== "string" ||
-            typeof metadata.chunkId !== "string" ||
-            typeof metadata.text !== "string"
-        ) {
-            continue;
-        }
-
-        chunks.push({
-            sourceId: metadata.sourceId,
-            sourceTitle: metadata.sourceTitle,
-            sourceType: metadata.sourceType,
-            chunkId: metadata.chunkId,
-            chunkIndex: Number(metadata.chunkIndex ?? 0),
-            ...(typeof metadata.page === "number"
-                ? { page: metadata.page }
-                : {}),
-            text: metadata.text,
-            score,
-        });
-    }
-
-    return chunks;
+    return retrieveWorkspaceContextAdvanced(workspaceId, query);
 }
 
 export type UserMemoryContext = string;

@@ -73,7 +73,7 @@ export function ImportPdfForm({ workspaceId, onDone }: ImportFormProps) {
             const dropped = event.dataTransfer.files?.[0];
             if (dropped) acceptFile(dropped);
           }}
-          className="rounded-md border border-dashed px-4 py-7 text-center"
+          className={`overflow-hidden rounded-md border border-dashed px-4 text-center transition-all ${file ? "py-4" : "py-7"}`}
         >
           {file ? (
             <div className="flex flex-col items-center gap-1.5">

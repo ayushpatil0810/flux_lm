@@ -60,6 +60,14 @@ export function ChatView({ workspaceId, noSources, sourcesCount }: ChatViewProps
   const abortRef = React.useRef<AbortController | null>(null);
 
   /**
+   * Once the user sends their first message, keep the MessageList mounted
+   * even while transient query states (conversations list, messages) are
+   * resolving. This prevents the welcome screen from flashing back after
+   * the stream finishes and the new conversation ID is briefly unknown.
+   */
+  const hasEverStreamedRef = React.useRef(false);
+
+  /**
    * Keep a copy of the last stream so we can continue showing the optimistic
    * user + assistant messages while the persisted messages are being fetched
    * after the stream completes. This prevents the brief loading-spinner flash
@@ -81,6 +89,8 @@ export function ChatView({ workspaceId, noSources, sourcesCount }: ChatViewProps
     }
     setStream(null);
     setStreamError(null);
+    // Reset the "ever streamed" guard when moving workspaces.
+    hasEverStreamedRef.current = false;
   }
 
   // Clear the lastStream once the real messages are available.
@@ -102,6 +112,7 @@ export function ChatView({ workspaceId, noSources, sourcesCount }: ChatViewProps
     const content = text.trim();
     if (!content || stream) return;
 
+    hasEverStreamedRef.current = true;
     setStreamError(null);
     const newStream: StreamState = { userText: content, assistantText: "" };
     setStream(newStream);
@@ -196,7 +207,7 @@ export function ChatView({ workspaceId, noSources, sourcesCount }: ChatViewProps
         aria-label="Conversation"
         className="flex min-w-0 flex-1 flex-col bg-background"
       >
-        {activeConversationId || stream || streamError || lastStreamRef.current ? (
+        {hasEverStreamedRef.current || activeConversationId || stream || streamError || lastStreamRef.current ? (
           <>
             {activeConversationId && messagesQuery.isPending && !lastStreamRef.current ? (
               <LoadingState label="Loading conversation" />

@@ -3,7 +3,6 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowUp01Icon, ArrowDown01Icon, CpuIcon, Link01Icon, Layers01Icon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
-;
 
 import type { ChatModel } from "@/lib/api";
 import { CHAT_MODELS } from "@/lib/constants";
@@ -49,6 +48,15 @@ export function Composer({
 }: ComposerProps) {
   const [value, setValue] = React.useState("");
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const wasStreamingRef = React.useRef(false);
+
+  // Auto-focus textarea when streaming ends so the user can immediately type a follow-up.
+  React.useEffect(() => {
+    if (wasStreamingRef.current && !isStreaming) {
+      textareaRef.current?.focus();
+    }
+    wasStreamingRef.current = isStreaming;
+  }, [isStreaming]);
 
   React.useEffect(() => {
     if (autoFocus) textareaRef.current?.focus();

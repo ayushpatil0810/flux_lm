@@ -1,5 +1,6 @@
 import {
   keepPreviousData,
+  useIsMutating,
   useMutation,
   useQuery,
   useQueryClient,
@@ -14,6 +15,21 @@ import {
   type SourceListFilters,
 } from "@/lib/api";
 
+/** Builds a temporary optimistic Source placeholder shown while the real one is being created. */
+function optimisticSource(overrides: Partial<Source> & { title: string; type: Source["type"] }): Source {
+  return {
+    id: `optimistic-${Date.now()}`,
+    workspaceId: "",
+    status: "PENDING",
+    content: null,
+    url: null,
+    metadata: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    ...overrides,
+  };
+}
+
 const PROCESSING_STATUSES = new Set(["PENDING", "PROCESSING"]);
 
 /**
@@ -27,6 +43,8 @@ export function useSources(
   filters: SourceListFilters = {},
   options?: { enabled?: boolean }
 ) {
+  const isMutating = useIsMutating();
+
   return useQuery({
     queryKey: queryKeys.sources.list(workspaceId, filters),
     queryFn: () =>
@@ -36,6 +54,10 @@ export function useSources(
     retry: shouldRetry,
     placeholderData: keepPreviousData,
     refetchInterval: (query) => {
+      // Pause polling if we are currently importing a source to prevent
+      // background fetches from overwriting optimistic placeholders.
+      if (isMutating > 0) return false;
+
       const sources = query.state.data;
       return sources?.some((source) => PROCESSING_STATUSES.has(source.status))
         ? 4000
@@ -52,32 +74,86 @@ function useInvalidateSources(workspaceId: string) {
     });
 }
 
+/**
+ * Swaps the optimistic placeholder (identified by its temporary id) for the
+ * real Source returned by the server. Called in onSuccess so the item never
+ * disappears between the optimistic write and the background invalidation.
+ */
+function useReplaceOptimisticSource(workspaceId: string) {
+  const queryClient = useQueryClient();
+  return (realSource: Source, optimisticId: string) => {
+    queryClient.setQueriesData<Source[]>(
+      { queryKey: queryKeys.sources.all(workspaceId) },
+      (old) =>
+        old?.map((s) => (s.id === optimisticId ? realSource : s)) ?? [realSource],
+    );
+  };
+}
+
 export function useImportWebsiteSource(workspaceId: string) {
+  const queryClient = useQueryClient();
   const invalidate = useInvalidateSources(workspaceId);
+  const replaceOptimistic = useReplaceOptimisticSource(workspaceId);
   return useMutation({
     mutationFn: (input: { url: string; title?: string }) =>
       apiFetch<Source>(endpoints.sources.importWebsite(), {
         method: "POST",
         json: { workspaceId, ...input },
       }),
-    onSuccess: invalidate,
+    onMutate: async (input) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
+      const previous = queryClient.getQueriesData<Source[]>({ queryKey: queryKeys.sources.all(workspaceId) });
+      const placeholder = optimisticSource({ title: input.title ?? input.url, type: "WEBSITE", workspaceId });
+      queryClient.setQueriesData<Source[]>(
+        { queryKey: queryKeys.sources.all(workspaceId) },
+        (old) => [placeholder, ...(old ?? [])],
+      );
+      return { previous, optimisticId: placeholder.id };
+    },
+    onSuccess: (realSource, _input, context) => {
+      if (context?.optimisticId) replaceOptimistic(realSource, context.optimisticId);
+    },
+    onError: (_err, _input, context) => {
+      context?.previous?.forEach(([key, data]) => queryClient.setQueryData(key, data));
+    },
+    onSettled: invalidate,
   });
 }
 
 export function useImportYoutubeSource(workspaceId: string) {
+  const queryClient = useQueryClient();
   const invalidate = useInvalidateSources(workspaceId);
+  const replaceOptimistic = useReplaceOptimisticSource(workspaceId);
   return useMutation({
     mutationFn: (input: { url: string; title?: string }) =>
       apiFetch<Source>(endpoints.sources.importYoutube(), {
         method: "POST",
         json: { workspaceId, ...input },
       }),
-    onSuccess: invalidate,
+    onMutate: async (input) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
+      const previous = queryClient.getQueriesData<Source[]>({ queryKey: queryKeys.sources.all(workspaceId) });
+      const placeholder = optimisticSource({ title: input.title ?? input.url, type: "YOUTUBE", workspaceId });
+      queryClient.setQueriesData<Source[]>(
+        { queryKey: queryKeys.sources.all(workspaceId) },
+        (old) => [placeholder, ...(old ?? [])],
+      );
+      return { previous, optimisticId: placeholder.id };
+    },
+    onSuccess: (realSource, _input, context) => {
+      if (context?.optimisticId) replaceOptimistic(realSource, context.optimisticId);
+    },
+    onError: (_err, _input, context) => {
+      context?.previous?.forEach(([key, data]) => queryClient.setQueryData(key, data));
+    },
+    onSettled: invalidate,
   });
 }
 
 export function useImportTextSource(workspaceId: string) {
+  const queryClient = useQueryClient();
   const invalidate = useInvalidateSources(workspaceId);
+  const replaceOptimistic = useReplaceOptimisticSource(workspaceId);
   return useMutation({
     mutationFn: (input: {
       title: string;
@@ -88,12 +164,31 @@ export function useImportTextSource(workspaceId: string) {
         method: "POST",
         json: { workspaceId, ...input },
       }),
-    onSuccess: invalidate,
+    onMutate: async (input) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
+      const previous = queryClient.getQueriesData<Source[]>({ queryKey: queryKeys.sources.all(workspaceId) });
+      const sourceType: Source["type"] = input.type === "MARKDOWN" ? "MARKDOWN" : "TEXT";
+      const placeholder = optimisticSource({ title: input.title, type: sourceType, workspaceId });
+      queryClient.setQueriesData<Source[]>(
+        { queryKey: queryKeys.sources.all(workspaceId) },
+        (old) => [placeholder, ...(old ?? [])],
+      );
+      return { previous, optimisticId: placeholder.id };
+    },
+    onSuccess: (realSource, _input, context) => {
+      if (context?.optimisticId) replaceOptimistic(realSource, context.optimisticId);
+    },
+    onError: (_err, _input, context) => {
+      context?.previous?.forEach(([key, data]) => queryClient.setQueryData(key, data));
+    },
+    onSettled: invalidate,
   });
 }
 
 export function useImportPdfSource(workspaceId: string) {
+  const queryClient = useQueryClient();
   const invalidate = useInvalidateSources(workspaceId);
+  const replaceOptimistic = useReplaceOptimisticSource(workspaceId);
   return useMutation({
     mutationFn: (input: { file: File; title?: string }) => {
       const formData = new FormData();
@@ -105,7 +200,27 @@ export function useImportPdfSource(workspaceId: string) {
         formData,
       });
     },
-    onSuccess: invalidate,
+    onMutate: async (input) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
+      const previous = queryClient.getQueriesData<Source[]>({ queryKey: queryKeys.sources.all(workspaceId) });
+      const placeholder = optimisticSource({
+        title: input.title ?? input.file.name.replace(/\.pdf$/i, ""),
+        type: "PDF",
+        workspaceId,
+      });
+      queryClient.setQueriesData<Source[]>(
+        { queryKey: queryKeys.sources.all(workspaceId) },
+        (old) => [placeholder, ...(old ?? [])],
+      );
+      return { previous, optimisticId: placeholder.id };
+    },
+    onSuccess: (realSource, _input, context) => {
+      if (context?.optimisticId) replaceOptimistic(realSource, context.optimisticId);
+    },
+    onError: (_err, _input, context) => {
+      context?.previous?.forEach(([key, data]) => queryClient.setQueryData(key, data));
+    },
+    onSettled: invalidate,
   });
 }
 

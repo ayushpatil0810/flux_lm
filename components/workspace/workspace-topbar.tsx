@@ -1,6 +1,6 @@
 "use client";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Loading02Icon, Settings01Icon, SidebarLeftIcon } from '@hugeicons/core-free-icons';
+import { Loading02Icon, Settings01Icon, SidebarLeftIcon, SidebarRightIcon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
 import Link from "next/link";
@@ -9,7 +9,6 @@ import { useUpdateWorkspace } from "@/hooks/use-workspaces";
 import { useWorkspaceContext } from "@/components/shell/workspace-context";
 import { useWorkspacePanel } from "@/components/shell/workspace-panel-context";
 import { FluxLogo } from "@/components/ui/logo";
-;
 import { cn } from "@/lib/utils";
 
 interface WorkspaceTopbarProps {
@@ -75,11 +74,12 @@ export function WorkspaceTopbar({
         onClick={() => setLeftOpen(!leftOpen)}
         aria-label={leftOpen ? "Close sources panel" : "Open sources panel"}
         className={cn(
-          "flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground",
+          "flex h-8 items-center gap-1.5 px-2.5 rounded-lg text-sm font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground",
           leftOpen && "bg-white/5 text-foreground",
         )}
       >
-        <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} className="size-4 rotate-90" aria-hidden />
+        <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} className="size-4" aria-hidden />
+        <span>Sources</span>
       </button>
 
       {/* Logo — links to dashboard */}
@@ -141,9 +141,10 @@ export function WorkspaceTopbar({
         type="button"
         onClick={onOpenSettings}
         aria-label="Workspace settings"
-        className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+        className="flex h-8 items-center gap-1.5 px-2.5 rounded-lg text-sm font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
       >
         <HugeiconsIcon icon={Settings01Icon} strokeWidth={1.5} className="size-4" aria-hidden />
+        <span className="hidden sm:inline">Settings</span>
       </button>
 
       {/* Right panel toggle */}
@@ -152,11 +153,12 @@ export function WorkspaceTopbar({
         onClick={() => setRightOpen(!rightOpen)}
         aria-label={rightOpen ? "Close artifacts panel" : "Open artifacts panel"}
         className={cn(
-          "flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground",
+          "flex h-8 items-center gap-1.5 px-2.5 rounded-lg text-sm font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground",
           rightOpen && "bg-white/5 text-foreground",
         )}
       >
-        <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} className="size-4 -rotate-90" aria-hidden />
+        <span>Artifacts</span>
+        <HugeiconsIcon icon={SidebarRightIcon} strokeWidth={1.5} className="size-4" aria-hidden />
       </button>
     </header>
   );

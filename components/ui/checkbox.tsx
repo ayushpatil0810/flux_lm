@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Checkbox as CheckboxPrimitive } from "radix-ui"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { CheckmarkBadge01Icon as Check, MinusSignIcon as Minus } from "@hugeicons/core-free-icons"
+import { Tick01Icon as Check, MinusSignIcon as Minus } from "@hugeicons/core-free-icons"
 
 import { cn } from "@/lib/utils"
 

@@ -137,8 +137,8 @@ export function ArtifactPreview({
             >
               <h3 className="font-medium text-destructive">Generation failed</h3>
               <p className="mt-1 text-sm text-destructive/80">
-                There was an error creating this artifact. You may need to try
-                again with different sources.
+                {artifact.metadata?.processingError ||
+                  "There was an error creating this artifact. You may need to try again with different sources."}
               </p>
             </div>
           ) : (
