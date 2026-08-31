@@ -192,7 +192,7 @@ function getLayoutedElements(rawNodes: RawNode[], rawEdges: RawEdge[]) {
       id: edge.id || `e-${edge.source}-${edge.target}-${i}`,
       source: edge.source,
       target: edge.target,
-      type: "bezier",
+      type: "default",
       animated: false,
       style: {
         stroke: isRootEdge ? "var(--primary)" : "var(--border)",
@@ -288,7 +288,7 @@ export function MindmapFlow({ nodes: rawNodes, edges: rawEdges }: MindmapFlowPro
   }, [setNodes, setEdges]);
 
   return (
-    <div className="relative w-full h-full min-h-[500px] rounded-xl border border-border/80 bg-card/40 backdrop-blur-xs overflow-hidden shadow-xs">
+    <div className="relative w-full h-[500px] rounded-xl border border-border/80 bg-card/40 backdrop-blur-xs overflow-hidden shadow-xs">
       {viewMode === "tree" ? (
         <div className="flex h-full w-full flex-col items-center justify-center">
           <p className="text-sm text-muted-foreground">Outline view not implemented yet.</p>

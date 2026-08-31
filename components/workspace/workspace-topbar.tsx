@@ -79,7 +79,7 @@ export function WorkspaceTopbar({
         )}
       >
         <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} className="size-4" aria-hidden />
-        <span>Sources</span>
+        <span className="hidden sm:inline">Sources</span>
       </button>
 
       {/* Logo — links to dashboard */}
@@ -157,7 +157,7 @@ export function WorkspaceTopbar({
           rightOpen && "bg-white/5 text-foreground",
         )}
       >
-        <span>Artifacts</span>
+        <span className="hidden sm:inline">Artifacts</span>
         <HugeiconsIcon icon={SidebarRightIcon} strokeWidth={1.5} className="size-4" aria-hidden />
       </button>
     </header>

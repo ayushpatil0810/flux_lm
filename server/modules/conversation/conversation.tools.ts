@@ -6,7 +6,7 @@ import { logger } from "@/lib/logger";
 const log = logger.child({ module: "WebSearchTool" });
 
 const searchParameters = z.object({
-  query: z.string().describe("The search query to look up on the web."),
+  query: z.string().min(1).describe("The search query to look up on the web. Must not be empty."),
 });
 
 // The `as any` cast is necessary because this project uses Zod v4 (or a different version)
@@ -41,8 +41,8 @@ export const webSearchTool = tool({
         success: true,
         results: formattedResults,
       };
-    } catch (error) {
-      log.error({ error, query }, "Web search tool failed");
+    } catch (err) {
+      log.error({ err, query }, "Web search tool failed");
       return {
         success: false,
         message: "An error occurred while searching the web.",

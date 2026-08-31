@@ -155,7 +155,7 @@ export function Composer({
                 )}
               >
                 <HugeiconsIcon icon={Link01Icon} strokeWidth={1.5} className="size-3.5" aria-hidden />
-                <span>Web search</span>
+                <span className="hidden sm:inline">Web search</span>
               </button>
             </div>
 

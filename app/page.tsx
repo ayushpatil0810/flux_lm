@@ -115,6 +115,9 @@ const FAQS = [
   },
 ] as const;
 
+import { Menu01Icon as MenuIcon } from '@hugeicons/core-free-icons';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+
 function Logo() {
   return (
     <span className="flex items-center gap-2.5">
@@ -173,6 +176,43 @@ function Header() {
               <HugeiconsIcon icon={ArrowRight} aria-hidden="true" />
             </Link>
           </Button>
+
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="size-8">
+                  <HugeiconsIcon icon={MenuIcon} aria-hidden="true" className="size-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="flex flex-col gap-6 pt-12 w-[300px]">
+                <SheetTitle className="sr-only">Mobile menu</SheetTitle>
+                <SheetDescription className="sr-only">Mobile navigation menu</SheetDescription>
+                <div className="flex flex-col gap-4">
+                  {NAV_LINKS.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="text-lg font-medium text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                  <div className="h-px bg-border my-2" />
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Theme</span>
+                    <ThemeSwitch />
+                  </div>
+                  <Link
+                    href="/login"
+                    className="text-lg font-medium text-muted-foreground hover:text-foreground transition-colors sm:hidden"
+                  >
+                    Log in
+                  </Link>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </header>
