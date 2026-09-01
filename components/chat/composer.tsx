@@ -32,10 +32,6 @@ interface ComposerProps {
   autoFocus?: boolean;
 }
 
-/**
- * Chat composer: one bordered container with an auto-growing textarea,
- * a quiet model picker, and a web-search toggle.
- */
 export function Composer({
   isStreaming,
   onSend,
@@ -62,12 +58,12 @@ export function Composer({
     if (autoFocus) textareaRef.current?.focus();
   }, [autoFocus]);
 
-  function resize() {
-    const el = textareaRef.current;
-    if (!el) return;
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setValue(e.target.value);
+    const el = e.target;
     el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
-  }
+    el.style.height = `${Math.min(el.scrollHeight, 300)}px`;
+  };
 
   function submit() {
     const text = value.trim();
@@ -75,11 +71,13 @@ export function Composer({
     onSend(text);
     setValue("");
     const el = textareaRef.current;
-    if (el) el.style.height = "auto";
+    if (el) {
+      el.style.height = "auto";
+    }
   }
 
   return (
-    <div className="shrink-0 px-4 pb-4 pt-2 md:px-8">
+    <div className="shrink-0 px-4 pb-6 pt-2 md:px-8">
       <form
         className="mx-auto w-full max-w-3xl"
         onSubmit={(event) => {
@@ -87,44 +85,39 @@ export function Composer({
           submit();
         }}
       >
-        <div className="rounded-2xl border border-border/60 bg-background transition-colors focus-within:border-primary/60">
+        <div className="relative flex flex-col rounded-2xl border border-border/50 bg-card shadow-sm transition-all focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10">
           <textarea
             ref={textareaRef}
             rows={1}
             value={value}
-            onChange={(event) => {
-              setValue(event.target.value);
-              resize();
-            }}
+            onChange={handleInput}
             onKeyDown={(event) => {
               if (event.key === "Enter" && !event.shiftKey) {
                 event.preventDefault();
                 submit();
               }
             }}
-            placeholder="Ask anything about this workspace's sources…"
+            placeholder="Ask anything about this workspace..."
             aria-label="Message input"
-            disabled={isStreaming}
-            className="max-h-[200px] min-h-[52px] w-full resize-none bg-transparent px-4 py-3.5 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/60 focus:outline-none disabled:opacity-50"
+            // We intentionally do NOT disable the textarea while streaming so users can queue up thoughts.
+            className="max-h-[300px] min-h-[60px] w-full resize-none bg-transparent px-4 py-4 text-base leading-relaxed text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
           />
 
-      {/* Action bar */}
-          <div className="flex items-center justify-between gap-2 border-t border-border/40 px-2.5 py-2">
+          <div className="flex items-center justify-between gap-2 px-3 pb-3 pt-1">
             <div className="flex items-center gap-1.5">
-              {/* Model Picker */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
                     aria-label="Choose model"
-                    className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <HugeiconsIcon icon={CpuIcon} strokeWidth={1.5} className="size-3.5" aria-hidden />
+                    <HugeiconsIcon icon={CpuIcon} strokeWidth={1.5} className="size-4" aria-hidden />
                     <span>{MODEL_LABELS[model]}</span>
-                    <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={1.5} className="size-3 text-muted-foreground/70" aria-hidden />
+                    <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={1.5} className="size-3.5 opacity-60" aria-hidden />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-44">
+                <DropdownMenuContent align="start" className="w-48 rounded-xl">
                   <DropdownMenuRadioGroup
                     value={model}
                     onValueChange={(next) => onModelChange(next as ChatModel)}
@@ -133,7 +126,7 @@ export function Composer({
                       <DropdownMenuRadioItem
                         key={option}
                         value={option}
-                        className="text-xs"
+                        className="text-sm cursor-pointer rounded-lg py-2"
                       >
                         {MODEL_LABELS[option]}
                       </DropdownMenuRadioItem>
@@ -142,24 +135,23 @@ export function Composer({
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Web Search Toggle */}
               <button
                 type="button"
                 aria-pressed={webSearch}
                 onClick={() => onWebSearchChange(!webSearch)}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-md px-2 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   webSearch
                     ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
-                <HugeiconsIcon icon={Link01Icon} strokeWidth={1.5} className="size-3.5" aria-hidden />
-                <span className="hidden sm:inline">Web search</span>
+                <HugeiconsIcon icon={Link01Icon} strokeWidth={1.5} className="size-4" aria-hidden />
+                <span className="hidden sm:inline">Web Search</span>
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center">
               {isStreaming ? (
                 <Button
                   type="button"
@@ -167,9 +159,9 @@ export function Composer({
                   size="icon"
                   onClick={onStop}
                   aria-label="Stop generating"
-                  className="size-8 rounded-full"
+                  className="size-9 rounded-xl shadow-none"
                 >
-                  <HugeiconsIcon icon={Layers01Icon} strokeWidth={1.5} className="size-3 fill-current" aria-hidden />
+                  <HugeiconsIcon icon={Layers01Icon} strokeWidth={1.5} className="size-4 fill-current" aria-hidden />
                 </Button>
               ) : (
                 <Button
@@ -178,13 +170,13 @@ export function Composer({
                   disabled={value.trim().length === 0}
                   aria-label="Send message"
                   className={cn(
-                    "size-8 rounded-full transition-colors",
+                    "size-9 rounded-xl shadow-none transition-all duration-200",
                     value.trim().length > 0
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "bg-muted text-muted-foreground/50"
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:-translate-y-0.5"
+                      : "bg-muted text-muted-foreground/40"
                   )}
                 >
-                  <HugeiconsIcon icon={ArrowUp01Icon} strokeWidth={1.5} className="size-4" aria-hidden />
+                  <HugeiconsIcon icon={ArrowUp01Icon} strokeWidth={2} className="size-4" aria-hidden />
                 </Button>
               )}
             </div>

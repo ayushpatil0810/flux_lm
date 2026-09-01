@@ -126,7 +126,7 @@ export function SidebarArtifacts({
                   key={type}
                   type="button"
                   onClick={() => setActiveType(type)}
-                  className="group relative flex w-full items-center gap-3.5 overflow-hidden rounded-xl border border-border/50 bg-card/40 p-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+                  className="group relative flex w-full items-center gap-3.5 overflow-hidden rounded-xl border border-border/50 bg-card/40 p-3 text-left transition-colors duration-200 hover:border-primary/40 hover:bg-card/60"
                 >
                   {/* Subtle noise texture */}
                   <div 

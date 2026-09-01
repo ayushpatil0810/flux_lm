@@ -199,7 +199,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
               key={id}
               type="button"
               onClick={() => setImportType(id)}
-              className="group relative flex flex-col items-center gap-2 overflow-hidden rounded-xl border border-border/50 bg-card/40 px-2 py-3.5 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+              className="group relative flex flex-col items-center gap-2 overflow-hidden rounded-xl border border-border/50 bg-card/40 px-2 py-3.5 text-center transition-colors duration-200 hover:border-primary/40 hover:bg-card/60"
             >
               {/* Subtle noise texture */}
               <div 

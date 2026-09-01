@@ -268,9 +268,14 @@ export function ChatView({ workspaceId, noSources, sourcesCount }: ChatViewProps
                       <button
                         key={item.label}
                         onClick={() => void send(item.prompt)}
-                        className="rounded-lg border border-border/60 px-4 py-3 text-left text-sm text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="group flex flex-col justify-between rounded-xl border border-border/50 bg-card/40 p-4 text-left transition-all duration-300 hover:border-primary/40 hover:bg-card/60 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
-                        {item.label}
+                        <span className="text-sm font-medium text-foreground">
+                          {item.label}
+                        </span>
+                        <span className="mt-1 text-xs text-muted-foreground line-clamp-1">
+                          {item.prompt}
+                        </span>
                       </button>
                     ))}
                   </div>
