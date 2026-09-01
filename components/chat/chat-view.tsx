@@ -23,6 +23,7 @@ import {
 import { useSources } from "@/hooks/use-sources";
 import { useToast } from "@/components/providers/toast-provider";
 import { ErrorState, LoadingState } from "@/components/shell/states";
+import { ChatSkeleton } from "./chat-skeleton";
 import { Composer } from "./composer";
 import {
   MessageList,
@@ -198,7 +199,7 @@ export function ChatView({ workspaceId, noSources, sourcesCount }: ChatViewProps
   }
 
   if (isConversationsPending) {
-    return <LoadingState label="Loading workspace..." />;
+    return <ChatSkeleton />;
   }
 
   return (

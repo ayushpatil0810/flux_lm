@@ -1,36 +1,47 @@
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Settings01Icon as Settings } from "@hugeicons/core-free-icons";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function WorkspaceViewSkeleton() {
   return (
-    <div className="relative flex h-full w-full overflow-hidden bg-background">
-      <div className="flex min-w-0 flex-1 flex-col">
-        {/* Topbar Skeleton */}
-        <header className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border/30 px-3">
-          <div className="flex min-w-0 items-center gap-2">
-            <div className="h-4 w-32 bg-muted rounded animate-pulse" />
-          </div>
-          <button
-            type="button"
-            disabled
-            className="flex size-8 items-center justify-center rounded-md text-muted-foreground opacity-50"
-          >
-            <HugeiconsIcon icon={Settings} className="size-4" />
-          </button>
-        </header>
-
-        {/* Chat Area Skeleton */}
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-hidden p-4">
-          <div className="w-full max-w-3xl flex-1 flex flex-col justify-end gap-6 pb-6">
-            <div className="flex w-full flex-col gap-2">
-              <div className="h-20 w-3/4 rounded-2xl rounded-tl-sm bg-muted animate-pulse" />
-            </div>
-            <div className="flex w-full flex-col gap-2 items-end">
-              <div className="h-12 w-1/2 rounded-2xl rounded-tr-sm bg-primary/20 animate-pulse" />
-            </div>
-          </div>
-          <div className="w-full max-w-3xl h-14 rounded-full border bg-muted/50 animate-pulse mt-4" />
+    <div className="flex h-full flex-col overflow-hidden bg-background">
+      {/* Topbar Skeleton */}
+      <header className="flex h-12 shrink-0 items-center justify-between border-b border-border/30 px-3 md:px-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <Skeleton className="size-6 rounded-md" />
+          <Skeleton className="h-5 w-32 rounded-md" />
         </div>
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-8 w-24 rounded-md hidden md:block" />
+          <Skeleton className="h-8 w-24 rounded-md hidden md:block" />
+          <Skeleton className="size-8 rounded-md" />
+        </div>
+      </header>
+
+      {/* Three-column body skeleton */}
+      <div className="flex min-h-0 flex-1 overflow-hidden relative">
+        {/* Left Panel Skeleton (Sources) */}
+        <div className="hidden w-[280px] shrink-0 flex-col border-r border-border/30 md:flex p-4 gap-4">
+           <Skeleton className="h-8 w-full rounded-md" />
+           <Skeleton className="h-12 w-full rounded-lg" />
+           <Skeleton className="h-12 w-full rounded-lg" />
+           <Skeleton className="h-12 w-full rounded-lg" />
+        </div>
+
+        {/* Center (Chat) Skeleton */}
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden items-center p-4">
+           <div className="w-full max-w-3xl flex-1 flex flex-col justify-end gap-6 pb-6">
+              <div className="flex w-full justify-end">
+                <Skeleton className="h-12 w-[60%] rounded-2xl" />
+              </div>
+              <div className="flex w-full justify-start">
+                <Skeleton className="h-32 w-[85%] rounded-2xl" />
+              </div>
+           </div>
+           
+           {/* Composer Skeleton */}
+           <div className="w-full max-w-3xl shrink-0 px-4 md:px-8 pb-6 pt-2">
+             <Skeleton className="h-32 w-full rounded-2xl" />
+           </div>
+        </main>
       </div>
     </div>
   );

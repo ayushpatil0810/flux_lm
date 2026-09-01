@@ -1,13 +1,14 @@
 import { Suspense } from "react";
 import { WorkspaceShell } from "@/components/shell/workspace-shell";
-import { LoadingState } from "@/components/shell/states";
+import { WorkspaceViewSkeleton } from "@/components/workspace/workspace-view-skeleton";
+
 export default function WorkspaceLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <Suspense fallback={<LoadingState label="Loading workspace" />}>
+    <Suspense fallback={<WorkspaceViewSkeleton />}>
       <WorkspaceShell>{children}</WorkspaceShell>
     </Suspense>
   );

@@ -5,7 +5,8 @@ import Link from "next/link";
 
 import { ApiClientError, getErrorMessage } from "@/lib/api";
 import { useWorkspaceContext } from "@/components/shell/workspace-context";
-import { ErrorState, LoadingState } from "@/components/shell/states";
+import { ErrorState } from "@/components/shell/states";
+import { WorkspaceViewSkeleton } from "@/components/workspace/workspace-view-skeleton";
 import { Button } from "@/components/ui/button";
 
 interface WorkspaceShellProps {
@@ -23,7 +24,7 @@ export function WorkspaceShell({
   const { data: workspace, isPending, error, refetch } = useWorkspaceContext();
 
   if (isPending) {
-    return <LoadingState label="Loading workspace" />;
+    return <WorkspaceViewSkeleton />;
   }
 
   if (error || !workspace) {
