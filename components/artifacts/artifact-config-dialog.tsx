@@ -326,8 +326,9 @@ export function ArtifactConfigDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-md gap-0 p-0 overflow-hidden flex flex-col max-h-[90vh]">
+        {/* Header — pinned */}
+        <DialogHeader className="px-5 pt-5 pb-4 border-b border-border/30 shrink-0">
           <DialogTitle className="font-serif text-heading">
             Generate {type ? ARTIFACT_TYPE_LABELS[type].toLowerCase() : ""}
           </DialogTitle>
@@ -336,87 +337,94 @@ export function ArtifactConfigDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {readySources.length === 0 ? (
-          <div className="rounded-md border border-dashed px-4 py-6 text-center">
-            <p className="text-sm font-medium">No ready sources</p>
-            <p className="mx-auto mt-1.5 max-w-xs text-sm text-muted-foreground">
-              Add a source and wait for it to finish indexing before generating.
-            </p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="grid gap-4">
-            {/* Type-specific options */}
-            {renderTypeOptions()}
-
-            {/* Sources */}
-            <div className="space-y-1.5">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Sources
+        {/* Body — scrollable */}
+        <div className="flex-1 overflow-y-auto no-scrollbar px-5 py-4">
+          {readySources.length === 0 ? (
+            <div className="rounded-md border border-dashed px-4 py-6 text-center">
+              <p className="text-sm font-medium">No ready sources</p>
+              <p className="mx-auto mt-1.5 max-w-xs text-sm text-muted-foreground">
+                Add a source and wait for it to finish indexing before generating.
               </p>
-              <div className="max-h-40 overflow-y-auto rounded-lg border border-border/40 p-1.5">
-                {readySources.map((source) => (
-                  <label
-                    key={source.id}
-                    className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent"
-                  >
-                    <Checkbox
-                      checked={!excludedIds.has(source.id)}
-                      onCheckedChange={(checked) =>
-                        toggleSource(source.id, checked === true)
-                      }
-                      aria-label={`Include ${source.title}`}
-                    />
-                    <span className="truncate">{source.title}</span>
-                  </label>
-                ))}
+            </div>
+          ) : (
+            <form id="artifact-config-form" onSubmit={handleSubmit} className="flex flex-col gap-4">
+              {/* Type-specific options */}
+              {renderTypeOptions()}
+
+              {/* Sources */}
+              <div className="space-y-1.5">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Sources
+                </p>
+                <div className="max-h-40 overflow-y-auto rounded-lg border border-border/40 p-1.5">
+                  {readySources.map((source) => (
+                    <label
+                      key={source.id}
+                      className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent"
+                    >
+                      <Checkbox
+                        checked={!excludedIds.has(source.id)}
+                        onCheckedChange={(checked) =>
+                          toggleSource(source.id, checked === true)
+                        }
+                        aria-label={`Include ${source.title}`}
+                      />
+                      <span className="truncate">{source.title}</span>
+                    </label>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {selectedSources.length} of {readySources.length} selected
+                </p>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {selectedSources.length} of {readySources.length} selected
-              </p>
-            </div>
 
-            {/* Optional title */}
-            <div className="grid gap-1.5">
-              <Label htmlFor="artifact-config-title">
-                Title{" "}
-                <span className="font-normal text-muted-foreground">
-                  (optional)
-                </span>
-              </Label>
-              <Input
-                id="artifact-config-title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                maxLength={200}
-                placeholder="Leave blank for an automatic title"
-              />
-            </div>
+              {/* Optional title */}
+              <div className="grid gap-1.5">
+                <Label htmlFor="artifact-config-title">
+                  Title{" "}
+                  <span className="font-normal text-muted-foreground">
+                    (optional)
+                  </span>
+                </Label>
+                <Input
+                  id="artifact-config-title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  maxLength={200}
+                  placeholder="Leave blank for an automatic title"
+                />
+              </div>
+            </form>
+          )}
+        </div>
 
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={
-                  createArtifact.isPending || selectedSources.length === 0
-                }
-              >
-                {createArtifact.isPending ? (
-                  <>
-                    <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5} className="size-4 animate-spin" aria-hidden />
-                    Starting…
-                  </>
-                ) : (
-                  "Generate"
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
+        {/* Footer — pinned */}
+        {readySources.length > 0 && (
+          <div className="flex items-center justify-end gap-2 border-t border-border/30 px-5 py-3 shrink-0">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => onOpenChange(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              size="sm"
+              form="artifact-config-form"
+              disabled={createArtifact.isPending || selectedSources.length === 0}
+            >
+              {createArtifact.isPending ? (
+                <>
+                  <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5} className="size-4 animate-spin" aria-hidden />
+                  Starting…
+                </>
+              ) : (
+                "Generate"
+              )}
+            </Button>
+          </div>
         )}
       </DialogContent>
     </Dialog>

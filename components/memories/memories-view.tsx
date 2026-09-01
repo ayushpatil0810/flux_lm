@@ -3,7 +3,6 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { Loading02Icon, MoreHorizontalIcon, PlusSignIcon } from '@hugeicons/core-free-icons';
 
 import * as React from "react";
-;
 
 import { getErrorMessage, type MemoryItem } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
@@ -62,9 +61,6 @@ export function MemoriesView() {
       });
     }
   }
-  // The topbar context was removed, but users can still add memories
-  // via the empty state or we can add a button here if needed.
-  // For now, we'll let DashboardTopbar handle the static title/description.
 
   return (
     <>
@@ -92,7 +88,7 @@ export function MemoriesView() {
           ) : (
             <>
               <div className="mb-6 flex items-center justify-end">
-                <Button onClick={() => setAddOpen(true)} className="h-9 gap-1.5 px-3.5">
+                <Button onClick={() => setAddOpen(true)}>
                   <HugeiconsIcon icon={PlusSignIcon} strokeWidth={1.5} className="size-4" aria-hidden />
                   Add memory
                 </Button>
@@ -184,4 +180,3 @@ export function MemoriesView() {
     </>
   );
 }
-

@@ -9,6 +9,7 @@ import { useUpdateWorkspace } from "@/hooks/use-workspaces";
 import { useWorkspaceContext } from "@/components/shell/workspace-context";
 import { useWorkspacePanel } from "@/components/shell/workspace-panel-context";
 import { FluxLogo } from "@/components/ui/logo";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface WorkspaceTopbarProps {
@@ -69,18 +70,20 @@ export function WorkspaceTopbar({
   return (
     <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border/30 bg-background px-3">
       {/* Left panel toggle */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="sm"
         onClick={() => setLeftOpen(!leftOpen)}
         aria-label={leftOpen ? "Close sources panel" : "Open sources panel"}
         className={cn(
-          "flex h-8 items-center gap-1.5 px-2.5 rounded-lg text-sm font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground",
-          leftOpen && "bg-white/5 text-foreground",
+          "gap-1.5 text-muted-foreground",
+          leftOpen && "bg-muted text-foreground",
         )}
       >
         <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} className="size-4" aria-hidden />
         <span className="hidden sm:inline">Sources</span>
-      </button>
+      </Button>
 
       {/* Logo — links to dashboard */}
       <Link
@@ -137,29 +140,33 @@ export function WorkspaceTopbar({
       </div>
 
       {/* Settings */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="sm"
         onClick={onOpenSettings}
         aria-label="Workspace settings"
-        className="flex h-8 items-center gap-1.5 px-2.5 rounded-lg text-sm font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+        className="gap-1.5 text-muted-foreground"
       >
         <HugeiconsIcon icon={Settings01Icon} strokeWidth={1.5} className="size-4" aria-hidden />
         <span className="hidden sm:inline">Settings</span>
-      </button>
+      </Button>
 
       {/* Right panel toggle */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="sm"
         onClick={() => setRightOpen(!rightOpen)}
         aria-label={rightOpen ? "Close artifacts panel" : "Open artifacts panel"}
         className={cn(
-          "flex h-8 items-center gap-1.5 px-2.5 rounded-lg text-sm font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground",
-          rightOpen && "bg-white/5 text-foreground",
+          "gap-1.5 text-muted-foreground",
+          rightOpen && "bg-muted text-foreground",
         )}
       >
         <span className="hidden sm:inline">Artifacts</span>
         <HugeiconsIcon icon={SidebarRightIcon} strokeWidth={1.5} className="size-4" aria-hidden />
-      </button>
+      </Button>
     </header>
   );
 }

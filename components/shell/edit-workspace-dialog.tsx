@@ -244,7 +244,6 @@ export function EditWorkspaceDialog({
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-8 text-xs"
                 onClick={() => onOpenChange(false)}
               >
                 Cancel
@@ -252,7 +251,6 @@ export function EditWorkspaceDialog({
               <Button
                 type="submit"
                 size="sm"
-                className="h-8 text-xs"
                 disabled={
                   updateWorkspace.isPending ||
                   title.trim().length === 0 ||
