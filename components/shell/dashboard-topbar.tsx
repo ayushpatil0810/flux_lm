@@ -1,73 +1,51 @@
 "use client"
 import { HugeiconsIcon } from '@hugeicons/react';
-import { PlusSignIcon } from '@hugeicons/core-free-icons';
+import { Clock01Icon } from '@hugeicons/core-free-icons';
 
 import * as React from 'react'
-import { usePathname } from 'next/navigation'
-;
+import Link from 'next/link'
 
+import { FluxLogo } from '@/components/ui/logo'
+import { ThemeSwitch } from '@/components/ui/theme-switch'
 import { Button } from '@/components/ui/button'
-import { SidebarTrigger } from '@/components/ui/sidebar'
+import { UserMenu } from '@/components/shell/user-menu'
 
 interface DashboardTopbarProps {
-  onNewWorkspace?: () => void
+  onMemoriesOpen: () => void
 }
 
 /**
- * Top bar header for the global (non-workspace) routes: dashboard and
- * memories. Workspace routes render their own contextual header inside
- * the workspace view instead.
+ * Top bar for the dashboard. No sidebar — everything lives here:
+ * logo, memories trigger, theme toggle, and account menu.
  */
-export function DashboardTopbar({ onNewWorkspace }: DashboardTopbarProps) {
-  const pathname = usePathname()
-  const isDashboard = pathname === '/dashboard' || pathname === '/'
-  const isMemories = pathname.includes('/memories')
-
-  let title: string | undefined
-  let description: string | undefined
-  let actions: React.ReactNode | undefined
-
-  if (!title) {
-    if (isDashboard) {
-      title = 'Your Workspaces'
-      description = 'Select or configure an active knowledge workspace.'
-      actions = onNewWorkspace ? (
-        <Button onClick={onNewWorkspace} className="h-9 gap-1.5 px-3.5">
-          <HugeiconsIcon icon={PlusSignIcon} strokeWidth={1.5} className="size-4" />
-          New Workspace
-        </Button>
-      ) : null
-    } else if (isMemories) {
-      title = 'Memories'
-      description = 'Facts and preferences Flux remembers from your conversations, across all workspaces.'
-    } else {
-      title = 'Flux'
-      description = 'Intelligent research assistant workspace.'
-    }
-  }
-
+export function DashboardTopbar({ onMemoriesOpen }: DashboardTopbarProps) {
   return (
-    <header className="flex h-12 shrink-0 items-center justify-between gap-4 border-b border-border/30 px-4 md:h-14 md:px-6 bg-background">
-      <div className="flex min-w-0 items-center gap-3">
-        <SidebarTrigger className="size-8 shrink-0 md:hidden [&_svg]:size-4.5!" />
+    <header className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-border/30 px-5 bg-background">
+      {/* Left: logo + wordmark */}
+      <Link href="/dashboard" className="flex items-center gap-2.5 min-w-0">
+        <FluxLogo className="size-6 shrink-0 text-primary" />
+        <span className="text-base font-semibold tracking-tight truncate">Flux</span>
+      </Link>
 
-        <div className="flex flex-col gap-0 min-w-0">
-          <h1 className="font-sans text-sm font-medium tracking-tight text-foreground truncate">
-            {title}
-          </h1>
-          {description ? (
-            <p className="text-xs text-muted-foreground/70 truncate hidden sm:block">
-              {description}
-            </p>
-          ) : null}
+      {/* Right: icon actions + avatar */}
+      <div className="flex shrink-0 items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-8 text-muted-foreground hover:text-foreground"
+          onClick={onMemoriesOpen}
+          aria-label="Open memories"
+          title="Memories"
+        >
+          <HugeiconsIcon icon={Clock01Icon} strokeWidth={1.5} className="size-4.5" />
+        </Button>
+
+        <ThemeSwitch />
+
+        <div className="ml-1">
+          <UserMenu variant="avatar" />
         </div>
       </div>
-
-      {actions ? (
-        <div className="flex shrink-0 items-center gap-2">
-          {actions}
-        </div>
-      ) : null}
     </header>
   )
 }
