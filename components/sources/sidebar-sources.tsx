@@ -268,11 +268,23 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
             />
           </div>
         ) : sources.length === 0 ? (
-          <div className="flex flex-col items-center px-4 py-12 text-center">
-            <p className="text-sm font-medium">No sources yet</p>
-            <p className="text-muted-foreground mt-1 text-xs leading-relaxed">
-              Pick a type above to import your first source.
-            </p>
+          <div className="mx-3 my-4 relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-border/40 bg-card/30 px-4 py-10 text-center shadow-sm">
+            <div className="bg-noise absolute inset-0 z-0 opacity-[0.15] mix-blend-overlay" />
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="mb-3 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary ring-4 ring-primary/5">
+                <HugeiconsIcon
+                  icon={FileUploadIcon}
+                  strokeWidth={1.5}
+                  className="size-5"
+                />
+              </div>
+              <h3 className="text-[13px] font-semibold tracking-tight text-foreground">
+                No sources yet
+              </h3>
+              <p className="mt-1.5 max-w-[180px] text-xs text-muted-foreground leading-relaxed">
+                Pick a type above to import your first piece of knowledge.
+              </p>
+            </div>
           </div>
         ) : (
           <>
@@ -288,7 +300,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                 const subtitle = sourceSubtitle(source);
                 return (
                   <li key={source.id} className="group relative">
-                    <div className="hover:bg-accent/60 focus-within:bg-accent/60 flex items-start gap-1 rounded-lg px-3 py-2.5 transition-colors">
+                    <div className="border border-transparent hover:border-border/50 hover:bg-card/40 focus-within:border-border/50 focus-within:bg-card/40 hover:shadow-sm flex items-start gap-1 rounded-xl px-3 py-2.5 transition-all duration-200">
                       <button
                         type="button"
                         onClick={() => setPreviewSource(source)}

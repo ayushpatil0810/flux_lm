@@ -25,6 +25,8 @@ interface WorkspaceTopbarProps {
   onOpenSettings: () => void;
 }
 
+import { ThemeSwitch } from "@/components/ui/theme-switch";
+
 export function WorkspaceTopbar({
   workspaceId,
   onOpenSettings,
@@ -77,42 +79,42 @@ export function WorkspaceTopbar({
     .join(" · ");
 
   return (
-    <header className="border-border/30 bg-background flex h-12 shrink-0 items-center gap-2 border-b px-3">
-      {/* Left panel toggle */}
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => setLeftOpen(!leftOpen)}
-        aria-label={leftOpen ? "Close sources panel" : "Open sources panel"}
-        className={cn(
-          "text-muted-foreground gap-1.5",
-          leftOpen && "bg-muted text-foreground",
-        )}
-      >
-        <HugeiconsIcon
-          icon={SidebarLeftIcon}
-          strokeWidth={1.5}
-          className="size-4"
-          aria-hidden
-        />
-        <span className="hidden sm:inline">Sources</span>
-      </Button>
+    <header className="border-border/30 bg-background/80 flex h-14 shrink-0 items-center justify-between border-b px-4 backdrop-blur-xl relative z-40">
+      {/* 1. Left Zone: Logo & Sources */}
+      <div className="flex items-center gap-3">
+        <Link
+          href="/dashboard"
+          className="focus-visible:ring-primary/60 flex items-center gap-2 rounded-sm focus-visible:ring-2 focus-visible:outline-none transition-transform hover:scale-105"
+          aria-label="Back to dashboard"
+        >
+          <div className="bg-primary/10 text-primary flex size-8 items-center justify-center rounded-lg ring-4 ring-primary/5">
+            <FluxLogo className="size-4" />
+          </div>
+        </Link>
+        <span aria-hidden className="bg-border/50 h-5 w-px mx-1" />
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setLeftOpen(!leftOpen)}
+          aria-label={leftOpen ? "Close sources panel" : "Open sources panel"}
+          className={cn(
+            "text-muted-foreground gap-1.5 font-medium transition-colors hover:bg-accent/60",
+            leftOpen && "bg-accent/60 text-foreground shadow-sm",
+          )}
+        >
+          <HugeiconsIcon
+            icon={SidebarLeftIcon}
+            strokeWidth={1.5}
+            className="size-4.5"
+            aria-hidden
+          />
+          <span className="hidden sm:inline">Sources</span>
+        </Button>
+      </div>
 
-      {/* Logo — links to dashboard */}
-      <Link
-        href="/dashboard"
-        className="focus-visible:ring-primary/60 flex items-center gap-2 rounded-sm focus-visible:ring-2 focus-visible:outline-none"
-        aria-label="Back to dashboard"
-      >
-        <FluxLogo className="text-primary size-5" />
-      </Link>
-
-      {/* Divider */}
-      <span aria-hidden className="bg-border/50 h-4 w-px" />
-
-      {/* Workspace title — click to edit inline */}
-      <div className="flex min-w-0 flex-1 items-center gap-2">
+      {/* 2. Center Zone: Workspace Title */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 max-w-[40%]">
         {editing ? (
           <input
             ref={inputRef}
@@ -124,77 +126,74 @@ export function WorkspaceTopbar({
               if (e.key === "Enter") inputRef.current?.blur();
               if (e.key === "Escape") cancelEdit();
             }}
-            className="text-foreground ring-primary/40 focus:ring-primary/70 min-w-0 flex-1 rounded-md bg-transparent px-1.5 py-0.5 text-sm font-medium ring-1 outline-none"
+            className="text-foreground ring-primary/40 focus:ring-primary/70 min-w-0 flex-1 rounded-md bg-transparent px-2 py-1 text-sm font-semibold tracking-tight ring-1 outline-none text-center"
             maxLength={100}
             autoFocus
           />
         ) : (
-          <button
-            type="button"
-            onClick={startEditing}
-            className="text-foreground max-w-xs truncate rounded-md px-1.5 py-0.5 text-sm font-medium transition-colors hover:bg-white/5"
-            title="Click to rename"
-          >
-            {workspace?.title ?? "Workspace"}
-          </button>
+          <div className="flex flex-col items-center">
+            <button
+              type="button"
+              onClick={startEditing}
+              className="text-foreground truncate rounded-md px-2 py-0.5 text-[15px] font-semibold tracking-tight transition-colors hover:bg-white/5"
+              title="Click to rename"
+            >
+              {workspace?.title ?? "Workspace"}
+            </button>
+          </div>
         )}
 
         {updateWorkspace.isPending && (
           <HugeiconsIcon
             icon={Loading02Icon}
             strokeWidth={1.5}
-            className="text-muted-foreground size-3.5 shrink-0 animate-spin"
+            className="text-muted-foreground size-3.5 shrink-0 animate-spin absolute -right-6 top-1/2 -translate-y-1/2"
             aria-hidden
           />
         )}
-
-        {!editing && countLabel ? (
-          <span className="text-muted-foreground hidden shrink-0 text-xs sm:block">
-            {countLabel}
-          </span>
-        ) : null}
       </div>
 
-      {/* Settings */}
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={onOpenSettings}
-        aria-label="Workspace settings"
-        className="text-muted-foreground gap-1.5"
-      >
-        <HugeiconsIcon
-          icon={Settings01Icon}
-          strokeWidth={1.5}
-          className="size-4"
-          aria-hidden
-        />
-        <span className="hidden sm:inline">Settings</span>
-      </Button>
-
-      {/* Right panel toggle */}
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => setRightOpen(!rightOpen)}
-        aria-label={
-          rightOpen ? "Close artifacts panel" : "Open artifacts panel"
-        }
-        className={cn(
-          "text-muted-foreground gap-1.5",
-          rightOpen && "bg-muted text-foreground",
-        )}
-      >
-        <span className="hidden sm:inline">Artifacts</span>
-        <HugeiconsIcon
-          icon={SidebarRightIcon}
-          strokeWidth={1.5}
-          className="size-4"
-          aria-hidden
-        />
-      </Button>
+      {/* 3. Right Zone: Theme, Settings, Artifacts */}
+      <div className="flex items-center gap-2">
+        <ThemeSwitch className="size-8" />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={onOpenSettings}
+          aria-label="Workspace settings"
+          className="text-muted-foreground transition-colors hover:bg-accent/60 size-8"
+        >
+          <HugeiconsIcon
+            icon={Settings01Icon}
+            strokeWidth={1.5}
+            className="size-4.5"
+            aria-hidden
+          />
+        </Button>
+        <span aria-hidden className="bg-border/50 h-5 w-px mx-1" />
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setRightOpen(!rightOpen)}
+          aria-label={
+            rightOpen ? "Close artifacts panel" : "Open artifacts panel"
+          }
+          className={cn(
+            "text-muted-foreground gap-1.5 font-medium transition-colors hover:bg-accent/60",
+            rightOpen && "bg-accent/60 text-foreground shadow-sm",
+          )}
+        >
+          <span className="hidden sm:inline">Artifacts</span>
+          <HugeiconsIcon
+            icon={SidebarRightIcon}
+            strokeWidth={1.5}
+            className="size-4.5"
+            aria-hidden
+          />
+        </Button>
+      </div>
     </header>
   );
 }

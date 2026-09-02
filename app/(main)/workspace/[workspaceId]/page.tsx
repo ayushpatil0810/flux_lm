@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { WorkspaceView } from "@/components/workspace/workspace-view";
 import { WorkspaceViewSkeleton } from "@/components/workspace/workspace-view-skeleton";
 
+export const instant = false;
+
 export default async function WorkspaceIndexPage({
   params,
 }: {

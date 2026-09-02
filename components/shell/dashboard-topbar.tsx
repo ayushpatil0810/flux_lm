@@ -33,8 +33,8 @@ export function DashboardTopbar({ onMemoriesOpen }: DashboardTopbarProps) {
       <div className="flex shrink-0 items-center gap-1">
         <Button
           variant="ghost"
-          size="icon"
-          className="text-muted-foreground hover:text-foreground size-8"
+          size="sm"
+          className="h-8 gap-1.5 text-muted-foreground hover:text-foreground hover:bg-muted"
           onClick={onMemoriesOpen}
           aria-label="Open memories"
           title="Memories"
@@ -44,6 +44,7 @@ export function DashboardTopbar({ onMemoriesOpen }: DashboardTopbarProps) {
             strokeWidth={1.5}
             className="size-4.5"
           />
+          <span className="hidden sm:inline text-xs font-medium">Memories</span>
         </Button>
 
         <ThemeSwitch />
