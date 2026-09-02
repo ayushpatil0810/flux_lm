@@ -3,6 +3,7 @@
 import * as React from "react";
 
 interface UsePanelResizeOptions {
+  id?: string;
   initialWidth: number;
   minWidth: number;
   maxWidth: number;
@@ -20,6 +21,7 @@ interface UsePanelResizeResult {
  * On the left side, dragging right expands; on the right, dragging left expands.
  */
 export function usePanelResize({
+  id,
   initialWidth,
   minWidth,
   maxWidth,
@@ -30,6 +32,20 @@ export function usePanelResize({
   const dragging = React.useRef(false);
   const startX = React.useRef(0);
   const startWidth = React.useRef(0);
+
+  React.useEffect(() => {
+    if (id) {
+      const saved = localStorage.getItem(`flux-panel-${id}`);
+      if (saved) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed)) {
+          const valid = Math.min(maxWidth, Math.max(minWidth, parsed));
+          setWidth(valid);
+          currentWidth.current = valid;
+        }
+      }
+    }
+  }, [id, minWidth, maxWidth]);
 
   const onMouseDown = React.useCallback(
     (e: React.MouseEvent) => {
@@ -53,12 +69,15 @@ export function usePanelResize({
         dragging.current = false;
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
+        if (id) {
+          localStorage.setItem(`flux-panel-${id}`, currentWidth.current.toString());
+        }
       }
 
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onMouseUp);
     },
-    [side, minWidth, maxWidth],
+    [id, side, minWidth, maxWidth],
   );
 
   return { width, onMouseDown };

@@ -64,11 +64,20 @@ export function useDeleteWorkspace() {
           previousWorkspaces.filter((ws) => ws.id !== workspaceId)
         );
       }
-      return { previousWorkspaces };
+      
+      const previousDetail = queryClient.getQueryData<Workspace>(queryKeys.workspaces.detail(workspaceId));
+      if (previousDetail) {
+        queryClient.removeQueries({ queryKey: queryKeys.workspaces.detail(workspaceId) });
+      }
+
+      return { previousWorkspaces, previousDetail };
     },
     onError: (err, variables, context) => {
       if (context?.previousWorkspaces) {
         queryClient.setQueryData(queryKeys.workspaces.all, context.previousWorkspaces);
+      }
+      if (context?.previousDetail) {
+        queryClient.setQueryData(queryKeys.workspaces.detail(variables), context.previousDetail);
       }
     },
     onSettled: () => {

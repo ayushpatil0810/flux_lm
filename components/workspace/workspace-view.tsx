@@ -46,6 +46,7 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
 
   // Resizing hooks
   const leftResize = usePanelResize({
+    id: "sidebar-left",
     initialWidth: 280,
     minWidth: 240,
     maxWidth: 420,
@@ -53,6 +54,7 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
   });
 
   const rightResize = usePanelResize({
+    id: "sidebar-right",
     initialWidth: 320,
     minWidth: 280,
     maxWidth: 480,
@@ -60,6 +62,7 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
   });
 
   const previewResize = usePanelResize({
+    id: "preview-panel",
     initialWidth: 600,
     minWidth: 320,
     maxWidth: 1200,
