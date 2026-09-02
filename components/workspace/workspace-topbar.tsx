@@ -12,19 +12,23 @@ import { FluxLogo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+import { useSources } from "@/hooks/use-sources";
+import { useArtifacts } from "@/hooks/use-artifacts";
+
 interface WorkspaceTopbarProps {
   workspaceId: string;
-  sourcesCount: number;
-  artifactsCount: number;
   onOpenSettings: () => void;
 }
 
 export function WorkspaceTopbar({
   workspaceId,
-  sourcesCount,
-  artifactsCount,
   onOpenSettings,
 }: WorkspaceTopbarProps) {
+  const { data: sources } = useSources(workspaceId);
+  const { data: artifacts } = useArtifacts(workspaceId);
+  
+  const sourcesCount = sources?.length ?? 0;
+  const artifactsCount = artifacts?.length ?? 0;
   const { leftOpen, setLeftOpen, rightOpen, setRightOpen } =
     useWorkspacePanel();
   const workspaceCtx = useWorkspaceContext();

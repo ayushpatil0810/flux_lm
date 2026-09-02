@@ -26,6 +26,7 @@ export function usePanelResize({
   side,
 }: UsePanelResizeOptions): UsePanelResizeResult {
   const [width, setWidth] = React.useState(initialWidth);
+  const currentWidth = React.useRef(initialWidth);
   const dragging = React.useRef(false);
   const startX = React.useRef(0);
   const startWidth = React.useRef(0);
@@ -35,7 +36,7 @@ export function usePanelResize({
       e.preventDefault();
       dragging.current = true;
       startX.current = e.clientX;
-      startWidth.current = width;
+      startWidth.current = currentWidth.current;
 
       function onMouseMove(ev: MouseEvent) {
         if (!dragging.current) return;
@@ -44,6 +45,7 @@ export function usePanelResize({
             ? ev.clientX - startX.current
             : startX.current - ev.clientX;
         const next = Math.min(maxWidth, Math.max(minWidth, startWidth.current + delta));
+        currentWidth.current = next;
         setWidth(next);
       }
 
@@ -56,7 +58,7 @@ export function usePanelResize({
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onMouseUp);
     },
-    [width, side, minWidth, maxWidth],
+    [side, minWidth, maxWidth],
   );
 
   return { width, onMouseDown };

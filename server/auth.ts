@@ -8,6 +8,12 @@ import * as schema from "./db/schema/auth";
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", schema }),
   plugins: [jwt()],
+  session: {
+    cookieCache: {
+      enabled: true,
+      strategy: "jwt",
+    },
+  },
   baseURL: env.BETTER_AUTH_URL,
   secret: env.BETTER_AUTH_SECRET,
   emailAndPassword: { enabled: true },

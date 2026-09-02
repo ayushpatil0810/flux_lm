@@ -33,8 +33,6 @@ import {
 
 interface ChatViewProps {
   workspaceId: string;
-  noSources: boolean;
-  sourcesCount: number;
 }
 
 /**
@@ -42,12 +40,16 @@ interface ChatViewProps {
  * It uses the first available conversation for the workspace,
  * or starts a new one if none exists.
  */
-export function ChatView({ workspaceId, noSources, sourcesCount }: ChatViewProps) {
+export function ChatView({ workspaceId }: ChatViewProps) {
   const queryClient = useQueryClient();
   const { push } = useToast();
 
   const { data: workspace } = useWorkspaceContext();
   const { data: conversations, isPending: isConversationsPending } = useConversations(workspaceId);
+  const { data: sources } = useSources(workspaceId);
+  
+  const sourcesCount = sources?.length ?? 0;
+  const noSources = sources !== undefined && sources.length === 0;
   
   // Use the first conversation available in the workspace, or undefined if none.
   const activeConversationId = conversations && conversations.length > 0 ? conversations[0].id : undefined;

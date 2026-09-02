@@ -55,33 +55,24 @@ export function Shell({ children }: ShellProps) {
 
   // ── Dashboard route — topbar only, no sidebar ────────────────────────────────
   return (
-    <WorkspaceContext.Provider value={workspaceQuery}>
-      <WorkspacePanelProvider>
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground"
-        >
-          Skip to content
-        </a>
+    <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground"
+      >
+        Skip to content
+      </a>
 
-        <div className="flex h-svh w-full flex-col overflow-hidden bg-background">
-          <DashboardTopbar onMemoriesOpen={() => setMemoriesOpen(true)} />
-          <main id="main-content" className="flex-1 overflow-y-auto no-scrollbar">
-            {children}
-          </main>
-        </div>
+      <div className="flex h-svh w-full flex-col overflow-hidden bg-background">
+        <DashboardTopbar onMemoriesOpen={() => setMemoriesOpen(true)} />
+        <main id="main-content" className="flex-1 overflow-y-auto no-scrollbar">
+          {children}
+        </main>
+      </div>
 
-        <MemoriesSheet open={memoriesOpen} onOpenChange={setMemoriesOpen} />
+      <MemoriesSheet open={memoriesOpen} onOpenChange={setMemoriesOpen} />
 
-        <CreateWorkspaceDialog open={createOpen} onOpenChange={setCreateOpen} />
-        {workspace ? (
-          <EditWorkspaceDialog
-            workspace={workspace}
-            open={editOpen}
-            onOpenChange={setEditOpen}
-          />
-        ) : null}
-      </WorkspacePanelProvider>
-    </WorkspaceContext.Provider>
+      <CreateWorkspaceDialog open={createOpen} onOpenChange={setCreateOpen} />
+    </>
   )
 }

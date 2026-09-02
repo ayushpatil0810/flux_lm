@@ -41,12 +41,6 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
   const [settingsOpen, setSettingsOpen] = React.useState(false);
 
   const { data: workspace } = useWorkspaceContext();
-  const { data: sources } = useSources(workspaceId);
-  const { data: artifacts } = useArtifacts(workspaceId);
-
-  const sourcesCount = sources?.length ?? 0;
-  const artifactsCount = artifacts?.length ?? 0;
-  const noSources = sources !== undefined && sources.length === 0;
 
   // Resizing hooks
   const leftResize = usePanelResize({
@@ -77,8 +71,6 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
       {/* Topbar */}
       <WorkspaceTopbar
         workspaceId={workspaceId}
-        sourcesCount={sourcesCount}
-        artifactsCount={artifactsCount}
         onOpenSettings={() => setSettingsOpen(true)}
       />
 
@@ -153,8 +145,6 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
                 <div className="flex min-h-0 min-w-0 flex-1 flex-col">
                   <ChatView
                     workspaceId={workspaceId}
-                    noSources={noSources}
-                    sourcesCount={sourcesCount}
                   />
                 </div>
               </>
@@ -162,8 +152,6 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
               <div className="flex-1 min-w-0">
                 <ChatView
                   workspaceId={workspaceId}
-                  noSources={noSources}
-                  sourcesCount={sourcesCount}
                 />
               </div>
             )}
