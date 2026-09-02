@@ -68,8 +68,25 @@ export function useUpdateMemory() {
         method: "PATCH",
         json: { text: input.text },
       }),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: queryKeys.memories.all }),
+    onMutate: async (input) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.memories.all });
+      const previousMemories = queryClient.getQueryData<MemoryItem[]>(queryKeys.memories.all);
+      
+      queryClient.setQueryData<MemoryItem[]>(
+        queryKeys.memories.all,
+        (old) => old?.map(m => m.id === input.id ? { ...m, memory: input.text } : m)
+      );
+      
+      return { previousMemories };
+    },
+    onError: (err, newMemory, context) => {
+      if (context?.previousMemories) {
+        queryClient.setQueryData(queryKeys.memories.all, context.previousMemories);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.memories.all });
+    },
   });
 }
 
@@ -78,7 +95,24 @@ export function useDeleteMemory() {
   return useMutation({
     mutationFn: (id: string) =>
       apiFetch<unknown>(endpoints.memories.detail(id), { method: "DELETE" }),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: queryKeys.memories.all }),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.memories.all });
+      const previousMemories = queryClient.getQueryData<MemoryItem[]>(queryKeys.memories.all);
+      
+      queryClient.setQueryData<MemoryItem[]>(
+        queryKeys.memories.all,
+        (old) => old?.filter(m => m.id !== id)
+      );
+      
+      return { previousMemories };
+    },
+    onError: (err, id, context) => {
+      if (context?.previousMemories) {
+        queryClient.setQueryData(queryKeys.memories.all, context.previousMemories);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.memories.all });
+    },
   });
 }

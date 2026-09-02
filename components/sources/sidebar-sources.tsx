@@ -11,7 +11,7 @@ import { useToast } from "@/components/providers/toast-provider";
 import { ErrorState, LoadingState } from "@/components/shell/states";
 import { Button } from "@/components/ui/button";
 import { StatusIndicator } from "@/components/ui/status-indicator";
-import { useWorkspacePanel } from "@/components/shell/workspace-panel-context";
+import { useWorkspacePreview } from "@/components/shell/workspace-panel-context";
 import { SourceDetailDialog } from "./source-detail-dialog";
 import { ConfirmDeleteDialog } from "./confirm-delete-dialog";
 import { RenameSourceDialog } from "./rename-source-dialog";
@@ -146,7 +146,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
     useSources(workspaceId);
   const deleteSource = useDeleteSource(workspaceId);
   const { push } = useToast();
-  const { setPreviewSource } = useWorkspacePanel();
+  const { setPreviewSource } = useWorkspacePreview();
 
   const [importType, setImportType] = React.useState<ImportType | null>(null);
   const [detailSource, setDetailSource] = React.useState<Source | null>(null);
@@ -331,7 +331,6 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
         workspaceId={workspaceId}
         importType={importType}
         onClose={() => setImportType(null)}
-        onImported={() => refetch()}
       />
       <SourceDetailDialog
         source={detailSource}

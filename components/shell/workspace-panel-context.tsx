@@ -8,6 +8,9 @@ interface WorkspacePanelContextType {
   setLeftOpen: (open: boolean) => void;
   rightOpen: boolean;
   setRightOpen: (open: boolean) => void;
+}
+
+interface WorkspacePreviewContextType {
   previewSource: Source | null;
   setPreviewSource: (source: Source | null) => void;
   previewArtifactId: string | null;
@@ -16,6 +19,9 @@ interface WorkspacePanelContextType {
 
 const WorkspacePanelContext =
   React.createContext<WorkspacePanelContextType | null>(null);
+
+const WorkspacePreviewContext =
+  React.createContext<WorkspacePreviewContextType | null>(null);
 
 /**
  * Tracks whether the Sources (left) and Artifacts (right) panels are open,
@@ -41,23 +47,31 @@ export function WorkspacePanelProvider({
     if (id) setPreviewSourceInternal(null);
   }, []);
 
-  const value = React.useMemo(
+  const panelValue = React.useMemo(
     () => ({
       leftOpen,
       setLeftOpen,
       rightOpen,
       setRightOpen,
+    }),
+    [leftOpen, rightOpen],
+  );
+
+  const previewValue = React.useMemo(
+    () => ({
       previewSource,
       setPreviewSource,
       previewArtifactId,
       setPreviewArtifactId,
     }),
-    [leftOpen, rightOpen, previewSource, previewArtifactId, setPreviewSource, setPreviewArtifactId],
+    [previewSource, previewArtifactId, setPreviewSource, setPreviewArtifactId],
   );
 
   return (
-    <WorkspacePanelContext.Provider value={value}>
-      {children}
+    <WorkspacePanelContext.Provider value={panelValue}>
+      <WorkspacePreviewContext.Provider value={previewValue}>
+        {children}
+      </WorkspacePreviewContext.Provider>
     </WorkspacePanelContext.Provider>
   );
 }
@@ -72,3 +86,12 @@ export function useWorkspacePanel(): WorkspacePanelContextType {
   return context;
 }
 
+export function useWorkspacePreview(): WorkspacePreviewContextType {
+  const context = React.useContext(WorkspacePreviewContext);
+  if (!context) {
+    throw new Error(
+      "useWorkspacePreview must be used within WorkspacePanelProvider",
+    );
+  }
+  return context;
+}

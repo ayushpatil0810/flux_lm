@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 
 import { useWorkspace } from '@/hooks/use-workspaces'
 import { CreateWorkspaceDialog } from '@/components/shell/create-workspace-dialog'
-import { EditWorkspaceDialog } from '@/components/shell/edit-workspace-dialog'
+
 import { DashboardTopbar } from '@/components/shell/dashboard-topbar'
 import { WorkspacePanelProvider } from '@/components/shell/workspace-panel-context'
 import { WorkspaceContext } from '@/components/shell/workspace-context'
@@ -24,7 +24,7 @@ interface ShellProps {
  */
 export function Shell({ children }: ShellProps) {
   const [createOpen, setCreateOpen] = React.useState(false)
-  const [editOpen, setEditOpen] = React.useState(false)
+
   const [memoriesOpen, setMemoriesOpen] = React.useState(false)
 
   const params = useParams()
@@ -41,13 +41,7 @@ export function Shell({ children }: ShellProps) {
             {children}
           </div>
 
-          {workspace ? (
-            <EditWorkspaceDialog
-              workspace={workspace}
-              open={editOpen}
-              onOpenChange={setEditOpen}
-            />
-          ) : null}
+
         </WorkspacePanelProvider>
       </WorkspaceContext.Provider>
     )

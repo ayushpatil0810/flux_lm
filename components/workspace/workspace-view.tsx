@@ -11,7 +11,7 @@ import { EditWorkspaceDialog } from "@/components/shell/edit-workspace-dialog";
 import { useWorkspaceContext } from "@/components/shell/workspace-context";
 import { useSources } from "@/hooks/use-sources";
 import { useArtifacts } from "@/hooks/use-artifacts";
-import { useWorkspacePanel } from "@/components/shell/workspace-panel-context";
+import { useWorkspacePanel, useWorkspacePreview } from "@/components/shell/workspace-panel-context";
 import { WorkspaceTopbar } from "./workspace-topbar";
 import { usePanelResize } from "@/hooks/use-panel-resize";
 
@@ -32,11 +32,13 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
     setLeftOpen,
     rightOpen,
     setRightOpen,
+  } = useWorkspacePanel();
+  const {
     previewSource,
     setPreviewSource,
     previewArtifactId,
     setPreviewArtifactId,
-  } = useWorkspacePanel();
+  } = useWorkspacePreview();
 
   const [settingsOpen, setSettingsOpen] = React.useState(false);
 

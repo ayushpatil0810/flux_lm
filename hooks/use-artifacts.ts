@@ -24,6 +24,7 @@ export function useArtifacts(
     queryFn: () =>
       apiFetch<LearningArtifact[]>(endpoints.artifacts.list(workspaceId)),
     enabled: options?.enabled,
+    staleTime: 60 * 1000,
     retry: shouldRetry,
     refetchInterval: (query) =>
       query.state.data?.some((artifact) =>
