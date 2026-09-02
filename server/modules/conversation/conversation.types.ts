@@ -7,7 +7,9 @@ import {
   streamChatSchema,
 } from "./conversation.validator";
 
-export type ListConversationsQuery = z.infer<typeof listConversationsQuerySchema>;
+export type ListConversationsQuery = z.infer<
+  typeof listConversationsQuerySchema
+>;
 export type CreateConversationInput = z.infer<typeof createConversationSchema>;
 export type AddMessageInput = z.infer<typeof addMessageSchema>;
 export type ListMessagesQuery = z.infer<typeof listMessagesQuerySchema>;

@@ -133,5 +133,3 @@ export type ImportYoutubeSourceInput = z.infer<
 >;
 export type UpdateSourceInput = z.infer<typeof updateSourceSchema>;
 export type BulkDeleteSourcesInput = z.infer<typeof bulkDeleteSourcesSchema>;
-
-

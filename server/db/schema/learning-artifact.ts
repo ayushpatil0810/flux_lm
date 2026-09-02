@@ -1,12 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
-import {
-  index,
-  jsonb,
-  pgEnum,
-  pgTable,
-  text,
-} from "drizzle-orm/pg-core";
+import { index, jsonb, pgEnum, pgTable, text } from "drizzle-orm/pg-core";
 import { getWorkspaceEntityBase, workspace } from "./workspace";
 import { timestamps } from "./utils";
 import { LearningArtifactContent, LearningArtifactMetadata } from "./types";

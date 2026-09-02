@@ -39,7 +39,10 @@ export class MemoryController {
       );
     }
 
-    const newMemory = await MemoryService.createMemory(user.id, validation.data);
+    const newMemory = await MemoryService.createMemory(
+      user.id,
+      validation.data,
+    );
     return ApiResponse.created(newMemory, "Memory created successfully");
   });
 

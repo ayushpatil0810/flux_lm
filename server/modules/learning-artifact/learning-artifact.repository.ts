@@ -38,7 +38,10 @@ export class LearningArtifactRepository {
    */
   static async findByWorkspaceId(
     workspaceId: string,
-    filters: { type?: ArtifactRecord["type"]; status?: ArtifactRecord["status"] } = {},
+    filters: {
+      type?: ArtifactRecord["type"];
+      status?: ArtifactRecord["status"];
+    } = {},
   ) {
     const conditions = [eq(learningArtifact.workspaceId, workspaceId)];
 

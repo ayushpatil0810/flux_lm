@@ -13,7 +13,9 @@ const envSchema = z.object({
 
   // Authentication & Security (Better Auth & OAuth)
   // BETTER_AUTH_SECRET is required in all environments — it signs session tokens.
-  BETTER_AUTH_SECRET: z.string().min(32, "BETTER_AUTH_SECRET must be at least 32 characters"),
+  BETTER_AUTH_SECRET: z
+    .string()
+    .min(32, "BETTER_AUTH_SECRET must be at least 32 characters"),
   BETTER_AUTH_URL: z.string().default("http://localhost:3000"),
   GITHUB_CLIENT_ID: z.string().optional(),
   GITHUB_CLIENT_SECRET: z.string().optional(),

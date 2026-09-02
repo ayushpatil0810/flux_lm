@@ -4,7 +4,6 @@ import { ApiError } from "./api-error";
 
 const log = logger.child({ module: "ApiResponse" });
 
-
 export class ApiResponse {
   static success<T>(data: T, message?: string, statusCode = 200) {
     return NextResponse.json(
@@ -13,7 +12,7 @@ export class ApiResponse {
         message,
         data,
       },
-      { status: statusCode }
+      { status: statusCode },
     );
   }
 
@@ -24,7 +23,7 @@ export class ApiResponse {
         message,
         data,
       },
-      { status: 201 }
+      { status: 201 },
     );
   }
 
@@ -36,7 +35,7 @@ export class ApiResponse {
           error: error.message,
           details: error.errors ?? null,
         },
-        { status: error.statusCode }
+        { status: error.statusCode },
       );
     }
 
@@ -50,7 +49,7 @@ export class ApiResponse {
         success: false,
         error: message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

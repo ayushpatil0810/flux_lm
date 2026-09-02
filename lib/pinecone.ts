@@ -100,7 +100,9 @@ export async function querySimilarity(
   options: VectorQueryOptions,
 ): Promise<ScoredChunkResult[]> {
   if (!env.PINECONE_API_KEY) {
-    log.warn("PINECONE_API_KEY is not configured — returning empty similarity results");
+    log.warn(
+      "PINECONE_API_KEY is not configured — returning empty similarity results",
+    );
     return [];
   }
 
@@ -184,5 +186,7 @@ export async function deleteVectorsBySourceIds(
 }
 
 if (!env.PINECONE_API_KEY) {
-  log.warn("PINECONE_API_KEY is not configured — vector search features will be disabled");
+  log.warn(
+    "PINECONE_API_KEY is not configured — vector search features will be disabled",
+  );
 }

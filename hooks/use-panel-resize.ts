@@ -60,7 +60,10 @@ export function usePanelResize({
           side === "left"
             ? ev.clientX - startX.current
             : startX.current - ev.clientX;
-        const next = Math.min(maxWidth, Math.max(minWidth, startWidth.current + delta));
+        const next = Math.min(
+          maxWidth,
+          Math.max(minWidth, startWidth.current + delta),
+        );
         currentWidth.current = next;
         setWidth(next);
       }
@@ -70,7 +73,10 @@ export function usePanelResize({
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
         if (id) {
-          localStorage.setItem(`flux-panel-${id}`, currentWidth.current.toString());
+          localStorage.setItem(
+            `flux-panel-${id}`,
+            currentWidth.current.toString(),
+          );
         }
       }
 

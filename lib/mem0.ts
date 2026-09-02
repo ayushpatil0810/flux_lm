@@ -18,7 +18,9 @@ export async function searchUserMemories(userId: string, query: string) {
   }
 
   try {
-    const response = await client.search(query, { filters: { user_id: userId } });
+    const response = await client.search(query, {
+      filters: { user_id: userId },
+    });
     return response.results.map((result) => ({
       memory: result.memory || "",
     }));
@@ -35,7 +37,7 @@ export async function searchUserMemories(userId: string, query: string) {
 export async function addMemoriesFromMessages(
   userId: string,
   messages: { role: string; content: string }[],
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
 ) {
   if (!env.MEM0_API_KEY) {
     logger.warn({ userId }, "[Mem0] MEM0_API_KEY not set. Skipping addition.");
@@ -43,16 +45,16 @@ export async function addMemoriesFromMessages(
   }
 
   try {
-    const formattedMessages = messages.map(msg => ({
+    const formattedMessages = messages.map((msg) => ({
       role: msg.role as "user" | "assistant",
-      content: msg.content
+      content: msg.content,
     }));
 
     await client.add(formattedMessages, {
       userId,
       metadata,
     });
-    
+
     logger.info({ userId }, "[Mem0] Successfully added memories.");
   } catch (error) {
     logger.error({ userId, error }, "[Mem0] Failed to add memories.");
@@ -87,7 +89,9 @@ export async function addMemory(userId: string, text: string) {
   }
 
   try {
-    const response = await client.add([{ role: "user", content: text }], { userId });
+    const response = await client.add([{ role: "user", content: text }], {
+      userId,
+    });
     return response;
   } catch (error) {
     logger.error({ userId, error }, "[Mem0] Failed to add user memory.");

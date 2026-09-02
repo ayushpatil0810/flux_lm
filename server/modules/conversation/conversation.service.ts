@@ -1,11 +1,32 @@
 import { ApiError } from "@/server/utils/api-error";
 import { ConversationRepository } from "./conversation.repository";
-import { CreateConversationInput, AddMessageInput, StreamChatInput } from "./conversation.validator";
+import {
+  CreateConversationInput,
+  AddMessageInput,
+  StreamChatInput,
+} from "./conversation.validator";
 import { WorkspaceService } from "../workspace/workspace.service";
-import { streamText, convertToModelMessages, type UIMessage, isStepCount, generateText } from "ai";
+import {
+  streamText,
+  convertToModelMessages,
+  type UIMessage,
+  isStepCount,
+  generateText,
+} from "ai";
 import { openai } from "@ai-sdk/openai";
-import { CHAT_MODELS, CHAT_MODEL, RECENT_MESSAGE_WINDOW, CONVERSATION_SUMMARY_INTERVAL } from "@/lib/constants";
-import { buildChatSystemPrompt, retrieveWorkspaceContext, getLastUserMessageText, buildConversationTitle, getTextFromUIMessage } from "./conversation.utils";
+import {
+  CHAT_MODELS,
+  CHAT_MODEL,
+  RECENT_MESSAGE_WINDOW,
+  CONVERSATION_SUMMARY_INTERVAL,
+} from "@/lib/constants";
+import {
+  buildChatSystemPrompt,
+  retrieveWorkspaceContext,
+  getLastUserMessageText,
+  buildConversationTitle,
+  getTextFromUIMessage,
+} from "./conversation.utils";
 import { webSearchTool } from "./conversation.tools";
 import { searchUserMemories, addMemoriesFromMessages } from "@/lib/mem0";
 import { inngest } from "@/inngest/client";
@@ -25,7 +46,7 @@ export class ConversationService {
   static async getWorkspaceConversations(workspaceId: string, userId: string) {
     // Verify workspace ownership
     await WorkspaceService.getWorkspaceById(workspaceId, userId);
-    
+
     return await ConversationRepository.findByWorkspaceId(workspaceId);
   }
 
@@ -56,7 +77,10 @@ export class ConversationService {
    * @param input - Validated creation payload.
    * @returns Newly created conversation record.
    */
-  static async createConversation(userId: string, input: CreateConversationInput) {
+  static async createConversation(
+    userId: string,
+    input: CreateConversationInput,
+  ) {
     // Verify workspace ownership
     await WorkspaceService.getWorkspaceById(input.workspaceId, userId);
 
@@ -85,11 +109,18 @@ export class ConversationService {
    * @param input - Validated message payload.
    * @returns Inserted message record.
    */
-  static async addMessage(conversationId: string, userId: string, input: AddMessageInput) {
+  static async addMessage(
+    conversationId: string,
+    userId: string,
+    input: AddMessageInput,
+  ) {
     // Verify existence & ownership
     await ConversationService.getConversationById(conversationId, userId);
 
-    const result = await ConversationService._insertMessage(conversationId, input);
+    const result = await ConversationService._insertMessage(
+      conversationId,
+      input,
+    );
     const { messageCount: _, ...message } = result;
     return message;
   }
@@ -97,7 +128,10 @@ export class ConversationService {
   /**
    * Internal helper to insert a message without redundant workspace checks.
    */
-  private static async _insertMessage(conversationId: string, input: AddMessageInput) {
+  private static async _insertMessage(
+    conversationId: string,
+    input: AddMessageInput,
+  ) {
     return await ConversationRepository.addMessage({
       conversationId,
       role: input.role,
@@ -114,7 +148,11 @@ export class ConversationService {
    * @param limit - Optional limit on the number of returned messages.
    * @returns Array of message records.
    */
-  static async getConversationMessages(conversationId: string, userId: string, limit?: number) {
+  static async getConversationMessages(
+    conversationId: string,
+    userId: string,
+    limit?: number,
+  ) {
     // Verify existence & ownership
     await ConversationService.getConversationById(conversationId, userId);
 
@@ -134,17 +172,23 @@ export class ConversationService {
     userId: string,
     input: StreamChatInput,
   ) {
-    const workspace = await WorkspaceService.getWorkspaceById(workspaceId, userId);
-    
+    const workspace = await WorkspaceService.getWorkspaceById(
+      workspaceId,
+      userId,
+    );
+
     // Find model to use (from input, workspace default, or fallback to CHAT_MODEL)
     const requestedModel = input.model ?? workspace.defaultModel;
-    const chatModel = CHAT_MODELS.find((model) => model === requestedModel) ?? CHAT_MODEL;
-    
+    const chatModel =
+      CHAT_MODELS.find((model) => model === requestedModel) ?? CHAT_MODEL;
+
     // Enable web search if requested and tool is available (API keys can be checked inside the tool or implicitly allowed)
     const webSearchEnabled = input.webSearch === true;
 
     // Cast is necessary because UI message payloads from the client might be broader than the strict SDK UIMessage type
-    const userText = getLastUserMessageText(input.messages as unknown as UIMessage[]);
+    const userText = getLastUserMessageText(
+      input.messages as unknown as UIMessage[],
+    );
     if (!userText) {
       throw ApiError.badRequest("A user message is required");
     }
@@ -152,7 +196,10 @@ export class ConversationService {
     // Resolve or create conversation
     let conversation;
     if (input.conversationId) {
-      conversation = await ConversationService.getConversationById(input.conversationId, userId);
+      conversation = await ConversationService.getConversationById(
+        input.conversationId,
+        userId,
+      );
     } else {
       conversation = await ConversationService.createConversation(userId, {
         workspaceId,
@@ -202,7 +249,9 @@ export class ConversationService {
       model: openai(chatModel),
       system: systemPrompt,
       // Cast is necessary because UI message payloads from the client might be broader than the strict SDK UIMessage type
-      messages: await convertToModelMessages(contextMessages as unknown as UIMessage[]),
+      messages: await convertToModelMessages(
+        contextMessages as unknown as UIMessage[],
+      ),
       tools,
       stopWhen: webSearchEnabled ? isStepCount(3) : undefined,
       onFinish: async ({ response, text }) => {
@@ -211,16 +260,22 @@ export class ConversationService {
 
         // Build citations (if we want to extract web citations we can parse the tool calls, but for simplicity we rely on DB citations)
         // Note: AI SDK v3.x onFinish provides `text`, `toolCalls`, `toolResults` etc.
-        const allCitations = [...citations]; 
-        
-        const addedMessage = await ConversationService._insertMessage(conversation.id, {
-          role: "ASSISTANT",
-          content: assistantText,
-          citations: allCitations.length > 0 ? allCitations : undefined,
-        });
+        const allCitations = [...citations];
+
+        const addedMessage = await ConversationService._insertMessage(
+          conversation.id,
+          {
+            role: "ASSISTANT",
+            content: assistantText,
+            citations: allCitations.length > 0 ? allCitations : undefined,
+          },
+        );
 
         // Update the conversation's title if this is the first real exchange and title is default
-        if (conversation.title === "New Chat" || conversation.title === "New chat") {
+        if (
+          conversation.title === "New Chat" ||
+          conversation.title === "New chat"
+        ) {
           await ConversationRepository.update(conversation.id, {
             title: buildConversationTitle(userText),
           });
@@ -234,7 +289,6 @@ export class ConversationService {
             data: { conversationId: conversation.id, userId },
           });
         }
-
       },
     });
 
@@ -253,12 +307,19 @@ export class ConversationService {
    * @param userId - ID of the user (for verification)
    */
   static async summarizeConversation(conversationId: string, userId: string) {
-    const conversation = await ConversationService.getConversationById(conversationId, userId);
-    
+    const conversation = await ConversationService.getConversationById(
+      conversationId,
+      userId,
+    );
+
     // Use the workspace's default model or fallback
-    const workspace = await WorkspaceService.getWorkspaceById(conversation.workspaceId, userId);
+    const workspace = await WorkspaceService.getWorkspaceById(
+      conversation.workspaceId,
+      userId,
+    );
     const requestedModel = workspace.defaultModel;
-    const chatModel = CHAT_MODELS.find((model) => model === requestedModel) ?? CHAT_MODEL;
+    const chatModel =
+      CHAT_MODELS.find((model) => model === requestedModel) ?? CHAT_MODEL;
 
     const messages = await ConversationRepository.findMessages(conversationId);
     if (messages.length === 0) return;
@@ -289,7 +350,7 @@ export class ConversationService {
 
     const updated = await ConversationRepository.updateSummary(
       conversation.id,
-      summary.trim()
+      summary.trim(),
     );
 
     const recentMessages = messages.slice(-16).map((message) => ({

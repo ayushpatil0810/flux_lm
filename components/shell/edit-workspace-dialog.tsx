@@ -1,16 +1,11 @@
 "use client";
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Delete01Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Delete01Icon } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-;
-
 import { getErrorMessage, getFieldErrors, type Workspace } from "@/lib/api";
-import {
-  useDeleteWorkspace,
-  useUpdateWorkspace,
-} from "@/hooks/use-workspaces";
+import { useDeleteWorkspace, useUpdateWorkspace } from "@/hooks/use-workspaces";
 import { useToast } from "@/components/providers/toast-provider";
 import { Button } from "@/components/ui/button";
 import { ConfirmDeleteDialog } from "@/components/sources/confirm-delete-dialog";
@@ -66,9 +61,7 @@ export function EditWorkspaceDialog({
     if (workspace && open) {
       setTitle(workspace.title);
       setDescription(workspace.description || "");
-      setModel(
-        workspace.defaultModel === "gpt-4o" ? "gpt-4o" : "gpt-4o-mini",
-      );
+      setModel(workspace.defaultModel === "gpt-4o" ? "gpt-4o" : "gpt-4o-mini");
       setFieldErrors({});
     }
   }, [workspace, open]);
@@ -131,22 +124,22 @@ export function EditWorkspaceDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm gap-0 p-0 overflow-hidden">
+      <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-sm">
         <form onSubmit={handleSubmit}>
           {/* Header */}
-          <DialogHeader className="px-5 pt-5 pb-4 border-b border-border/30">
+          <DialogHeader className="border-border/30 border-b px-5 pt-5 pb-4">
             <DialogTitle className="text-sm font-medium">
               Workspace settings
             </DialogTitle>
           </DialogHeader>
 
           {/* Body */}
-          <div className="px-5 py-4 space-y-4">
+          <div className="space-y-4 px-5 py-4">
             {/* Title */}
             <div className="space-y-1.5">
               <label
                 htmlFor="edit-workspace-title"
-                className="block text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                className="text-muted-foreground block text-xs font-medium tracking-wider uppercase"
               >
                 Name
               </label>
@@ -162,7 +155,7 @@ export function EditWorkspaceDialog({
                 aria-invalid={Boolean(fieldErrors.title)}
               />
               {fieldErrors.title ? (
-                <p className="text-xs text-destructive">{fieldErrors.title}</p>
+                <p className="text-destructive text-xs">{fieldErrors.title}</p>
               ) : null}
             </div>
 
@@ -170,10 +163,10 @@ export function EditWorkspaceDialog({
             <div className="space-y-1.5">
               <label
                 htmlFor="edit-workspace-description"
-                className="block text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                className="text-muted-foreground block text-xs font-medium tracking-wider uppercase"
               >
                 Description{" "}
-                <span className="normal-case font-normal">(optional)</span>
+                <span className="font-normal normal-case">(optional)</span>
               </label>
               <Textarea
                 id="edit-workspace-description"
@@ -182,11 +175,11 @@ export function EditWorkspaceDialog({
                 maxLength={500}
                 rows={2}
                 placeholder="What this collection is for"
-                className="text-sm resize-none"
+                className="resize-none text-sm"
                 aria-invalid={Boolean(fieldErrors.description)}
               />
               {fieldErrors.description ? (
-                <p className="text-xs text-destructive">
+                <p className="text-destructive text-xs">
                   {fieldErrors.description}
                 </p>
               ) : null}
@@ -194,7 +187,7 @@ export function EditWorkspaceDialog({
 
             {/* Model */}
             <div className="space-y-1.5">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 Default model
               </p>
               <div className="grid grid-cols-2 gap-2">
@@ -205,7 +198,7 @@ export function EditWorkspaceDialog({
                       "relative flex cursor-pointer flex-col rounded-lg border px-3 py-2.5 transition-colors",
                       model === option.value
                         ? "border-primary/60 bg-primary/5"
-                        : "border-border/40 hover:border-border/70 hover:bg-white/3"
+                        : "border-border/40 hover:border-border/70 hover:bg-white/3",
                     )}
                   >
                     <input
@@ -216,10 +209,10 @@ export function EditWorkspaceDialog({
                       onChange={() => setModel(option.value)}
                       className="sr-only"
                     />
-                    <span className="text-xs font-medium leading-none">
+                    <span className="text-xs leading-none font-medium">
                       {option.label}
                     </span>
-                    <span className="mt-1 text-[11px] leading-snug text-muted-foreground/70">
+                    <span className="text-muted-foreground/70 mt-1 text-[11px] leading-snug">
                       {option.description}
                     </span>
                   </label>
@@ -229,13 +222,18 @@ export function EditWorkspaceDialog({
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between gap-3 border-t border-border/30 px-5 py-3">
+          <div className="border-border/30 flex items-center justify-between gap-3 border-t px-5 py-3">
             <button
               type="button"
               onClick={() => setDeleteOpen(true)}
-              className="flex items-center gap-1.5 text-xs text-muted-foreground/60 transition-colors hover:text-destructive"
+              className="text-muted-foreground/60 hover:text-destructive flex items-center gap-1.5 text-xs transition-colors"
             >
-              <HugeiconsIcon icon={Delete01Icon} strokeWidth={1.5} className="size-3.5" aria-hidden />
+              <HugeiconsIcon
+                icon={Delete01Icon}
+                strokeWidth={1.5}
+                className="size-3.5"
+                aria-hidden
+              />
               Delete workspace
             </button>
 
@@ -270,11 +268,11 @@ export function EditWorkspaceDialog({
           description={
             <>
               This permanently deletes{" "}
-              <span className="font-medium text-foreground">
+              <span className="text-foreground font-medium">
                 {workspace?.title}
               </span>
-              , including its sources, artifacts, and conversations. This
-              cannot be undone.
+              , including its sources, artifacts, and conversations. This cannot
+              be undone.
             </>
           }
           confirmLabel="Delete workspace"

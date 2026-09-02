@@ -30,7 +30,8 @@ export const endpoints = {
     importYoutube: () => "/api/sources/import/youtube",
   },
   conversations: {
-    list: (workspaceId: string) => withQuery("/api/conversations", { workspaceId }),
+    list: (workspaceId: string) =>
+      withQuery("/api/conversations", { workspaceId }),
     detail: (id: string) => `/api/conversations/${id}`,
     messages: (id: string, limit?: number) =>
       withQuery(`/api/conversations/${id}/messages`, { limit }),

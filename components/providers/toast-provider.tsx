@@ -1,10 +1,8 @@
 "use client";
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Cancel01Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Cancel01Icon } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
-;
-
 import { cn } from "@/lib/utils";
 
 export interface ToastOptions {
@@ -40,7 +38,9 @@ export function useToast(): ToastContextValue {
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = React.useState<ToastItem[]>([]);
   const counter = React.useRef(0);
-  const timeouts = React.useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const timeouts = React.useRef<Map<string, ReturnType<typeof setTimeout>>>(
+    new Map(),
+  );
 
   React.useEffect(() => {
     return () => {
@@ -87,7 +87,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           <div
             key={toast.id}
             className={cn(
-              "ui-enter-fade pointer-events-auto w-full rounded-lg border bg-popover px-4 py-3 text-popover-foreground",
+              "ui-enter-fade bg-popover text-popover-foreground pointer-events-auto w-full rounded-lg border px-4 py-3",
               toast.variant === "destructive"
                 ? "border-destructive/50"
                 : "border-border",
@@ -104,7 +104,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   {toast.title}
                 </p>
                 {toast.description ? (
-                  <p className="mt-1 text-sm text-muted-foreground">
+                  <p className="text-muted-foreground mt-1 text-sm">
                     {toast.description}
                   </p>
                 ) : null}
@@ -113,9 +113,14 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 type="button"
                 onClick={() => dismiss(toast.id)}
                 aria-label="Dismiss notification"
-                className="rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+                className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/60 rounded-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
               >
-                <HugeiconsIcon icon={Cancel01Icon} strokeWidth={1.5} className="size-4" aria-hidden />
+                <HugeiconsIcon
+                  icon={Cancel01Icon}
+                  strokeWidth={1.5}
+                  className="size-4"
+                  aria-hidden
+                />
               </button>
             </div>
           </div>

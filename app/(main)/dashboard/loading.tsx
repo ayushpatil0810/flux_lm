@@ -9,11 +9,11 @@ export default function DashboardLoading() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="flex min-h-[12rem] flex-col justify-between overflow-hidden rounded-2xl border border-border/50 bg-card/40 p-5"
+              className="border-border/50 bg-card/40 flex min-h-[12rem] flex-col justify-between overflow-hidden rounded-2xl border p-5"
             >
               <div className="relative z-20 flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                  <Skeleton className="size-11 rounded-xl bg-primary/10" />
+                  <Skeleton className="bg-primary/10 size-11 rounded-xl" />
                   <Skeleton className="size-8 rounded-lg" />
                 </div>
                 <div className="space-y-3">

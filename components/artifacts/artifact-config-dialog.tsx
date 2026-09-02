@@ -1,6 +1,6 @@
 "use client";
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Loading02Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Loading02Icon } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
 
@@ -9,9 +9,7 @@ import { getErrorMessage } from "@/lib/api";
 import { useCreateArtifact } from "@/hooks/use-artifacts";
 import { useSources } from "@/hooks/use-sources";
 import { useToast } from "@/components/providers/toast-provider";
-import {
-  ARTIFACT_TYPE_LABELS,
-} from "./artifact-meta";
+import { ARTIFACT_TYPE_LABELS } from "./artifact-meta";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -24,7 +22,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-;
 import { cn } from "@/lib/utils";
 
 // ── Per-type config schemas ─────────────────────────────────────────────────
@@ -35,12 +32,23 @@ type CountOption10_20_30 = 10 | 20 | 30;
 type DifficultyOption = "easy" | "medium" | "hard";
 type StyleOption = "academic" | "executive" | "casual";
 
-interface SummaryConfig { length: LengthOption }
-interface TakeawaysConfig { count: CountOption5_10_15 }
-interface FlashcardsConfig { count: CountOption10_20_30 }
-interface QuizConfig { count: CountOption5_10_15; difficulty: DifficultyOption }
-interface MindmapConfig { }
-interface ReportConfig { style: StyleOption }
+interface SummaryConfig {
+  length: LengthOption;
+}
+interface TakeawaysConfig {
+  count: CountOption5_10_15;
+}
+interface FlashcardsConfig {
+  count: CountOption10_20_30;
+}
+interface QuizConfig {
+  count: CountOption5_10_15;
+  difficulty: DifficultyOption;
+}
+interface MindmapConfig {}
+interface ReportConfig {
+  style: StyleOption;
+}
 
 type ArtifactConfig =
   | SummaryConfig
@@ -67,7 +75,7 @@ function SegmentGroup<T extends string | number>({
 }) {
   return (
     <div className="space-y-1.5">
-      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+      <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
         {label}
       </p>
       <div className="flex gap-1">
@@ -191,12 +199,18 @@ function ReportOptions({
 
 function defaultConfig(type: ArtifactType): ArtifactConfig {
   switch (type) {
-    case "SUMMARY": return { length: "standard" };
-    case "TAKEAWAYS": return { count: 10 };
-    case "FLASHCARDS": return { count: 20 };
-    case "QUIZ": return { count: 10, difficulty: "medium" };
-    case "MINDMAP": return {};
-    case "REPORT": return { style: "academic" };
+    case "SUMMARY":
+      return { length: "standard" };
+    case "TAKEAWAYS":
+      return { count: 10 };
+    case "FLASHCARDS":
+      return { count: 20 };
+    case "QUIZ":
+      return { count: 10, difficulty: "medium" };
+    case "MINDMAP":
+      return {};
+    case "REPORT":
+      return { style: "academic" };
   }
 }
 
@@ -305,19 +319,13 @@ export function ArtifactConfigDialog({
         );
       case "QUIZ":
         return (
-          <QuizOptions
-            config={config as QuizConfig}
-            onChange={setConfig}
-          />
+          <QuizOptions config={config as QuizConfig} onChange={setConfig} />
         );
       case "MINDMAP":
         return null;
       case "REPORT":
         return (
-          <ReportOptions
-            config={config as ReportConfig}
-            onChange={setConfig}
-          />
+          <ReportOptions config={config as ReportConfig} onChange={setConfig} />
         );
       default:
         return null;
@@ -326,10 +334,10 @@ export function ArtifactConfigDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md gap-0 p-0 overflow-hidden flex flex-col max-h-[90vh]">
+      <DialogContent className="flex max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-md">
         {/* Header — pinned */}
-        <DialogHeader className="px-5 pt-5 pb-4 border-b border-border/30 shrink-0">
-          <DialogTitle className="font-serif text-heading">
+        <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4">
+          <DialogTitle className="text-heading font-serif">
             Generate {type ? ARTIFACT_TYPE_LABELS[type].toLowerCase() : ""}
           </DialogTitle>
           <DialogDescription>
@@ -338,29 +346,34 @@ export function ArtifactConfigDialog({
         </DialogHeader>
 
         {/* Body — scrollable */}
-        <div className="flex-1 overflow-y-auto no-scrollbar px-5 py-4">
+        <div className="no-scrollbar flex-1 overflow-y-auto px-5 py-4">
           {readySources.length === 0 ? (
             <div className="rounded-md border border-dashed px-4 py-6 text-center">
               <p className="text-sm font-medium">No ready sources</p>
-              <p className="mx-auto mt-1.5 max-w-xs text-sm text-muted-foreground">
-                Add a source and wait for it to finish indexing before generating.
+              <p className="text-muted-foreground mx-auto mt-1.5 max-w-xs text-sm">
+                Add a source and wait for it to finish indexing before
+                generating.
               </p>
             </div>
           ) : (
-            <form id="artifact-config-form" onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <form
+              id="artifact-config-form"
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-4"
+            >
               {/* Type-specific options */}
               {renderTypeOptions()}
 
               {/* Sources */}
               <div className="space-y-1.5">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                   Sources
                 </p>
-                <div className="max-h-40 overflow-y-auto rounded-lg border border-border/40 p-1.5">
+                <div className="border-border/40 max-h-40 overflow-y-auto rounded-lg border p-1.5">
                   {readySources.map((source) => (
                     <label
                       key={source.id}
-                      className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent"
+                      className="hover:bg-accent flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors"
                     >
                       <Checkbox
                         checked={!excludedIds.has(source.id)}
@@ -373,7 +386,7 @@ export function ArtifactConfigDialog({
                     </label>
                   ))}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   {selectedSources.length} of {readySources.length} selected
                 </p>
               </div>
@@ -382,7 +395,7 @@ export function ArtifactConfigDialog({
               <div className="grid gap-1.5">
                 <Label htmlFor="artifact-config-title">
                   Title{" "}
-                  <span className="font-normal text-muted-foreground">
+                  <span className="text-muted-foreground font-normal">
                     (optional)
                   </span>
                 </Label>
@@ -400,7 +413,7 @@ export function ArtifactConfigDialog({
 
         {/* Footer — pinned */}
         {readySources.length > 0 && (
-          <div className="flex items-center justify-end gap-2 border-t border-border/30 px-5 py-3 shrink-0">
+          <div className="border-border/30 flex shrink-0 items-center justify-end gap-2 border-t px-5 py-3">
             <Button
               type="button"
               variant="ghost"
@@ -413,11 +426,18 @@ export function ArtifactConfigDialog({
               type="submit"
               size="sm"
               form="artifact-config-form"
-              disabled={createArtifact.isPending || selectedSources.length === 0}
+              disabled={
+                createArtifact.isPending || selectedSources.length === 0
+              }
             >
               {createArtifact.isPending ? (
                 <>
-                  <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5} className="size-4 animate-spin" aria-hidden />
+                  <HugeiconsIcon
+                    icon={Loading02Icon}
+                    strokeWidth={1.5}
+                    className="size-4 animate-spin"
+                    aria-hidden
+                  />
                   Starting…
                 </>
               ) : (

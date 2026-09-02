@@ -18,9 +18,7 @@ interface WorkspaceShellProps {
  * real API and renders the shell once known, an explicit not-found or
  * error state otherwise. Children only render with a valid workspace.
  */
-export function WorkspaceShell({
-  children,
-}: WorkspaceShellProps) {
+export function WorkspaceShell({ children }: WorkspaceShellProps) {
   const { data: workspace, isPending, error, refetch } = useWorkspaceContext();
 
   if (isPending) {
@@ -28,15 +26,14 @@ export function WorkspaceShell({
   }
 
   if (error || !workspace) {
-    const notFound =
-      error instanceof ApiClientError && error.isNotFound;
+    const notFound = error instanceof ApiClientError && error.isNotFound;
 
     return (
       <div className="px-6 py-10 md:px-10">
         {notFound ? (
           <div className="max-w-md">
-            <h1 className="font-serif text-title">Workspace not found</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <h1 className="text-title font-serif">Workspace not found</h1>
+            <p className="text-muted-foreground mt-2 text-sm">
               It may have been deleted, or the link is wrong.
             </p>
             <Button asChild variant="outline" className="mt-5">

@@ -20,18 +20,18 @@ export type SourceType = "PDF" | "WEBSITE" | "YOUTUBE" | "TEXT" | "MARKDOWN";
 export type SourceStatus = "PENDING" | "PROCESSING" | "READY" | "FAILED";
 
 export type ArtifactType =
-  | "SUMMARY"
-  | "TAKEAWAYS"
-  | "FLASHCARDS"
-  | "QUIZ"
-  | "MINDMAP"
-  | "REPORT";
+  "SUMMARY" | "TAKEAWAYS" | "FLASHCARDS" | "QUIZ" | "MINDMAP" | "REPORT";
 
 export type ArtifactStatus = "PENDING" | "PROCESSING" | "READY" | "FAILED";
 
 export type MessageRole = "USER" | "ASSISTANT";
 
-export type { CitationMetadata, LearningArtifactContent, LearningArtifactMetadata, SourceMetadata };
+export type {
+  CitationMetadata,
+  LearningArtifactContent,
+  LearningArtifactMetadata,
+  SourceMetadata,
+};
 
 export interface Workspace {
   id: string;

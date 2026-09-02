@@ -8,7 +8,6 @@ import { INNGEST_EVENTS } from "./events";
 
 const log = logger.child({ module: "Inngest" });
 
-
 /**
  * Step-by-step durable function for source ingestion: content extraction, chunking,
  * OpenAI vector embeddings generation, and Pinecone index storage.
@@ -20,7 +19,10 @@ export const processSourceFunction = inngest.createFunction(
     triggers: [{ event: INNGEST_EVENTS.SOURCE_CREATED }],
   },
   async ({ event, step }) => {
-    const { sourceId } = event.data as { sourceId: string; workspaceId?: string };
+    const { sourceId } = event.data as {
+      sourceId: string;
+      workspaceId?: string;
+    };
 
     await step.run("mark-processing", () =>
       SourceService.markSourceProcessing(sourceId),
@@ -50,7 +52,11 @@ export const processSourceFunction = inngest.createFunction(
       await step.run("mark-failed", async () => {
         const source = await SourceRepository.findById(sourceId);
         if (source) {
-          await SourceService.markSourceFailed(sourceId, error, source.metadata);
+          await SourceService.markSourceFailed(
+            sourceId,
+            error,
+            source.metadata,
+          );
         }
       });
       throw error;
@@ -72,9 +78,8 @@ export const generateArtifactFunction = inngest.createFunction(
 
     await step.run("generate", async () => {
       log.info({ artifactId }, "Processing learning artifact generation");
-      const { LearningArtifactService } = await import(
-        "@/server/modules/learning-artifact/learning-artifact.service"
-      );
+      const { LearningArtifactService } =
+        await import("@/server/modules/learning-artifact/learning-artifact.service");
       await LearningArtifactService.processArtifactById(artifactId);
       return { artifactId };
     });

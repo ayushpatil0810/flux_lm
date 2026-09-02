@@ -88,7 +88,7 @@ function RenameForm({
   return (
     <form onSubmit={handleSubmit}>
       <DialogHeader>
-        <DialogTitle className="font-serif text-heading">
+        <DialogTitle className="text-heading font-serif">
           Rename source
         </DialogTitle>
         <DialogDescription>
@@ -108,7 +108,7 @@ function RenameForm({
           aria-describedby={fieldError ? "rename-source-error" : undefined}
         />
         {fieldError ? (
-          <p id="rename-source-error" className="text-sm text-destructive">
+          <p id="rename-source-error" className="text-destructive text-sm">
             {fieldError}
           </p>
         ) : null}

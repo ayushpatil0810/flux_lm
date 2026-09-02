@@ -1,10 +1,8 @@
 "use client";
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Loading02Icon, Cancel01Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Loading02Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
-;
-
 import { formatDate } from "@/lib/utils";
 import { useArtifact, useDeleteArtifact } from "@/hooks/use-artifacts";
 import { useToast } from "@/components/providers/toast-provider";
@@ -28,10 +26,13 @@ export function ArtifactPreview({
   onClose,
 }: ArtifactPreviewProps) {
   const { push } = useToast();
-  const { data: artifact, isPending, isError, error, refetch } = useArtifact(
-    workspaceId,
-    artifactId,
-  );
+  const {
+    data: artifact,
+    isPending,
+    isError,
+    error,
+    refetch,
+  } = useArtifact(workspaceId, artifactId);
   const deleteArtifact = useDeleteArtifact(workspaceId);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
 
@@ -81,11 +82,13 @@ export function ArtifactPreview({
     );
   } else {
     content = (
-      <div className="flex h-full flex-col min-h-0 bg-background">
-        <div className="flex shrink-0 items-start justify-between gap-4 border-b border-border/40 px-5 py-4 bg-card/40">
+      <div className="bg-background flex h-full min-h-0 flex-col">
+        <div className="border-border/40 bg-card/40 flex shrink-0 items-start justify-between gap-4 border-b px-5 py-4">
           <div className="min-w-0">
-            <h1 className="font-serif text-lg font-semibold">{artifact.title}</h1>
-            <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+            <h1 className="font-serif text-lg font-semibold">
+              {artifact.title}
+            </h1>
+            <p className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
               <span>{ARTIFACT_TYPE_LABELS[artifact.type]}</span>
               <span aria-hidden>·</span>
               <StatusIndicator status={artifact.status} />
@@ -108,35 +111,43 @@ export function ArtifactPreview({
               onClick={onClose}
               aria-label="Close preview"
             >
-              <HugeiconsIcon icon={Cancel01Icon} strokeWidth={1.5} className="size-4" />
+              <HugeiconsIcon
+                icon={Cancel01Icon}
+                strokeWidth={1.5}
+                className="size-4"
+              />
             </Button>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-4 min-h-0">
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
           {generating ? (
             <div
               role="status"
               className="flex min-h-[240px] flex-col items-center justify-center gap-3 text-center"
             >
-              <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5}
-                className="size-4 animate-spin text-muted-foreground"
+              <HugeiconsIcon
+                icon={Loading02Icon}
+                strokeWidth={1.5}
+                className="text-muted-foreground size-4 animate-spin"
                 aria-hidden
               />
               <p className="text-sm font-medium">
                 Generating {ARTIFACT_TYPE_LABELS[artifact.type].toLowerCase()}
               </p>
-              <p className="max-w-xs text-sm text-muted-foreground">
+              <p className="text-muted-foreground max-w-xs text-sm">
                 This usually takes a few seconds.
               </p>
             </div>
           ) : artifact.status === "FAILED" ? (
             <div
               role="alert"
-              className="mx-auto max-w-2xl rounded-md border border-destructive/40 bg-destructive/5 px-5 py-4"
+              className="border-destructive/40 bg-destructive/5 mx-auto max-w-2xl rounded-md border px-5 py-4"
             >
-              <h3 className="font-medium text-destructive">Generation failed</h3>
-              <p className="mt-1 text-sm text-destructive/80">
+              <h3 className="text-destructive font-medium">
+                Generation failed
+              </h3>
+              <p className="text-destructive/80 mt-1 text-sm">
                 {artifact.metadata?.processingError ||
                   "There was an error creating this artifact. You may need to try again with different sources."}
               </p>
@@ -151,7 +162,7 @@ export function ArtifactPreview({
 
   return (
     <>
-      <div className="flex h-full w-full flex-col min-h-0 bg-background overflow-hidden animate-in slide-in-from-left-4 duration-300">
+      <div className="bg-background animate-in slide-in-from-left-4 flex h-full min-h-0 w-full flex-col overflow-hidden duration-300">
         {content}
       </div>
 
@@ -162,7 +173,7 @@ export function ArtifactPreview({
         description={
           <>
             This permanently deletes{" "}
-            <span className="font-medium text-foreground">
+            <span className="text-foreground font-medium">
               {artifact?.title}
             </span>
             . This cannot be undone.

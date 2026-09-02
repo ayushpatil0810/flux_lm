@@ -1,6 +1,12 @@
 "use client";
-import { HugeiconsIcon } from '@hugeicons/react';
-import { ArrowUp01Icon, ArrowDown01Icon, CpuIcon, Link01Icon, Layers01Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowUp01Icon,
+  ArrowDown01Icon,
+  CpuIcon,
+  Link01Icon,
+  Layers01Icon,
+} from "@hugeicons/core-free-icons";
 
 import * as React from "react";
 
@@ -77,7 +83,7 @@ export function Composer({
   }
 
   return (
-    <div className="shrink-0 px-4 pb-6 pt-2 md:px-8">
+    <div className="shrink-0 px-4 pt-2 pb-6 md:px-8">
       <form
         className="mx-auto w-full max-w-3xl"
         onSubmit={(event) => {
@@ -85,7 +91,7 @@ export function Composer({
           submit();
         }}
       >
-        <div className="relative flex flex-col rounded-2xl border border-border/50 bg-card shadow-sm transition-all focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10">
+        <div className="border-border/50 bg-card focus-within:border-primary/50 focus-within:ring-primary/10 relative flex flex-col rounded-2xl border shadow-sm transition-all focus-within:ring-4">
           <textarea
             ref={textareaRef}
             rows={1}
@@ -100,21 +106,31 @@ export function Composer({
             placeholder="Ask anything about this workspace..."
             aria-label="Message input"
             // We intentionally do NOT disable the textarea while streaming so users can queue up thoughts.
-            className="max-h-[300px] min-h-[60px] w-full resize-none bg-transparent px-4 py-4 text-base leading-relaxed text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+            className="text-foreground placeholder:text-muted-foreground/50 max-h-[300px] min-h-[60px] w-full resize-none bg-transparent px-4 py-4 text-base leading-relaxed focus:outline-none"
           />
 
-          <div className="flex items-center justify-between gap-2 px-3 pb-3 pt-1">
+          <div className="flex items-center justify-between gap-2 px-3 pt-1 pb-3">
             <div className="flex items-center gap-1.5">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
                     aria-label="Choose model"
-                    className="flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
                   >
-                    <HugeiconsIcon icon={CpuIcon} strokeWidth={1.5} className="size-4" aria-hidden />
+                    <HugeiconsIcon
+                      icon={CpuIcon}
+                      strokeWidth={1.5}
+                      className="size-4"
+                      aria-hidden
+                    />
                     <span>{MODEL_LABELS[model]}</span>
-                    <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={1.5} className="size-3.5 opacity-60" aria-hidden />
+                    <HugeiconsIcon
+                      icon={ArrowDown01Icon}
+                      strokeWidth={1.5}
+                      className="size-3.5 opacity-60"
+                      aria-hidden
+                    />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-48 rounded-xl">
@@ -126,7 +142,7 @@ export function Composer({
                       <DropdownMenuRadioItem
                         key={option}
                         value={option}
-                        className="text-sm cursor-pointer rounded-lg py-2"
+                        className="cursor-pointer rounded-lg py-2 text-sm"
                       >
                         {MODEL_LABELS[option]}
                       </DropdownMenuRadioItem>
@@ -140,13 +156,18 @@ export function Composer({
                 aria-pressed={webSearch}
                 onClick={() => onWebSearchChange(!webSearch)}
                 className={cn(
-                  "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "focus-visible:ring-ring flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none",
                   webSearch
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
-                <HugeiconsIcon icon={Link01Icon} strokeWidth={1.5} className="size-4" aria-hidden />
+                <HugeiconsIcon
+                  icon={Link01Icon}
+                  strokeWidth={1.5}
+                  className="size-4"
+                  aria-hidden
+                />
                 <span className="hidden sm:inline">Web Search</span>
               </button>
             </div>
@@ -161,7 +182,12 @@ export function Composer({
                   aria-label="Stop generating"
                   className="size-9 rounded-xl shadow-none"
                 >
-                  <HugeiconsIcon icon={Layers01Icon} strokeWidth={1.5} className="size-4 fill-current" aria-hidden />
+                  <HugeiconsIcon
+                    icon={Layers01Icon}
+                    strokeWidth={1.5}
+                    className="size-4 fill-current"
+                    aria-hidden
+                  />
                 </Button>
               ) : (
                 <Button
@@ -172,11 +198,16 @@ export function Composer({
                   className={cn(
                     "size-9 rounded-xl shadow-none transition-all duration-200",
                     value.trim().length > 0
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:-translate-y-0.5"
-                      : "bg-muted text-muted-foreground/40"
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md"
+                      : "bg-muted text-muted-foreground/40",
                   )}
                 >
-                  <HugeiconsIcon icon={ArrowUp01Icon} strokeWidth={2} className="size-4" aria-hidden />
+                  <HugeiconsIcon
+                    icon={ArrowUp01Icon}
+                    strokeWidth={2}
+                    className="size-4"
+                    aria-hidden
+                  />
                 </Button>
               )}
             </div>

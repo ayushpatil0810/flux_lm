@@ -23,7 +23,8 @@ export function useWorkspaces(initialData?: Workspace[]) {
 export function useWorkspace(workspaceId?: string) {
   return useQuery({
     queryKey: queryKeys.workspaces.detail(workspaceId || ""),
-    queryFn: () => apiFetch<Workspace>(endpoints.workspaces.detail(workspaceId!)),
+    queryFn: () =>
+      apiFetch<Workspace>(endpoints.workspaces.detail(workspaceId!)),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: shouldRetry,
     enabled: !!workspaceId,
@@ -57,27 +58,39 @@ export function useDeleteWorkspace() {
       }),
     onMutate: async (workspaceId) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.workspaces.all });
-      const previousWorkspaces = queryClient.getQueryData<Workspace[]>(queryKeys.workspaces.all);
+      const previousWorkspaces = queryClient.getQueryData<Workspace[]>(
+        queryKeys.workspaces.all,
+      );
       if (previousWorkspaces) {
         queryClient.setQueryData<Workspace[]>(
           queryKeys.workspaces.all,
-          previousWorkspaces.filter((ws) => ws.id !== workspaceId)
+          previousWorkspaces.filter((ws) => ws.id !== workspaceId),
         );
       }
-      
-      const previousDetail = queryClient.getQueryData<Workspace>(queryKeys.workspaces.detail(workspaceId));
+
+      const previousDetail = queryClient.getQueryData<Workspace>(
+        queryKeys.workspaces.detail(workspaceId),
+      );
       if (previousDetail) {
-        queryClient.removeQueries({ queryKey: queryKeys.workspaces.detail(workspaceId) });
+        queryClient.removeQueries({
+          queryKey: queryKeys.workspaces.detail(workspaceId),
+        });
       }
 
       return { previousWorkspaces, previousDetail };
     },
     onError: (err, variables, context) => {
       if (context?.previousWorkspaces) {
-        queryClient.setQueryData(queryKeys.workspaces.all, context.previousWorkspaces);
+        queryClient.setQueryData(
+          queryKeys.workspaces.all,
+          context.previousWorkspaces,
+        );
       }
       if (context?.previousDetail) {
-        queryClient.setQueryData(queryKeys.workspaces.detail(variables), context.previousDetail);
+        queryClient.setQueryData(
+          queryKeys.workspaces.detail(variables),
+          context.previousDetail,
+        );
       }
     },
     onSettled: () => {
@@ -107,18 +120,25 @@ export function useUpdateWorkspace() {
       }),
     onMutate: async ({ id, input }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.workspaces.all });
-      const previousWorkspaces = queryClient.getQueryData<Workspace[]>(queryKeys.workspaces.all);
+      const previousWorkspaces = queryClient.getQueryData<Workspace[]>(
+        queryKeys.workspaces.all,
+      );
       if (previousWorkspaces) {
         queryClient.setQueryData<Workspace[]>(
           queryKeys.workspaces.all,
-          previousWorkspaces.map((ws) => (ws.id === id ? { ...ws, ...input } : ws))
+          previousWorkspaces.map((ws) =>
+            ws.id === id ? { ...ws, ...input } : ws,
+          ),
         );
       }
       return { previousWorkspaces };
     },
     onError: (err, variables, context) => {
       if (context?.previousWorkspaces) {
-        queryClient.setQueryData(queryKeys.workspaces.all, context.previousWorkspaces);
+        queryClient.setQueryData(
+          queryKeys.workspaces.all,
+          context.previousWorkspaces,
+        );
       }
     },
     onSettled: () => {

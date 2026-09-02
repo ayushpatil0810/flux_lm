@@ -45,7 +45,12 @@ export interface LearningArtifactContent {
   takeaways?: string[];
   cards?: Array<{ front: string; back: string }>;
   flashcards?: Array<{ question: string; answer: string }>;
-  questions?: Array<{ question: string; options: string[]; correctIndex: number; explanation?: string }>;
+  questions?: Array<{
+    question: string;
+    options: string[];
+    correctIndex: number;
+    explanation?: string;
+  }>;
   quiz?: Array<{ question: string; options: string[]; answerIndex: number }>;
   nodes?: Array<{ id: string; label: string; parentId?: string }>;
   edges?: Array<{ source: string; target: string; label?: string }>;

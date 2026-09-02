@@ -84,10 +84,7 @@ export class ConversationRepository {
    * @param input - Partial conversation fields to update.
    * @returns Updated conversation record or null.
    */
-  static async update(
-    id: string,
-    input: { title?: string; summary?: string },
-  ) {
+  static async update(id: string, input: { title?: string; summary?: string }) {
     const [updated] = await db
       .update(conversation)
       .set({
@@ -107,10 +104,7 @@ export class ConversationRepository {
    * @param summary - Rolling summary string.
    * @returns Updated conversation record.
    */
-  static async updateSummary(
-    id: string,
-    summary: string,
-  ) {
+  static async updateSummary(id: string, summary: string) {
     const [updated] = await db
       .update(conversation)
       .set({
@@ -195,5 +189,4 @@ export class ConversationRepository {
     const messages = await query;
     return messages.reverse();
   }
-
 }

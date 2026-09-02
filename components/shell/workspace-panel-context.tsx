@@ -34,8 +34,11 @@ export function WorkspacePanelProvider({
 }) {
   const [leftOpen, setLeftOpen] = React.useState(true);
   const [rightOpen, setRightOpen] = React.useState(true);
-  const [previewSource, setPreviewSourceInternal] = React.useState<Source | null>(null);
-  const [previewArtifactId, setPreviewArtifactIdInternal] = React.useState<string | null>(null);
+  const [previewSource, setPreviewSourceInternal] =
+    React.useState<Source | null>(null);
+  const [previewArtifactId, setPreviewArtifactIdInternal] = React.useState<
+    string | null
+  >(null);
 
   const setPreviewSource = React.useCallback((source: Source | null) => {
     setPreviewSourceInternal(source);

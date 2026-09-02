@@ -3,7 +3,6 @@ import { YoutubeTranscript } from "youtube-transcript";
 
 const log = logger.child({ module: "YouTube" });
 
-
 export interface YoutubeTranscriptResult {
   videoId: string;
   videoUrl: string;
@@ -84,7 +83,7 @@ export async function fetchYoutubeMetadata(videoId: string) {
       };
     }
   } catch (error) {
-      log.warn({ err: error, videoId }, "Failed to fetch oEmbed metadata");
+    log.warn({ err: error, videoId }, "Failed to fetch oEmbed metadata");
   }
 
   return {
@@ -118,7 +117,8 @@ export async function getYoutubeTranscript(
   // Format segments into timestamped markdown: [00:15] Text snippet...
   const formattedTranscript = transcriptItems
     .map((item) => {
-      const offsetSeconds = item.offset > 100000 ? item.offset / 1000 : item.offset;
+      const offsetSeconds =
+        item.offset > 100000 ? item.offset / 1000 : item.offset;
       const timeStr = formatTimestamp(offsetSeconds);
       return `${timeStr} ${item.text.trim()}`;
     })

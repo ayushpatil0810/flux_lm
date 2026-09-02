@@ -66,7 +66,10 @@ export class SourceRepository {
    * @param sourceIds - Optional array of specific source IDs to include.
    * @returns Array of source records.
    */
-  static async findReadyByWorkspaceId(workspaceId: string, sourceIds?: string[]) {
+  static async findReadyByWorkspaceId(
+    workspaceId: string,
+    sourceIds?: string[],
+  ) {
     const conditions = [
       eq(source.workspaceId, workspaceId),
       eq(source.status, "READY"),
@@ -74,7 +77,10 @@ export class SourceRepository {
     if (sourceIds && sourceIds.length > 0) {
       conditions.push(inArray(source.id, sourceIds));
     }
-    return db.select().from(source).where(and(...conditions));
+    return db
+      .select()
+      .from(source)
+      .where(and(...conditions));
   }
 
   /**

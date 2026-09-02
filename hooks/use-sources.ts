@@ -16,7 +16,9 @@ import {
 } from "@/lib/api";
 
 /** Builds a temporary optimistic Source placeholder shown while the real one is being created. */
-function optimisticSource(overrides: Partial<Source> & { title: string; type: Source["type"] }): Source {
+function optimisticSource(
+  overrides: Partial<Source> & { title: string; type: Source["type"] },
+): Source {
   return {
     id: `optimistic-${Date.now()}`,
     workspaceId: "",
@@ -41,7 +43,7 @@ const PROCESSING_STATUSES = new Set(["PENDING", "PROCESSING"]);
 export function useSources(
   workspaceId: string,
   filters: SourceListFilters = {},
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const isMutating = useIsMutating();
 
@@ -85,7 +87,9 @@ function useReplaceOptimisticSource(workspaceId: string) {
     queryClient.setQueriesData<Source[]>(
       { queryKey: queryKeys.sources.all(workspaceId) },
       (old) =>
-        old?.map((s) => (s.id === optimisticId ? realSource : s)) ?? [realSource],
+        old?.map((s) => (s.id === optimisticId ? realSource : s)) ?? [
+          realSource,
+        ],
     );
   };
 }
@@ -101,9 +105,17 @@ export function useImportWebsiteSource(workspaceId: string) {
         json: { workspaceId, ...input },
       }),
     onMutate: async (input) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
-      const previous = queryClient.getQueriesData<Source[]>({ queryKey: queryKeys.sources.all(workspaceId) });
-      const placeholder = optimisticSource({ title: input.title ?? input.url, type: "WEBSITE", workspaceId });
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
+      const previous = queryClient.getQueriesData<Source[]>({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
+      const placeholder = optimisticSource({
+        title: input.title ?? input.url,
+        type: "WEBSITE",
+        workspaceId,
+      });
       queryClient.setQueriesData<Source[]>(
         { queryKey: queryKeys.sources.all(workspaceId) },
         (old) => [placeholder, ...(old ?? [])],
@@ -111,10 +123,13 @@ export function useImportWebsiteSource(workspaceId: string) {
       return { previous, optimisticId: placeholder.id };
     },
     onSuccess: (realSource, _input, context) => {
-      if (context?.optimisticId) replaceOptimistic(realSource, context.optimisticId);
+      if (context?.optimisticId)
+        replaceOptimistic(realSource, context.optimisticId);
     },
     onError: (_err, _input, context) => {
-      context?.previous?.forEach(([key, data]) => queryClient.setQueryData(key, data));
+      context?.previous?.forEach(([key, data]) =>
+        queryClient.setQueryData(key, data),
+      );
     },
     onSettled: invalidate,
   });
@@ -131,9 +146,17 @@ export function useImportYoutubeSource(workspaceId: string) {
         json: { workspaceId, ...input },
       }),
     onMutate: async (input) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
-      const previous = queryClient.getQueriesData<Source[]>({ queryKey: queryKeys.sources.all(workspaceId) });
-      const placeholder = optimisticSource({ title: input.title ?? input.url, type: "YOUTUBE", workspaceId });
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
+      const previous = queryClient.getQueriesData<Source[]>({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
+      const placeholder = optimisticSource({
+        title: input.title ?? input.url,
+        type: "YOUTUBE",
+        workspaceId,
+      });
       queryClient.setQueriesData<Source[]>(
         { queryKey: queryKeys.sources.all(workspaceId) },
         (old) => [placeholder, ...(old ?? [])],
@@ -141,10 +164,13 @@ export function useImportYoutubeSource(workspaceId: string) {
       return { previous, optimisticId: placeholder.id };
     },
     onSuccess: (realSource, _input, context) => {
-      if (context?.optimisticId) replaceOptimistic(realSource, context.optimisticId);
+      if (context?.optimisticId)
+        replaceOptimistic(realSource, context.optimisticId);
     },
     onError: (_err, _input, context) => {
-      context?.previous?.forEach(([key, data]) => queryClient.setQueryData(key, data));
+      context?.previous?.forEach(([key, data]) =>
+        queryClient.setQueryData(key, data),
+      );
     },
     onSettled: invalidate,
   });
@@ -165,10 +191,19 @@ export function useImportTextSource(workspaceId: string) {
         json: { workspaceId, ...input },
       }),
     onMutate: async (input) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
-      const previous = queryClient.getQueriesData<Source[]>({ queryKey: queryKeys.sources.all(workspaceId) });
-      const sourceType: Source["type"] = input.type === "MARKDOWN" ? "MARKDOWN" : "TEXT";
-      const placeholder = optimisticSource({ title: input.title, type: sourceType, workspaceId });
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
+      const previous = queryClient.getQueriesData<Source[]>({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
+      const sourceType: Source["type"] =
+        input.type === "MARKDOWN" ? "MARKDOWN" : "TEXT";
+      const placeholder = optimisticSource({
+        title: input.title,
+        type: sourceType,
+        workspaceId,
+      });
       queryClient.setQueriesData<Source[]>(
         { queryKey: queryKeys.sources.all(workspaceId) },
         (old) => [placeholder, ...(old ?? [])],
@@ -176,10 +211,13 @@ export function useImportTextSource(workspaceId: string) {
       return { previous, optimisticId: placeholder.id };
     },
     onSuccess: (realSource, _input, context) => {
-      if (context?.optimisticId) replaceOptimistic(realSource, context.optimisticId);
+      if (context?.optimisticId)
+        replaceOptimistic(realSource, context.optimisticId);
     },
     onError: (_err, _input, context) => {
-      context?.previous?.forEach(([key, data]) => queryClient.setQueryData(key, data));
+      context?.previous?.forEach(([key, data]) =>
+        queryClient.setQueryData(key, data),
+      );
     },
     onSettled: invalidate,
   });
@@ -201,8 +239,12 @@ export function useImportPdfSource(workspaceId: string) {
       });
     },
     onMutate: async (input) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
-      const previous = queryClient.getQueriesData<Source[]>({ queryKey: queryKeys.sources.all(workspaceId) });
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
+      const previous = queryClient.getQueriesData<Source[]>({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
       const placeholder = optimisticSource({
         title: input.title ?? input.file.name.replace(/\.pdf$/i, ""),
         type: "PDF",
@@ -215,10 +257,13 @@ export function useImportPdfSource(workspaceId: string) {
       return { previous, optimisticId: placeholder.id };
     },
     onSuccess: (realSource, _input, context) => {
-      if (context?.optimisticId) replaceOptimistic(realSource, context.optimisticId);
+      if (context?.optimisticId)
+        replaceOptimistic(realSource, context.optimisticId);
     },
     onError: (_err, _input, context) => {
-      context?.previous?.forEach(([key, data]) => queryClient.setQueryData(key, data));
+      context?.previous?.forEach(([key, data]) =>
+        queryClient.setQueryData(key, data),
+      );
     },
     onSettled: invalidate,
   });
@@ -233,17 +278,19 @@ export function useRenameSource(workspaceId: string) {
         json: { title: input.title },
       }),
     onMutate: async ({ sourceId, title }) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
-      
-      const previous = queryClient.getQueriesData<Source[]>({ 
-        queryKey: queryKeys.sources.all(workspaceId) 
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
+
+      const previous = queryClient.getQueriesData<Source[]>({
+        queryKey: queryKeys.sources.all(workspaceId),
       });
 
       queryClient.setQueriesData<Source[]>(
         { queryKey: queryKeys.sources.all(workspaceId) },
-        (old) => old?.map((s) => (s.id === sourceId ? { ...s, title } : s))
+        (old) => old?.map((s) => (s.id === sourceId ? { ...s, title } : s)),
       );
-      
+
       return { previous };
     },
     onError: (err, newSource, context) => {
@@ -254,7 +301,9 @@ export function useRenameSource(workspaceId: string) {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.sources.all(workspaceId) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
     },
   });
 }
@@ -267,17 +316,19 @@ export function useDeleteSource(workspaceId: string) {
         method: "DELETE",
       }),
     onMutate: async (sourceId) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
-      
-      const previous = queryClient.getQueriesData<Source[]>({ 
-        queryKey: queryKeys.sources.all(workspaceId) 
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
+
+      const previous = queryClient.getQueriesData<Source[]>({
+        queryKey: queryKeys.sources.all(workspaceId),
       });
 
       queryClient.setQueriesData<Source[]>(
         { queryKey: queryKeys.sources.all(workspaceId) },
-        (old) => old?.filter((s) => s.id !== sourceId)
+        (old) => old?.filter((s) => s.id !== sourceId),
       );
-      
+
       return { previous };
     },
     onError: (err, sourceId, context) => {
@@ -288,7 +339,9 @@ export function useDeleteSource(workspaceId: string) {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.sources.all(workspaceId) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
     },
   });
 }
@@ -302,17 +355,19 @@ export function useBulkDeleteSources(workspaceId: string) {
         json: { workspaceId, ids },
       }),
     onMutate: async (ids) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.sources.all(workspaceId) });
-      
-      const previous = queryClient.getQueriesData<Source[]>({ 
-        queryKey: queryKeys.sources.all(workspaceId) 
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
+
+      const previous = queryClient.getQueriesData<Source[]>({
+        queryKey: queryKeys.sources.all(workspaceId),
       });
 
       queryClient.setQueriesData<Source[]>(
         { queryKey: queryKeys.sources.all(workspaceId) },
-        (old) => old?.filter((s) => !ids.includes(s.id))
+        (old) => old?.filter((s) => !ids.includes(s.id)),
       );
-      
+
       return { previous };
     },
     onError: (err, ids, context) => {
@@ -323,7 +378,9 @@ export function useBulkDeleteSources(workspaceId: string) {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.sources.all(workspaceId) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.sources.all(workspaceId),
+      });
     },
   });
 }

@@ -2,7 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { CheckmarkBadge01Icon as Check, ArrowUpDownIcon as ChevronsUpDown } from "@hugeicons/core-free-icons";
+import {
+  CheckmarkBadge01Icon as Check,
+  ArrowUpDownIcon as ChevronsUpDown,
+} from "@hugeicons/core-free-icons";
 
 import type { Workspace } from "@/lib/api";
 import { useWorkspaces } from "@/hooks/use-workspaces";
@@ -28,12 +31,12 @@ export function WorkspaceSwitcher({ workspace }: { workspace: Workspace }) {
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={`Current workspace: ${workspace.title}. Open workspace switcher.`}
-        className="flex w-full items-center justify-between gap-2 rounded-md border border-border bg-card px-2.5 py-2 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+        className="border-border bg-card hover:bg-accent focus-visible:ring-ring/60 flex w-full items-center justify-between gap-2 rounded-md border px-2.5 py-2 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
         <span className="flex min-w-0 items-center gap-2.5">
           <span
             aria-hidden
-            className="flex size-6 shrink-0 items-center justify-center rounded-sm bg-secondary text-xs font-medium text-secondary-foreground"
+            className="bg-secondary text-secondary-foreground flex size-6 shrink-0 items-center justify-center rounded-sm text-xs font-medium"
           >
             {workspace.title.trim().slice(0, 1).toUpperCase() || "W"}
           </span>
@@ -41,8 +44,9 @@ export function WorkspaceSwitcher({ workspace }: { workspace: Workspace }) {
             {workspace.title}
           </span>
         </span>
-        <HugeiconsIcon icon={ChevronsUpDown}
-          className="size-4 shrink-0 text-muted-foreground"
+        <HugeiconsIcon
+          icon={ChevronsUpDown}
+          className="text-muted-foreground size-4 shrink-0"
           aria-hidden
         />
       </DropdownMenuTrigger>
@@ -56,7 +60,11 @@ export function WorkspaceSwitcher({ workspace }: { workspace: Workspace }) {
           >
             <span className="truncate">{entry.title}</span>
             {entry.id === workspace.id ? (
-              <HugeiconsIcon icon={Check} className="size-4 shrink-0 text-primary" aria-hidden />
+              <HugeiconsIcon
+                icon={Check}
+                className="text-primary size-4 shrink-0"
+                aria-hidden
+              />
             ) : null}
           </DropdownMenuItem>
         ))}

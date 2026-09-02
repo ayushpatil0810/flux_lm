@@ -74,5 +74,7 @@ export async function parseDocument(file: {
 }
 
 if (!env.FIRECRAWL_API_KEY) {
-  log.warn("FIRECRAWL_API_KEY is not configured — website scraping will fail at runtime");
+  log.warn(
+    "FIRECRAWL_API_KEY is not configured — website scraping will fail at runtime",
+  );
 }

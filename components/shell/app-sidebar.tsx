@@ -1,13 +1,22 @@
-"use client"
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Logout01Icon, BookOpen01Icon, SparkleIcon, SidebarLeftIcon, Cards01Icon, UserIcon, Home01Icon, Clock01Icon, SidebarRightIcon } from '@hugeicons/core-free-icons';
+"use client";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Logout01Icon,
+  BookOpen01Icon,
+  SparkleIcon,
+  SidebarLeftIcon,
+  Cards01Icon,
+  UserIcon,
+  Home01Icon,
+  Clock01Icon,
+  SidebarRightIcon,
+} from "@hugeicons/core-free-icons";
 
-import * as React from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import * as React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-
-import { FluxLogo } from '@/components/ui/logo'
+import { FluxLogo } from "@/components/ui/logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +24,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -29,37 +38,43 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar'
-import { cn, getInitials } from '@/lib/utils'
-import { authClient } from '@/lib/auth-client'
-import { useToast } from '@/components/providers/toast-provider'
-import type { Workspace } from '@/lib/api'
-import { WorkspaceSwitcher } from '@/components/shell/workspace-switcher'
-import { ThemeSwitch } from '@/components/ui/theme-switch'
-import { useWorkspacePanel } from '@/components/shell/workspace-panel-context'
+} from "@/components/ui/sidebar";
+import { cn, getInitials } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
+import { useToast } from "@/components/providers/toast-provider";
+import type { Workspace } from "@/lib/api";
+import { WorkspaceSwitcher } from "@/components/shell/workspace-switcher";
+import { ThemeSwitch } from "@/components/ui/theme-switch";
+import { useWorkspacePanel } from "@/components/shell/workspace-panel-context";
 
 const menuButtonClassName = cn(
-  'h-11 gap-2.5 rounded-lg px-3 text-base text-sidebar-foreground/70 transition-colors',
-  'aria-[current=page]:bg-background aria-[current=page]:font-medium aria-[current=page]:text-sidebar-accent-foreground',
-  'data-open:bg-background data-open:text-sidebar-accent-foreground',
-  '[&_svg]:size-5!',
-  'group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:[&>span]:hidden',
-)
+  "h-11 gap-2.5 rounded-lg px-3 text-base text-sidebar-foreground/70 transition-colors",
+  "aria-[current=page]:bg-background aria-[current=page]:font-medium aria-[current=page]:text-sidebar-accent-foreground",
+  "data-open:bg-background data-open:text-sidebar-accent-foreground",
+  "[&_svg]:size-5!",
+  "group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:[&>span]:hidden",
+);
 
 export type NavigationItem = {
-  name: string
-  href: string
-  icon: React.ElementType
-  badge?: string
-}
+  name: string;
+  href: string;
+  icon: React.ElementType;
+  badge?: string;
+};
 
-function NavItem({ item, onNavigate }: { item: NavigationItem; onNavigate?: () => void }) {
-  const pathname = usePathname()
-  const { isMobile, setOpenMobile } = useSidebar()
+function NavItem({
+  item,
+  onNavigate,
+}: {
+  item: NavigationItem;
+  onNavigate?: () => void;
+}) {
+  const pathname = usePathname();
+  const { isMobile, setOpenMobile } = useSidebar();
   const isActive =
-    item.href === '/' || item.href === '/dashboard'
+    item.href === "/" || item.href === "/dashboard"
       ? pathname === item.href
-      : pathname === item.href || pathname.startsWith(`${item.href}/`)
+      : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
   return (
     <SidebarMenuButton
@@ -69,51 +84,51 @@ function NavItem({ item, onNavigate }: { item: NavigationItem; onNavigate?: () =
     >
       <Link
         href={item.href}
-        aria-current={isActive ? 'page' : undefined}
+        aria-current={isActive ? "page" : undefined}
         onClick={() => {
-          onNavigate?.()
-          if (isMobile) setOpenMobile(false)
+          onNavigate?.();
+          if (isMobile) setOpenMobile(false);
         }}
       >
         <item.icon />
         <span>{item.name}</span>
         {item.badge ? (
-          <SidebarMenuBadge className="sidebar-badge-shadow static ml-auto rounded bg-background px-2 py-1.5 text-sm font-normal text-sidebar-foreground/70 group-aria-[current=page]/menu-button:font-medium group-aria-[current=page]/menu-button:text-sidebar-accent-foreground group-data-[collapsible=icon]:hidden">
+          <SidebarMenuBadge className="sidebar-badge-shadow bg-background text-sidebar-foreground/70 group-aria-[current=page]/menu-button:text-sidebar-accent-foreground static ml-auto rounded px-2 py-1.5 text-sm font-normal group-aria-[current=page]/menu-button:font-medium group-data-[collapsible=icon]:hidden">
             {item.badge}
           </SidebarMenuBadge>
         ) : null}
       </Link>
     </SidebarMenuButton>
-  )
+  );
 }
 
 // Removed PanelNavItem as sidebar is no longer in workspace view
 // Removed DarkModeItem in favor of ThemeToggle
 
 function ProfileItem() {
-  const { data: session } = authClient.useSession()
-  const [isSigningOut, setIsSigningOut] = React.useState(false)
-  const { push } = useToast()
+  const { data: session } = authClient.useSession();
+  const [isSigningOut, setIsSigningOut] = React.useState(false);
+  const { push } = useToast();
 
   const handleSignOut = async () => {
-    setIsSigningOut(true)
+    setIsSigningOut(true);
     try {
-      await authClient.signOut()
-      window.location.href = '/login'
+      await authClient.signOut();
+      window.location.href = "/login";
     } catch {
-      setIsSigningOut(false)
+      setIsSigningOut(false);
       push({
-        variant: 'destructive',
-        title: 'Could not sign out',
-        description: 'Check your connection and try again.',
-      })
+        variant: "destructive",
+        title: "Could not sign out",
+        description: "Check your connection and try again.",
+      });
     }
-  }
+  };
 
-  const user = session?.user
+  const user = session?.user;
 
   return (
-    <SidebarMenuItem className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full">
+    <SidebarMenuItem className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:justify-center">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <SidebarMenuButton tooltip="Profile" className={menuButtonClassName}>
@@ -121,17 +136,15 @@ function ProfileItem() {
             <span>Profile</span>
           </SidebarMenuButton>
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          side="top"
-          align="start"
-          className="w-56"
-        >
+        <DropdownMenuContent side="top" align="start" className="w-56">
           <DropdownMenuLabel className="font-normal">
             <div className="leading-tight">
-              <p className="text-sm font-medium text-foreground truncate">
-                {user?.name || 'Account'}
+              <p className="text-foreground truncate text-sm font-medium">
+                {user?.name || "Account"}
               </p>
-              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+              <p className="text-muted-foreground truncate text-xs">
+                {user?.email}
+              </p>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
@@ -140,98 +153,130 @@ function ProfileItem() {
             disabled={isSigningOut}
             onClick={handleSignOut}
           >
-            <HugeiconsIcon icon={Logout01Icon} strokeWidth={1.5} className="mr-2 h-4 w-4" />
-            {isSigningOut ? 'Signing out...' : 'Log out'}
+            <HugeiconsIcon
+              icon={Logout01Icon}
+              strokeWidth={1.5}
+              className="mr-2 h-4 w-4"
+            />
+            {isSigningOut ? "Signing out..." : "Log out"}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </SidebarMenuItem>
-  )
+  );
 }
 
 function CollapseControl({
   collapsed,
   onToggle,
 }: {
-  collapsed: boolean
-  onToggle: () => void
+  collapsed: boolean;
+  onToggle: () => void;
 }) {
   if (!collapsed) {
     return (
       <button
         type="button"
         onClick={onToggle}
-        className="flex size-9.5 shrink-0 items-center justify-center rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
+        className="bg-secondary hover:bg-secondary/80 flex size-9.5 shrink-0 items-center justify-center rounded-lg transition-colors"
         aria-label="Collapse sidebar"
       >
         <HugeiconsIcon icon={SidebarRightIcon} strokeWidth={1.5} />
       </button>
-    )
+    );
   }
 
   return (
-    <div className="relative size-10 shrink-0 group flex items-center justify-center">
+    <div className="group relative flex size-10 shrink-0 items-center justify-center">
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center transition-all ease-linear group-hover:scale-75 group-hover:opacity-0">
-        <FluxLogo className="size-6 text-primary" />
+        <FluxLogo className="text-primary size-6" />
       </div>
       <div className="pointer-events-none absolute inset-0 flex scale-75 items-center justify-center opacity-0 transition-all ease-linear group-hover:pointer-events-auto group-hover:scale-100 group-hover:opacity-100">
         <button
           type="button"
           onClick={onToggle}
-          className="flex size-10 items-center justify-center rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
+          className="bg-secondary hover:bg-secondary/80 flex size-10 items-center justify-center rounded-lg transition-colors"
           aria-label="Expand sidebar"
         >
           <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} />
         </button>
       </div>
     </div>
-  )
+  );
 }
 
 export interface AppSidebarProps {
-  workspace?: Workspace
-  onNavigate?: () => void
-  onNewWorkspace?: () => void
-  onWorkspaceSettings?: () => void
+  workspace?: Workspace;
+  onNavigate?: () => void;
+  onNewWorkspace?: () => void;
+  onWorkspaceSettings?: () => void;
 }
 
-export function AppSidebar({ workspace, onNavigate, onNewWorkspace, onWorkspaceSettings }: AppSidebarProps) {
-  const { state, toggleSidebar } = useSidebar()
-  const collapsed = state === 'collapsed'
+export function AppSidebar({
+  workspace,
+  onNavigate,
+  onNewWorkspace,
+  onWorkspaceSettings,
+}: AppSidebarProps) {
+  const { state, toggleSidebar } = useSidebar();
+  const collapsed = state === "collapsed";
 
   const generalNavItems: NavigationItem[] = [
-    { name: 'Workspaces', href: '/dashboard', icon: (props) => <HugeiconsIcon icon={Home01Icon} strokeWidth={1.5} {...props} /> },
-    { name: 'Memories', href: '/dashboard/memories', icon: (props) => <HugeiconsIcon icon={Clock01Icon} strokeWidth={1.5} {...props} /> },
-  ]
+    {
+      name: "Workspaces",
+      href: "/dashboard",
+      icon: (props) => (
+        <HugeiconsIcon icon={Home01Icon} strokeWidth={1.5} {...props} />
+      ),
+    },
+    {
+      name: "Memories",
+      href: "/dashboard/memories",
+      icon: (props) => (
+        <HugeiconsIcon icon={Clock01Icon} strokeWidth={1.5} {...props} />
+      ),
+    },
+  ];
 
   return (
-    <Sidebar collapsible="icon" className="h-full border-r border-sidebar-border bg-sidebar">
+    <Sidebar
+      collapsible="icon"
+      className="border-sidebar-border bg-sidebar h-full border-r"
+    >
       <SidebarHeader
         className={cn(
-          'h-12 flex-row items-center border-b border-sidebar-border transition-[padding] md:h-14',
-          collapsed ? 'justify-center px-0' : 'justify-between gap-4.75 px-4',
+          "border-sidebar-border h-12 flex-row items-center border-b transition-[padding] md:h-14",
+          collapsed ? "justify-center px-0" : "justify-between gap-4.75 px-4",
         )}
       >
         {!collapsed && (
-          <Link href="/dashboard" className="flex min-w-0 flex-1 items-center gap-2">
-            <FluxLogo className="size-8 shrink-0 text-primary" />
-            <span className="truncate text-xl font-semibold tracking-tight">Flux</span>
+          <Link
+            href="/dashboard"
+            className="flex min-w-0 flex-1 items-center gap-2"
+          >
+            <FluxLogo className="text-primary size-8 shrink-0" />
+            <span className="truncate text-xl font-semibold tracking-tight">
+              Flux
+            </span>
           </Link>
         )}
         <CollapseControl collapsed={collapsed} onToggle={toggleSidebar} />
       </SidebarHeader>
 
-      <SidebarContent className="gap-4 overflow-x-hidden overflow-y-auto px-3 py-4 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:overflow-y-auto!">
+      <SidebarContent className="gap-4 overflow-x-hidden overflow-y-auto px-3 py-4 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:overflow-y-auto! group-data-[collapsible=icon]:px-0">
         {/* Workspace section removed as sidebar is only used on dashboard now */}
 
-        <SidebarGroup className="gap-2 p-0 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:w-full">
-          <SidebarGroupLabel className="h-auto px-3 py-1 text-base font-normal text-muted-foreground group-data-[collapsible=icon]:hidden">
-            {workspace ? 'General' : 'Navigate'}
+        <SidebarGroup className="gap-2 p-0 group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-0">
+          <SidebarGroupLabel className="text-muted-foreground h-auto px-3 py-1 text-base font-normal group-data-[collapsible=icon]:hidden">
+            {workspace ? "General" : "Navigate"}
           </SidebarGroupLabel>
           <SidebarGroupContent className="w-full text-sm group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
-            <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:w-full">
+            <SidebarMenu className="gap-1 group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:items-center">
               {generalNavItems.map((item) => (
-                <SidebarMenuItem key={item.name} className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full">
+                <SidebarMenuItem
+                  key={item.name}
+                  className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:justify-center"
+                >
                   <NavItem item={item} onNavigate={onNavigate} />
                 </SidebarMenuItem>
               ))}
@@ -240,16 +285,16 @@ export function AppSidebar({ workspace, onNavigate, onNewWorkspace, onWorkspaceS
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-sidebar-border px-3 py-3 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
+      <SidebarFooter className="border-sidebar-border border-t px-3 py-3 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-0">
         <div className="flex items-center gap-1">
-          <div className="flex-1 min-w-0">
-            <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:w-full">
+          <div className="min-w-0 flex-1">
+            <SidebarMenu className="gap-1 group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:items-center">
               <ProfileItem />
             </SidebarMenu>
           </div>
-          <ThemeSwitch className="group-data-[collapsible=icon]:hidden shrink-0" />
+          <ThemeSwitch className="shrink-0 group-data-[collapsible=icon]:hidden" />
         </div>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

@@ -52,7 +52,7 @@ export function UserMenu({ variant = "full" }: UserMenuProps) {
       <div
         aria-hidden
         className={cn(
-          "animate-pulse rounded-full bg-muted",
+          "bg-muted animate-pulse rounded-full",
           variant === "full" ? "h-9 w-9" : "h-8 w-8",
         )}
       />
@@ -70,7 +70,7 @@ export function UserMenu({ variant = "full" }: UserMenuProps) {
         src={user.image ?? undefined}
         alt={user.name ? `${user.name}'s avatar` : "Account avatar"}
       />
-      <AvatarFallback className="bg-secondary text-xs font-medium text-secondary-foreground">
+      <AvatarFallback className="bg-secondary text-secondary-foreground text-xs font-medium">
         {getInitials(user.name, user.email)}
       </AvatarFallback>
     </Avatar>
@@ -81,17 +81,17 @@ export function UserMenu({ variant = "full" }: UserMenuProps) {
       <DropdownMenuTrigger
         aria-label="Account menu"
         className={cn(
-          "flex min-w-0 items-center gap-2.5 rounded-md text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60",
+          "hover:bg-accent focus-visible:ring-ring/60 flex min-w-0 items-center gap-2.5 rounded-md text-left transition-colors focus-visible:ring-2 focus-visible:outline-none",
           variant === "full" ? "flex-1 px-2 py-1.5" : "rounded-full",
         )}
       >
         {avatar}
         {variant === "full" ? (
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-medium leading-tight">
+            <span className="block truncate text-sm leading-tight font-medium">
               {user.name || "Account"}
             </span>
-            <span className="block truncate text-xs text-muted-foreground">
+            <span className="text-muted-foreground block truncate text-xs">
               {user.email}
             </span>
           </span>
@@ -109,15 +109,12 @@ export function UserMenu({ variant = "full" }: UserMenuProps) {
           <span className="block truncate text-sm font-medium">
             {user.name || "Account"}
           </span>
-          <span className="block truncate text-xs text-muted-foreground">
+          <span className="text-muted-foreground block truncate text-xs">
             {user.email}
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          disabled={isSigningOut}
-          onSelect={handleSignOut}
-        >
+        <DropdownMenuItem disabled={isSigningOut} onSelect={handleSignOut}>
           {isSigningOut ? "Signing out…" : "Sign out"}
         </DropdownMenuItem>
       </DropdownMenuContent>

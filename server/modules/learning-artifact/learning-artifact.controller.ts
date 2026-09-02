@@ -13,7 +13,10 @@ import { createArtifactSchema } from "./learning-artifact.validator";
  * Controller class handling HTTP requests for Learning Artifacts.
  */
 export class LearningArtifactController {
-  private static async getContext(req: NextRequest, params: Promise<{ id: string; artifactId: string }>) {
+  private static async getContext(
+    req: NextRequest,
+    params: Promise<{ id: string; artifactId: string }>,
+  ) {
     const user = await getAuthenticatedUser(req);
     const { id: workspaceId, artifactId } = await params;
     return { user, workspaceId, artifactId };
@@ -47,7 +50,8 @@ export class LearningArtifactController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string; artifactId: string }> },
     ) => {
-      const { user, workspaceId, artifactId } = await LearningArtifactController.getContext(req, params);
+      const { user, workspaceId, artifactId } =
+        await LearningArtifactController.getContext(req, params);
       const artifact = await LearningArtifactService.getArtifactForWorkspace(
         workspaceId,
         artifactId,
@@ -67,7 +71,10 @@ export class LearningArtifactController {
       { params }: { params: Promise<{ id: string }> },
     ) => {
       const user = await getAuthenticatedUser(req);
-      await checkRateLimit(`artifact:${user.id}`, { maxRequests: 10, windowMs: 60 * 1000 });
+      await checkRateLimit(`artifact:${user.id}`, {
+        maxRequests: 10,
+        windowMs: 60 * 1000,
+      });
       const { id: workspaceId } = await params;
       const body = await req.json();
 
@@ -79,11 +86,12 @@ export class LearningArtifactController {
         );
       }
 
-      const newArtifact = await LearningArtifactService.createArtifactForWorkspace(
-        workspaceId,
-        user.id,
-        validation.data,
-      );
+      const newArtifact =
+        await LearningArtifactService.createArtifactForWorkspace(
+          workspaceId,
+          user.id,
+          validation.data,
+        );
       return ApiResponse.created(newArtifact, "Artifact generation queued");
     },
   );
@@ -97,7 +105,8 @@ export class LearningArtifactController {
       req: NextRequest,
       { params }: { params: Promise<{ id: string; artifactId: string }> },
     ) => {
-      const { user, workspaceId, artifactId } = await LearningArtifactController.getContext(req, params);
+      const { user, workspaceId, artifactId } =
+        await LearningArtifactController.getContext(req, params);
       await LearningArtifactService.deleteArtifactForWorkspace(
         workspaceId,
         artifactId,

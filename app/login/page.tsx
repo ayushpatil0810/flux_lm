@@ -1,12 +1,10 @@
 "use client";
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Loading02Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Loading02Icon } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-;
-
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -72,23 +70,23 @@ export default function LoginPage() {
 
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
-      <aside className="hidden border-r bg-secondary/40 lg:flex lg:flex-col lg:justify-between lg:p-10">
+      <aside className="bg-secondary/40 hidden border-r lg:flex lg:flex-col lg:justify-between lg:p-10">
         <Link
           href="/"
-          className="w-fit rounded-sm font-serif text-lg font-semibold tracking-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+          className="focus-visible:ring-ring/60 w-fit rounded-sm font-serif text-lg font-semibold tracking-tight focus-visible:ring-2 focus-visible:outline-none"
         >
           Flux
         </Link>
         <div>
-          <p className="max-w-sm font-serif text-title">
+          <p className="text-title max-w-sm font-serif">
             Your sources, ready to answer.
           </p>
-          <p className="mt-3 max-w-sm text-sm text-muted-foreground">
-            Import PDFs, web pages, YouTube videos, and notes. Ask questions
-            and get answers that cite your material.
+          <p className="text-muted-foreground mt-3 max-w-sm text-sm">
+            Import PDFs, web pages, YouTube videos, and notes. Ask questions and
+            get answers that cite your material.
           </p>
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           Flux knowledge workspace
         </p>
       </aside>
@@ -97,14 +95,14 @@ export default function LoginPage() {
         <div className="w-full max-w-sm">
           <Link
             href="/"
-            className="mb-10 inline-block rounded-sm font-serif text-lg font-semibold tracking-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 lg:hidden"
+            className="focus-visible:ring-ring/60 mb-10 inline-block rounded-sm font-serif text-lg font-semibold tracking-tight focus-visible:ring-2 focus-visible:outline-none lg:hidden"
           >
             Flux
           </Link>
-          <h1 className="font-serif text-title">
+          <h1 className="text-title font-serif">
             {isSignUp ? "Create your account" : "Welcome back"}
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-2 text-sm">
             {isSignUp
               ? "Start building your knowledge workspace."
               : "Sign in to continue to your workspaces."}
@@ -117,7 +115,12 @@ export default function LoginPage() {
               onClick={() => handleSocial("github")}
             >
               {socialPending === "github" ? (
-                <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5} className="size-4 animate-spin" aria-hidden />
+                <HugeiconsIcon
+                  icon={Loading02Icon}
+                  strokeWidth={1.5}
+                  className="size-4 animate-spin"
+                  aria-hidden
+                />
               ) : null}
               Continue with GitHub
             </Button>
@@ -127,7 +130,12 @@ export default function LoginPage() {
               onClick={() => handleSocial("google")}
             >
               {socialPending === "google" ? (
-                <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5} className="size-4 animate-spin" aria-hidden />
+                <HugeiconsIcon
+                  icon={Loading02Icon}
+                  strokeWidth={1.5}
+                  className="size-4 animate-spin"
+                  aria-hidden
+                />
               ) : null}
               Continue with Google
             </Button>
@@ -135,11 +143,11 @@ export default function LoginPage() {
 
           <div
             aria-hidden
-            className="my-6 flex items-center gap-3 text-xs text-muted-foreground"
+            className="text-muted-foreground my-6 flex items-center gap-3 text-xs"
           >
-            <span className="h-px flex-1 bg-border" />
+            <span className="bg-border h-px flex-1" />
             or with email
-            <span className="h-px flex-1 bg-border" />
+            <span className="bg-border h-px flex-1" />
           </div>
 
           <form onSubmit={handleSubmit} className="grid gap-4">
@@ -182,14 +190,14 @@ export default function LoginPage() {
                 aria-describedby={isSignUp ? "password-hint" : undefined}
               />
               {isSignUp ? (
-                <p id="password-hint" className="text-xs text-muted-foreground">
+                <p id="password-hint" className="text-muted-foreground text-xs">
                   At least 8 characters.
                 </p>
               ) : null}
             </div>
 
             {error ? (
-              <p role="alert" className="text-sm text-destructive">
+              <p role="alert" className="text-destructive text-sm">
                 {error}
               </p>
             ) : null}
@@ -205,7 +213,7 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <p className="mt-6 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-6 text-sm">
             {isSignUp ? "Already have an account?" : "New to Flux?"}{" "}
             <button
               type="button"
@@ -213,7 +221,7 @@ export default function LoginPage() {
                 setMode(isSignUp ? "sign-in" : "sign-up");
                 setError(null);
               }}
-              className="rounded-sm font-medium text-foreground underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+              className="text-foreground focus-visible:ring-ring/60 rounded-sm font-medium underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:outline-none"
             >
               {isSignUp ? "Sign in" : "Create an account"}
             </button>

@@ -83,7 +83,7 @@ export function MemoryFormDialog({
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle className="font-serif text-heading">
+            <DialogTitle className="text-heading font-serif">
               {isEdit ? "Edit memory" : "Add a memory"}
             </DialogTitle>
             <DialogDescription>
@@ -107,13 +107,13 @@ export function MemoryFormDialog({
             />
             <div className="flex items-start justify-between gap-3">
               {fieldError ? (
-                <p id="memory-text-error" className="text-sm text-destructive">
+                <p id="memory-text-error" className="text-destructive text-sm">
                   {fieldError}
                 </p>
               ) : (
                 <span />
               )}
-              <span className="shrink-0 text-xs text-muted-foreground">
+              <span className="text-muted-foreground shrink-0 text-xs">
                 {text.length}/1000
               </span>
             </div>

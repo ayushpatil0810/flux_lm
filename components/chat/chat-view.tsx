@@ -16,10 +16,7 @@ import {
   type Message,
 } from "@/lib/api";
 import { useWorkspaceContext } from "@/components/shell/workspace-context";
-import {
-  useConversations,
-  useMessages,
-} from "@/hooks/use-conversations";
+import { useConversations, useMessages } from "@/hooks/use-conversations";
 import { useSources } from "@/hooks/use-sources";
 import { useToast } from "@/components/providers/toast-provider";
 import { ErrorState, LoadingState } from "@/components/shell/states";
@@ -45,21 +42,25 @@ export function ChatView({ workspaceId }: ChatViewProps) {
   const { push } = useToast();
 
   const { data: workspace } = useWorkspaceContext();
-  const { data: conversations, isPending: isConversationsPending } = useConversations(workspaceId);
+  const { data: conversations, isPending: isConversationsPending } =
+    useConversations(workspaceId);
   const { data: sources } = useSources(workspaceId);
-  
+
   const sourcesCount = sources?.length ?? 0;
   const noSources = sources !== undefined && sources.length === 0;
-  
+
   // Use the first conversation available in the workspace, or undefined if none.
-  const activeConversationId = conversations && conversations.length > 0 ? conversations[0].id : undefined;
-  
+  const activeConversationId =
+    conversations && conversations.length > 0 ? conversations[0].id : undefined;
+
   const messagesQuery = useMessages(activeConversationId);
 
   const [model, setModel] = React.useState<ChatModel | null>(null);
   const [webSearch, setWebSearch] = React.useState(false);
   const [stream, setStream] = React.useState<StreamState | null>(null);
-  const [streamError, setStreamError] = React.useState<StreamError | null>(null);
+  const [streamError, setStreamError] = React.useState<StreamError | null>(
+    null,
+  );
   const abortRef = React.useRef<AbortController | null>(null);
 
   /**
@@ -82,7 +83,8 @@ export function ChatView({ workspaceId }: ChatViewProps) {
     model ?? (workspace?.defaultModel === "gpt-4o" ? "gpt-4o" : "gpt-4o-mini");
 
   // Reset transient stream state when moving between conversations (if it ever happens).
-  const [prevConversationId, setPrevConversationId] = React.useState(activeConversationId);
+  const [prevConversationId, setPrevConversationId] =
+    React.useState(activeConversationId);
   if (activeConversationId !== prevConversationId) {
     setPrevConversationId(activeConversationId);
     // Only wipe the last stream once the new conversation's messages are loaded,
@@ -143,7 +145,10 @@ export function ChatView({ workspaceId }: ChatViewProps) {
           onChunk: (chunk) =>
             setStream((current) => {
               if (!current) return current;
-              const updated = { ...current, assistantText: current.assistantText + chunk };
+              const updated = {
+                ...current,
+                assistantText: current.assistantText + chunk,
+              };
               lastStreamRef.current = updated;
               return updated;
             }),
@@ -205,14 +210,20 @@ export function ChatView({ workspaceId }: ChatViewProps) {
   }
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-background">
+    <div className="bg-background flex h-full w-full overflow-hidden">
       <section
         aria-label="Conversation"
-        className="flex min-w-0 flex-1 flex-col bg-background"
+        className="bg-background flex min-w-0 flex-1 flex-col"
       >
-        {hasEverStreamedRef.current || activeConversationId || stream || streamError || lastStreamRef.current ? (
+        {hasEverStreamedRef.current ||
+        activeConversationId ||
+        stream ||
+        streamError ||
+        lastStreamRef.current ? (
           <>
-            {activeConversationId && messagesQuery.isPending && !lastStreamRef.current ? (
+            {activeConversationId &&
+            messagesQuery.isPending &&
+            !lastStreamRef.current ? (
               <LoadingState label="Loading conversation" />
             ) : activeConversationId && messagesQuery.isError ? (
               <div className="flex min-h-0 flex-1 items-center justify-center px-6">
@@ -225,7 +236,10 @@ export function ChatView({ workspaceId }: ChatViewProps) {
             ) : (
               <MessageList
                 messages={messagesQuery.data ?? []}
-                stream={stream ?? (messagesQuery.isPending ? lastStreamRef.current : null)}
+                stream={
+                  stream ??
+                  (messagesQuery.isPending ? lastStreamRef.current : null)
+                }
                 streamError={streamError}
                 onRetry={retry}
               />
@@ -244,11 +258,11 @@ export function ChatView({ workspaceId }: ChatViewProps) {
         ) : (
           <>
             <div className="flex min-h-0 flex-1 flex-col items-center justify-center p-6 sm:p-12">
-              <div className="flex w-full max-w-xl flex-col items-center text-center animate-in fade-in duration-300">
-                <h1 className="font-serif text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+              <div className="animate-in fade-in flex w-full max-w-xl flex-col items-center text-center duration-300">
+                <h1 className="text-foreground font-serif text-3xl font-medium tracking-tight sm:text-4xl">
                   Ask {workspace?.title ?? "this workspace"}
                 </h1>
-                <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+                <p className="text-muted-foreground mt-2 max-w-md text-sm leading-relaxed">
                   Answers grounded in your sources, with citations.
                   {sourcesCount > 0
                     ? ` ${sourcesCount} ${sourcesCount === 1 ? "source" : "sources"} connected.`
@@ -256,27 +270,41 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                 </p>
 
                 {noSources ? (
-                  <p className="mt-8 rounded-lg border border-dashed border-border/60 px-5 py-4 text-sm text-muted-foreground">
+                  <p className="border-border/60 text-muted-foreground mt-8 rounded-lg border border-dashed px-5 py-4 text-sm">
                     No sources yet — add a PDF, link, or note to start asking
                     questions.
                   </p>
                 ) : (
                   <div className="mt-8 grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
                     {[
-                      { label: "Summarize key takeaways", prompt: "Summarize the key takeaways from the connected sources." },
-                      { label: "Extract main insights", prompt: "What are the main insights across all documents?" },
-                      { label: "Find user feedback", prompt: "Find mentions of user feedback and requests." },
-                      { label: "List action items", prompt: "Extract key action items and next steps." },
+                      {
+                        label: "Summarize key takeaways",
+                        prompt:
+                          "Summarize the key takeaways from the connected sources.",
+                      },
+                      {
+                        label: "Extract main insights",
+                        prompt:
+                          "What are the main insights across all documents?",
+                      },
+                      {
+                        label: "Find user feedback",
+                        prompt: "Find mentions of user feedback and requests.",
+                      },
+                      {
+                        label: "List action items",
+                        prompt: "Extract key action items and next steps.",
+                      },
                     ].map((item) => (
                       <button
                         key={item.label}
                         onClick={() => void send(item.prompt)}
-                        className="group flex flex-col justify-between rounded-xl border border-border/50 bg-card/40 p-4 text-left transition-all duration-300 hover:border-primary/40 hover:bg-card/60 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="group border-border/50 bg-card/40 hover:border-primary/40 hover:bg-card/60 focus-visible:ring-ring flex flex-col justify-between rounded-xl border p-4 text-left transition-all duration-300 hover:shadow-sm focus-visible:ring-2 focus-visible:outline-none"
                       >
-                        <span className="text-sm font-medium text-foreground">
+                        <span className="text-foreground text-sm font-medium">
                           {item.label}
                         </span>
-                        <span className="mt-1 text-xs text-muted-foreground line-clamp-1">
+                        <span className="text-muted-foreground mt-1 line-clamp-1 text-xs">
                           {item.prompt}
                         </span>
                       </button>

@@ -11,7 +11,10 @@ import { EditWorkspaceDialog } from "@/components/shell/edit-workspace-dialog";
 import { useWorkspaceContext } from "@/components/shell/workspace-context";
 import { useSources } from "@/hooks/use-sources";
 import { useArtifacts } from "@/hooks/use-artifacts";
-import { useWorkspacePanel, useWorkspacePreview } from "@/components/shell/workspace-panel-context";
+import {
+  useWorkspacePanel,
+  useWorkspacePreview,
+} from "@/components/shell/workspace-panel-context";
 import { WorkspaceTopbar } from "./workspace-topbar";
 import { usePanelResize } from "@/hooks/use-panel-resize";
 
@@ -27,12 +30,8 @@ interface WorkspaceViewProps {
  * Includes mobile overlay states and topbar orchestration.
  */
 export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
-  const {
-    leftOpen,
-    setLeftOpen,
-    rightOpen,
-    setRightOpen,
-  } = useWorkspacePanel();
+  const { leftOpen, setLeftOpen, rightOpen, setRightOpen } =
+    useWorkspacePanel();
   const {
     previewSource,
     setPreviewSource,
@@ -72,7 +71,7 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
   const hasPreview = !!previewSource || !!previewArtifactId;
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="bg-background flex h-full flex-col overflow-hidden">
       {/* Topbar */}
       <WorkspaceTopbar
         workspaceId={workspaceId}
@@ -80,11 +79,11 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
       />
 
       {/* Three-column body */}
-      <div className="flex min-h-0 flex-1 overflow-hidden relative">
+      <div className="relative flex min-h-0 flex-1 overflow-hidden">
         {/* ── Left Panel (Sources) ────────────────────────────────────────── */}
         {leftOpen && (
           <div
-            className="relative hidden shrink-0 border-r border-border/30 md:flex md:flex-col animate-in slide-in-from-left-4 duration-300"
+            className="border-border/30 animate-in slide-in-from-left-4 relative hidden shrink-0 border-r duration-300 md:flex md:flex-col"
             style={{ width: leftResize.width }}
           >
             <SidebarSources
@@ -94,9 +93,9 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
             {/* Drag Handle */}
             <div
               onMouseDown={leftResize.onMouseDown}
-              className="absolute right-0 top-0 z-10 flex h-full w-2 cursor-col-resize items-center justify-center bg-transparent transition-colors hover:bg-primary/20 active:bg-primary/40"
+              className="hover:bg-primary/20 active:bg-primary/40 absolute top-0 right-0 z-10 flex h-full w-2 cursor-col-resize items-center justify-center bg-transparent transition-colors"
             >
-              <div className="h-8 w-0.5 rounded-full bg-border/80" />
+              <div className="bg-border/80 h-8 w-0.5 rounded-full" />
             </div>
           </div>
         )}
@@ -109,7 +108,7 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
               onClick={() => setLeftOpen(false)}
               aria-hidden
             />
-            <div className="absolute inset-y-0 left-0 flex w-[85vw] max-w-sm flex-col bg-background shadow-2xl animate-in slide-in-from-left duration-300">
+            <div className="bg-background animate-in slide-in-from-left absolute inset-y-0 left-0 flex w-[85vw] max-w-sm flex-col shadow-2xl duration-300">
               <SidebarSources
                 workspaceId={workspaceId}
                 onClose={() => setLeftOpen(false)}
@@ -120,12 +119,16 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
 
         {/* ── Center (Chat) ────────────────────────────────────────────────── */}
         <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-          <div className="flex min-h-0 flex-1 flex-col md:flex-row overflow-hidden relative">
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
             {hasPreview ? (
               <>
                 <div
-                  className="relative flex min-h-0 shrink-0 flex-col border-b border-border/30 md:border-b-0 md:border-r w-full md:w-[var(--preview-width)]"
-                  style={{ "--preview-width": `${previewResize.width}px` } as React.CSSProperties}
+                  className="border-border/30 relative flex min-h-0 w-full shrink-0 flex-col border-b md:w-[var(--preview-width)] md:border-r md:border-b-0"
+                  style={
+                    {
+                      "--preview-width": `${previewResize.width}px`,
+                    } as React.CSSProperties
+                  }
                 >
                   {previewSource ? (
                     <SourcePreview
@@ -142,22 +145,18 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
                   {/* Drag Handle */}
                   <div
                     onMouseDown={previewResize.onMouseDown}
-                    className="absolute right-0 top-0 z-10 hidden h-full w-2 cursor-col-resize items-center justify-center bg-transparent transition-colors hover:bg-primary/20 active:bg-primary/40 md:flex"
+                    className="hover:bg-primary/20 active:bg-primary/40 absolute top-0 right-0 z-10 hidden h-full w-2 cursor-col-resize items-center justify-center bg-transparent transition-colors md:flex"
                   >
-                    <div className="h-8 w-0.5 rounded-full bg-border/80" />
+                    <div className="bg-border/80 h-8 w-0.5 rounded-full" />
                   </div>
                 </div>
                 <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-                  <ChatView
-                    workspaceId={workspaceId}
-                  />
+                  <ChatView workspaceId={workspaceId} />
                 </div>
               </>
             ) : (
-              <div className="flex-1 min-w-0">
-                <ChatView
-                  workspaceId={workspaceId}
-                />
+              <div className="min-w-0 flex-1">
+                <ChatView workspaceId={workspaceId} />
               </div>
             )}
           </div>
@@ -166,15 +165,15 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
         {/* ── Right Panel (Artifacts) ──────────────────────────────────────── */}
         {rightOpen && (
           <div
-            className="relative hidden shrink-0 border-l border-border/30 md:flex md:flex-col animate-in slide-in-from-right-4 duration-300"
+            className="border-border/30 animate-in slide-in-from-right-4 relative hidden shrink-0 border-l duration-300 md:flex md:flex-col"
             style={{ width: rightResize.width }}
           >
             {/* Drag Handle */}
             <div
               onMouseDown={rightResize.onMouseDown}
-              className="absolute left-0 top-0 z-10 flex h-full w-2 -translate-x-1/2 cursor-col-resize items-center justify-center bg-transparent transition-colors hover:bg-primary/20 active:bg-primary/40"
+              className="hover:bg-primary/20 active:bg-primary/40 absolute top-0 left-0 z-10 flex h-full w-2 -translate-x-1/2 cursor-col-resize items-center justify-center bg-transparent transition-colors"
             >
-              <div className="h-8 w-0.5 rounded-full bg-border/80" />
+              <div className="bg-border/80 h-8 w-0.5 rounded-full" />
             </div>
             <SidebarArtifacts
               workspaceId={workspaceId}
@@ -192,7 +191,7 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
               onClick={() => setRightOpen(false)}
               aria-hidden
             />
-            <div className="absolute inset-y-0 right-0 flex w-[85vw] max-w-sm flex-col bg-background shadow-2xl animate-in slide-in-from-right duration-300">
+            <div className="bg-background animate-in slide-in-from-right absolute inset-y-0 right-0 flex w-[85vw] max-w-sm flex-col shadow-2xl duration-300">
               <SidebarArtifacts
                 workspaceId={workspaceId}
                 onClose={() => setRightOpen(false)}

@@ -1,5 +1,5 @@
-import type { SVGProps } from 'react'
-import { cn } from '@/lib/utils'
+import type { SVGProps } from "react";
+import { cn } from "@/lib/utils";
 
 export function FluxLogo({ className, ...props }: SVGProps<SVGSVGElement>) {
   return (
@@ -7,7 +7,7 @@ export function FluxLogo({ className, ...props }: SVGProps<SVGSVGElement>) {
       viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn('size-8', className)}
+      className={cn("size-8", className)}
       {...props}
     >
       <path
@@ -15,7 +15,7 @@ export function FluxLogo({ className, ...props }: SVGProps<SVGSVGElement>) {
         fill="currentColor"
       />
     </svg>
-  )
+  );
 }
 
-export const TallieLogo = FluxLogo
+export const TallieLogo = FluxLogo;

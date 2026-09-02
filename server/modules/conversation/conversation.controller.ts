@@ -56,7 +56,10 @@ export class ConversationController {
     ) => {
       const user = await getAuthenticatedUser(req);
       const { id } = await params;
-      const conversation = await ConversationService.getConversationById(id, user.id);
+      const conversation = await ConversationService.getConversationById(
+        id,
+        user.id,
+      );
       return ApiResponse.success(conversation);
     },
   );
@@ -81,7 +84,10 @@ export class ConversationController {
       user.id,
       validation.data,
     );
-    return ApiResponse.created(newConversation, "Conversation created successfully");
+    return ApiResponse.created(
+      newConversation,
+      "Conversation created successfully",
+    );
   });
 
   /**

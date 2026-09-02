@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { HugeiconsIcon } from '@hugeicons/react';
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowRight01Icon as ArrowRight,
   ArrowUpRight01Icon as ArrowUpRight,
@@ -15,7 +15,7 @@ import {
   SparkleIcon as Sparkles,
   PlaySquareIcon as SquarePlay,
   Note01Icon as StickyNote,
-} from '@hugeicons/core-free-icons';
+} from "@hugeicons/core-free-icons";
 
 import { ThemeSwitch } from "@/components/ui/theme-switch";
 import { Button } from "@/components/ui/button";
@@ -40,7 +40,11 @@ const PROOF_POINTS = [
 ] as const;
 
 const MOCK_SOURCES = [
-  { icon: FileText, title: "Attention Is All You Need", meta: "PDF · 15 pages" },
+  {
+    icon: FileText,
+    title: "Attention Is All You Need",
+    meta: "PDF · 15 pages",
+  },
   { icon: Globe, title: "transformer-explainer", meta: "Web · saved" },
   { icon: SquarePlay, title: "CS224n · Lecture 7", meta: "YouTube · 1h 12m" },
   { icon: StickyNote, title: "Reading notes", meta: "Note · 842 words" },
@@ -115,15 +119,21 @@ const FAQS = [
   },
 ] as const;
 
-import { Menu01Icon as MenuIcon } from '@hugeicons/core-free-icons';
-import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Menu01Icon as MenuIcon } from "@hugeicons/core-free-icons";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 
 function Logo() {
   return (
     <span className="flex items-center gap-2.5">
       <span
         aria-hidden="true"
-        className="flex size-7 items-center justify-center rounded-md bg-foreground font-serif text-sm italic text-background"
+        className="bg-foreground text-background flex size-7 items-center justify-center rounded-md font-serif text-sm italic"
       >
         F
       </span>
@@ -136,12 +146,12 @@ function Logo() {
 
 function Header() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl">
+    <header className="border-border/60 bg-background/70 fixed inset-x-0 top-0 z-50 border-b backdrop-blur-xl">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
         <Link
           href="/"
           aria-label="Flux home"
-          className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+          className="focus-visible:ring-ring/60 rounded-sm focus-visible:ring-2 focus-visible:outline-none"
         >
           <Logo />
         </Link>
@@ -181,31 +191,40 @@ function Header() {
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="size-8">
-                  <HugeiconsIcon icon={MenuIcon} aria-hidden="true" className="size-5" />
+                  <HugeiconsIcon
+                    icon={MenuIcon}
+                    aria-hidden="true"
+                    className="size-5"
+                  />
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="flex flex-col gap-6 pt-12 w-[300px]">
+              <SheetContent
+                side="right"
+                className="flex w-[300px] flex-col gap-6 pt-12"
+              >
                 <SheetTitle className="sr-only">Mobile menu</SheetTitle>
-                <SheetDescription className="sr-only">Mobile navigation menu</SheetDescription>
+                <SheetDescription className="sr-only">
+                  Mobile navigation menu
+                </SheetDescription>
                 <div className="flex flex-col gap-4">
                   {NAV_LINKS.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="text-lg font-medium text-muted-foreground hover:text-foreground transition-colors"
+                      className="text-muted-foreground hover:text-foreground text-lg font-medium transition-colors"
                     >
                       {link.label}
                     </Link>
                   ))}
-                  <div className="h-px bg-border my-2" />
+                  <div className="bg-border my-2 h-px" />
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Theme</span>
                     <ThemeSwitch />
                   </div>
                   <Link
                     href="/login"
-                    className="text-lg font-medium text-muted-foreground hover:text-foreground transition-colors sm:hidden"
+                    className="text-muted-foreground hover:text-foreground text-lg font-medium transition-colors sm:hidden"
                   >
                     Log in
                   </Link>
@@ -230,17 +249,16 @@ function SectionHeading({
 }) {
   return (
     <div className="max-w-2xl">
-      <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+      <p className="text-muted-foreground font-mono text-[11px] tracking-[0.16em] uppercase">
         {eyebrow}
       </p>
-      <h2 className="mt-4 font-serif text-title text-balance sm:text-4xl sm:leading-[1.12] sm:tracking-[-0.015em]">
+      <h2 className="text-title mt-4 font-serif text-balance sm:text-4xl sm:leading-[1.12] sm:tracking-[-0.015em]">
         {title}
       </h2>
-      <p className="mt-4 text-lead text-muted-foreground text-pretty">{lead}</p>
+      <p className="text-lead text-muted-foreground mt-4 text-pretty">{lead}</p>
     </div>
   );
 }
-
 
 function Hero() {
   return (
@@ -252,23 +270,23 @@ function Hero() {
       />
       <div
         aria-hidden="true"
-        className="glow-primary absolute left-1/2 top-[-20%] size-[42rem] -translate-x-1/2 rounded-full opacity-70 blur-3xl"
+        className="glow-primary absolute top-[-20%] left-1/2 size-[42rem] -translate-x-1/2 rounded-full opacity-70 blur-3xl"
       />
 
       <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-6 pt-40 pb-16 text-center sm:pt-48 sm:pb-24">
-        <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground backdrop-blur">
+        <div className="border-border bg-card/70 text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 font-mono text-[11px] tracking-[0.16em] uppercase backdrop-blur">
           <span
             aria-hidden="true"
-            className="size-1.5 animate-pulse rounded-full bg-primary"
+            className="bg-primary size-1.5 animate-pulse rounded-full"
           />
           AI knowledge workspace
         </div>
 
-        <h1 className="mt-8 max-w-3xl font-serif text-display-lg text-balance">
+        <h1 className="text-display-lg mt-8 max-w-3xl font-serif text-balance">
           Turn your sources into <em className="italic">answers</em>.
         </h1>
 
-        <p className="mt-6 max-w-xl text-lead text-muted-foreground text-pretty">
+        <p className="text-lead text-muted-foreground mt-6 max-w-xl text-pretty">
           Flux is a quiet place for serious reading. Import PDFs, web pages,
           YouTube videos, and notes — then ask questions in plain language and
           get answers that cite the material you gave it.
@@ -285,7 +303,7 @@ function Hero() {
             asChild
             variant="outline"
             size="lg"
-            className="w-full bg-background/60 backdrop-blur sm:w-auto"
+            className="bg-background/60 w-full backdrop-blur sm:w-auto"
           >
             <Link href="#how">See how it works</Link>
           </Button>
@@ -295,9 +313,13 @@ function Hero() {
           {PROOF_POINTS.map((point) => (
             <li
               key={point}
-              className="flex items-center gap-2 text-sm text-muted-foreground"
+              className="text-muted-foreground flex items-center gap-2 text-sm"
             >
-              <HugeiconsIcon icon={Check} aria-hidden="true" className="size-3.5 text-primary" />
+              <HugeiconsIcon
+                icon={Check}
+                aria-hidden="true"
+                className="text-primary size-3.5"
+              />
               {point}
             </li>
           ))}
@@ -311,13 +333,12 @@ function Cite({ n }: { n: number }) {
   return (
     <sup
       aria-hidden="true"
-      className="mx-0.5 inline-flex size-4 translate-y-0.5 items-center justify-center rounded-sm bg-primary/15 font-mono text-[9px] font-medium text-primary"
+      className="bg-primary/15 text-primary mx-0.5 inline-flex size-4 translate-y-0.5 items-center justify-center rounded-sm font-mono text-[9px] font-medium"
     >
       {n}
     </sup>
   );
 }
-
 
 function ProductMock() {
   return (
@@ -326,23 +347,23 @@ function ProductMock() {
         aria-hidden="true"
         className="glow-primary absolute -inset-x-8 -top-10 bottom-1/2 -z-10 rounded-full opacity-50 blur-3xl"
       />
-      <div className="overflow-hidden rounded-2xl border border-border bg-card text-left shadow-2xl shadow-foreground/[0.06]">
+      <div className="border-border bg-card shadow-foreground/[0.06] overflow-hidden rounded-2xl border text-left shadow-2xl">
         {/* Window chrome */}
-        <div className="flex items-center gap-3 border-b border-border px-5 py-3">
+        <div className="border-border flex items-center gap-3 border-b px-5 py-3">
           <div aria-hidden="true" className="flex gap-1.5">
-            <span className="size-2.5 rounded-full bg-border" />
-            <span className="size-2.5 rounded-full bg-border" />
-            <span className="size-2.5 rounded-full bg-border" />
+            <span className="bg-border size-2.5 rounded-full" />
+            <span className="bg-border size-2.5 rounded-full" />
+            <span className="bg-border size-2.5 rounded-full" />
           </div>
-          <p className="font-mono text-[11px] tracking-wide text-muted-foreground">
+          <p className="text-muted-foreground font-mono text-[11px] tracking-wide">
             flux / research-brief
           </p>
         </div>
 
         <div className="grid md:grid-cols-[240px_1fr]">
           {/* Sources rail */}
-          <aside className="hidden border-r border-border bg-muted/30 p-4 md:block">
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+          <aside className="border-border bg-muted/30 hidden border-r p-4 md:block">
+            <p className="text-muted-foreground font-mono text-[10px] tracking-[0.16em] uppercase">
               Sources · 4
             </p>
             <ul className="mt-3 space-y-1">
@@ -351,23 +372,28 @@ function ProductMock() {
                   key={source.title}
                   className="flex items-center gap-2.5 rounded-md px-2 py-2"
                 >
-                  <HugeiconsIcon icon={source.icon}
+                  <HugeiconsIcon
+                    icon={source.icon}
                     aria-hidden="true"
-                    className="size-3.5 shrink-0 text-muted-foreground"
+                    className="text-muted-foreground size-3.5 shrink-0"
                   />
                   <div className="min-w-0">
                     <p className="truncate text-xs font-medium">
                       {source.title}
                     </p>
-                    <p className="font-mono text-[10px] text-muted-foreground">
+                    <p className="text-muted-foreground font-mono text-[10px]">
                       {source.meta}
                     </p>
                   </div>
                 </li>
               ))}
             </ul>
-            <div className="mt-3 flex items-center justify-center gap-1.5 rounded-md border border-dashed border-border px-2 py-2 text-xs text-muted-foreground">
-              <HugeiconsIcon icon={Plus} aria-hidden="true" className="size-3.5" />
+            <div className="border-border text-muted-foreground mt-3 flex items-center justify-center gap-1.5 rounded-md border border-dashed px-2 py-2 text-xs">
+              <HugeiconsIcon
+                icon={Plus}
+                aria-hidden="true"
+                className="size-3.5"
+              />
               Add source
             </div>
           </aside>
@@ -375,9 +401,9 @@ function ProductMock() {
           {/* Conversation */}
           <div className="space-y-5 p-6 sm:p-8">
             <div className="flex justify-end">
-              <p className="max-w-md rounded-2xl rounded-br-sm bg-muted px-4 py-2.5 text-sm">
-                Why do transformers use multi-head attention instead of a
-                single head?
+              <p className="bg-muted max-w-md rounded-2xl rounded-br-sm px-4 py-2.5 text-sm">
+                Why do transformers use multi-head attention instead of a single
+                head?
               </p>
             </div>
 
@@ -390,25 +416,30 @@ function ProductMock() {
                 <Cite n={1} />
                 <Cite n={3} />
               </p>
-              <p className="text-sm leading-relaxed text-muted-foreground">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 In practice, this lets the model track syntax in one head and
-                semantics in another, which a single averaged distribution
-                would blur together.
+                semantics in another, which a single averaged distribution would
+                blur together.
                 <Cite n={4} />
               </p>
             </div>
 
             {/* Composer */}
-            <div className="flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3">
-              <HugeiconsIcon icon={Sparkles}
+            <div className="border-border bg-background flex items-center gap-3 rounded-xl border px-4 py-3">
+              <HugeiconsIcon
+                icon={Sparkles}
                 aria-hidden="true"
-                className="size-4 shrink-0 text-primary"
+                className="text-primary size-4 shrink-0"
               />
-              <p className="flex-1 text-sm text-muted-foreground">
+              <p className="text-muted-foreground flex-1 text-sm">
                 Ask a follow-up…
               </p>
-              <div className="flex size-7 items-center justify-center rounded-md bg-foreground text-background">
-                <HugeiconsIcon icon={ArrowUpRight} aria-hidden="true" className="size-3.5" />
+              <div className="bg-foreground text-background flex size-7 items-center justify-center rounded-md">
+                <HugeiconsIcon
+                  icon={ArrowUpRight}
+                  aria-hidden="true"
+                  className="size-3.5"
+                />
               </div>
             </div>
           </div>
@@ -417,7 +448,6 @@ function ProductMock() {
     </div>
   );
 }
-
 
 function Features() {
   return (
@@ -437,29 +467,37 @@ function Features() {
           {FEATURES.map((feature) => (
             <article
               key={feature.title}
-              className="group rounded-xl border border-border bg-card p-6 transition-colors duration-200 hover:border-foreground/20"
+              className="group border-border bg-card hover:border-foreground/20 rounded-xl border p-6 transition-colors duration-200"
             >
-              <div className="flex size-9 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors duration-200 group-hover:border-primary/40 group-hover:text-primary">
-                <HugeiconsIcon icon={feature.icon} aria-hidden="true" className="size-4" />
+              <div className="border-border bg-background text-muted-foreground group-hover:border-primary/40 group-hover:text-primary flex size-9 items-center justify-center rounded-lg border transition-colors duration-200">
+                <HugeiconsIcon
+                  icon={feature.icon}
+                  aria-hidden="true"
+                  className="size-4"
+                />
               </div>
               <h3 className="mt-5 text-base font-semibold tracking-[-0.01em]">
                 {feature.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
                 {feature.body}
               </p>
             </article>
           ))}
 
           {/* Artifacts — wide card */}
-          <article className="group rounded-xl border border-border bg-card p-6 transition-colors duration-200 hover:border-foreground/20 sm:col-span-2">
-            <div className="flex size-9 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors duration-200 group-hover:border-primary/40 group-hover:text-primary">
-              <HugeiconsIcon icon={Sparkles} aria-hidden="true" className="size-4" />
+          <article className="group border-border bg-card hover:border-foreground/20 rounded-xl border p-6 transition-colors duration-200 sm:col-span-2">
+            <div className="border-border bg-background text-muted-foreground group-hover:border-primary/40 group-hover:text-primary flex size-9 items-center justify-center rounded-lg border transition-colors duration-200">
+              <HugeiconsIcon
+                icon={Sparkles}
+                aria-hidden="true"
+                className="size-4"
+              />
             </div>
             <h3 className="mt-5 text-base font-semibold tracking-[-0.01em]">
               Artifacts on demand
             </h3>
-            <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+            <p className="text-muted-foreground mt-2 max-w-md text-sm leading-relaxed">
               The same sources become whatever the moment calls for — generated
               in one request, kept beside your conversation.
             </p>
@@ -467,7 +505,7 @@ function Features() {
               {ARTIFACT_CHIPS.map((chip) => (
                 <span
                   key={chip}
-                  className="rounded-full border border-border bg-background px-3 py-1 font-mono text-[11px] text-muted-foreground"
+                  className="border-border bg-background text-muted-foreground rounded-full border px-3 py-1 font-mono text-[11px]"
                 >
                   {chip}
                 </span>
@@ -482,7 +520,7 @@ function Features() {
 
 function HowItWorks() {
   return (
-    <section id="how" className="scroll-mt-24 border-t border-border/60">
+    <section id="how" className="border-border/60 scroll-mt-24 border-t">
       <div className="mx-auto w-full max-w-6xl px-6 py-24 sm:py-32">
         <SectionHeading
           eyebrow="How it works"
@@ -493,14 +531,14 @@ function HowItWorks() {
           }
           lead="The path from raw material to something you can use is deliberately short. Most people go from sign-up to their first cited answer in under two minutes."
         />
-        <ol className="mt-14 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3">
+        <ol className="border-border bg-border mt-14 grid gap-px overflow-hidden rounded-xl border sm:grid-cols-3">
           {STEPS.map((step) => (
             <li key={step.n} className="bg-card p-6 sm:p-8">
-              <p className="font-mono text-xs tracking-[0.16em] text-primary">
+              <p className="text-primary font-mono text-xs tracking-[0.16em]">
                 {step.n}
               </p>
-              <h3 className="mt-6 font-serif text-heading">{step.title}</h3>
-              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
+              <h3 className="text-heading mt-6 font-serif">{step.title}</h3>
+              <p className="text-muted-foreground mt-2.5 text-sm leading-relaxed">
                 {step.body}
               </p>
             </li>
@@ -511,10 +549,9 @@ function HowItWorks() {
   );
 }
 
-
 function Faq() {
   return (
-    <section id="faq" className="scroll-mt-24 border-t border-border/60">
+    <section id="faq" className="border-border/60 scroll-mt-24 border-t">
       <div className="mx-auto grid w-full max-w-6xl gap-12 px-6 py-24 sm:py-32 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
         <div>
           <SectionHeading
@@ -527,20 +564,18 @@ function Faq() {
             lead="The short version of what people usually ask before their first import."
           />
         </div>
-        <div className="border-t border-border">
+        <div className="border-border border-t">
           {FAQS.map((item) => (
-            <details
-              key={item.q}
-              className="group border-b border-border"
-            >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-left text-[15px] font-medium tracking-[-0.01em] transition-colors hover:text-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 [&::-webkit-details-marker]:hidden">
+            <details key={item.q} className="group border-border border-b">
+              <summary className="hover:text-foreground/80 focus-visible:ring-ring/60 flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-left text-[15px] font-medium tracking-[-0.01em] transition-colors focus-visible:ring-2 focus-visible:outline-none [&::-webkit-details-marker]:hidden">
                 {item.q}
-                <HugeiconsIcon icon={Plus}
+                <HugeiconsIcon
+                  icon={Plus}
                   aria-hidden="true"
-                  className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-45"
+                  className="text-muted-foreground size-4 shrink-0 transition-transform duration-200 group-open:rotate-45"
                 />
               </summary>
-              <p className="max-w-prose pb-6 text-sm leading-relaxed text-muted-foreground">
+              <p className="text-muted-foreground max-w-prose pb-6 text-sm leading-relaxed">
                 {item.a}
               </p>
             </details>
@@ -553,20 +588,20 @@ function Faq() {
 
 function FinalCta() {
   return (
-    <section className="border-t border-border/60">
+    <section className="border-border/60 border-t">
       <div className="mx-auto w-full max-w-6xl px-6 py-24 sm:py-32">
-        <div className="relative overflow-hidden rounded-3xl bg-foreground px-6 py-20 text-center text-background sm:px-16 sm:py-24">
+        <div className="bg-foreground text-background relative overflow-hidden rounded-3xl px-6 py-20 text-center sm:px-16 sm:py-24">
           <div
             aria-hidden="true"
-            className="glow-primary absolute left-1/2 top-0 size-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-60 blur-3xl"
+            className="glow-primary absolute top-0 left-1/2 size-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-60 blur-3xl"
           />
-          <p className="relative font-mono text-[11px] uppercase tracking-[0.16em] text-background/60">
+          <p className="text-background/60 relative font-mono text-[11px] tracking-[0.16em] uppercase">
             Ready when you are
           </p>
-          <h2 className="relative mx-auto mt-5 max-w-xl font-serif text-display text-balance">
+          <h2 className="text-display relative mx-auto mt-5 max-w-xl font-serif text-balance">
             Start asking <em className="italic">better</em> questions.
           </h2>
-          <p className="relative mx-auto mt-5 max-w-md text-lead text-background/70">
+          <p className="text-lead text-background/70 relative mx-auto mt-5 max-w-md">
             Create a workspace, add your first source, and ask it something
             real.
           </p>
@@ -586,11 +621,11 @@ function FinalCta() {
 
 function Footer() {
   return (
-    <footer className="border-t border-border/60">
+    <footer className="border-border/60 border-t">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-12 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-2">
           <Logo />
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             © 2026 Flux. Turn your sources into answers.
           </p>
         </div>
@@ -602,14 +637,14 @@ function Footer() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-sm text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+              className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/60 rounded-sm text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
               {link.label}
             </Link>
           ))}
           <Link
             href="/login"
-            className="rounded-sm text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/60 rounded-sm text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
           >
             Log in
           </Link>
@@ -639,4 +674,3 @@ export default function Home() {
     </div>
   );
 }
-

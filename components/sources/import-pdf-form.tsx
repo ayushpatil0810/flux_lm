@@ -80,7 +80,7 @@ export function ImportPdfForm({ workspaceId, onDone }: ImportFormProps) {
               <p className="max-w-full truncate text-sm font-medium">
                 {file.name}
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 {(file.size / (1024 * 1024)).toFixed(1)} MB
               </p>
               <Button
@@ -98,7 +98,7 @@ export function ImportPdfForm({ workspaceId, onDone }: ImportFormProps) {
             </div>
           ) : (
             <div className="flex flex-col items-center gap-1.5">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Drag a PDF here, up to 20 MB
               </p>
               <Button
@@ -126,7 +126,7 @@ export function ImportPdfForm({ workspaceId, onDone }: ImportFormProps) {
           />
         </div>
         {fileError ? (
-          <p role="alert" className="text-sm text-destructive">
+          <p role="alert" className="text-destructive text-sm">
             {fileError}
           </p>
         ) : null}
@@ -135,7 +135,7 @@ export function ImportPdfForm({ workspaceId, onDone }: ImportFormProps) {
       <div className="grid gap-1.5">
         <Label htmlFor="pdf-title">
           Title{" "}
-          <span className="font-normal text-muted-foreground">(optional)</span>
+          <span className="text-muted-foreground font-normal">(optional)</span>
         </Label>
         <Input
           id="pdf-title"

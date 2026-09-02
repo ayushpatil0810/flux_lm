@@ -17,7 +17,7 @@ const PROCESSING_STATUSES = new Set(["PENDING", "PROCESSING"]);
  */
 export function useArtifacts(
   workspaceId: string,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   return useQuery({
     queryKey: queryKeys.artifacts.all(workspaceId),

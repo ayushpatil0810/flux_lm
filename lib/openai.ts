@@ -1,4 +1,8 @@
-import { CHAT_MODEL, EMBEDDING_MODEL, EMBEDDING_DIMENSIONS } from "@/lib/constants";
+import {
+  CHAT_MODEL,
+  EMBEDDING_MODEL,
+  EMBEDDING_DIMENSIONS,
+} from "@/lib/constants";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 import OpenAI from "openai";
@@ -99,5 +103,7 @@ export async function streamChatCompletion(
 }
 
 if (!env.OPENAI_API_KEY) {
-  log.warn("OPENAI_API_KEY is not configured — AI features will fail at runtime");
+  log.warn(
+    "OPENAI_API_KEY is not configured — AI features will fail at runtime",
+  );
 }

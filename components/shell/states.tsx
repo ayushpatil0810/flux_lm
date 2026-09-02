@@ -1,8 +1,6 @@
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Loading02Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Loading02Icon } from "@hugeicons/core-free-icons";
 import * as React from "react";
-;
-
 import { Button } from "@/components/ui/button";
 
 /**
@@ -13,9 +11,14 @@ export function LoadingState({ label = "Loading" }: { label?: string }) {
   return (
     <div
       role="status"
-      className="flex min-h-[240px] flex-col items-center justify-center gap-3 text-sm text-muted-foreground"
+      className="text-muted-foreground flex min-h-[240px] flex-col items-center justify-center gap-3 text-sm"
     >
-      <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5} className="size-4 animate-spin" aria-hidden />
+      <HugeiconsIcon
+        icon={Loading02Icon}
+        strokeWidth={1.5}
+        className="size-4 animate-spin"
+        aria-hidden
+      />
       <span>{label}</span>
     </div>
   );
@@ -31,8 +34,8 @@ interface EmptyStateProps {
 export function EmptyState({ title, copy, action }: EmptyStateProps) {
   return (
     <div className="rounded-lg border border-dashed px-6 py-14 text-center">
-      <h2 className="font-serif text-heading">{title}</h2>
-      <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+      <h2 className="text-heading font-serif">{title}</h2>
+      <p className="text-muted-foreground mx-auto mt-2 max-w-sm text-sm">
         {copy}
       </p>
       {action ? <div className="mt-5 flex justify-center">{action}</div> : null}
@@ -55,19 +58,14 @@ export function ErrorState({
   return (
     <div
       role="alert"
-      className="rounded-lg border border-destructive/40 bg-destructive/5 px-5 py-4"
+      className="border-destructive/40 bg-destructive/5 rounded-lg border px-5 py-4"
     >
       <p className="text-sm font-medium">{title}</p>
       {message ? (
-        <p className="mt-1 text-sm text-muted-foreground">{message}</p>
+        <p className="text-muted-foreground mt-1 text-sm">{message}</p>
       ) : null}
       {onRetry ? (
-        <Button
-          variant="outline"
-          size="sm"
-          className="mt-3"
-          onClick={onRetry}
-        >
+        <Button variant="outline" size="sm" className="mt-3" onClick={onRetry}>
           Try again
         </Button>
       ) : null}

@@ -24,7 +24,7 @@ const STATUS_DOT_CLASSES: Record<WorkStatus, string> = {
  */
 export function StatusIndicator({ status }: { status: WorkStatus }) {
   return (
-    <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-xs font-mono">
+    <span className="inline-flex items-center gap-1.5 font-mono text-xs whitespace-nowrap">
       <span
         aria-hidden
         className={cn("size-1.5 rounded-full", STATUS_DOT_CLASSES[status])}
@@ -32,7 +32,7 @@ export function StatusIndicator({ status }: { status: WorkStatus }) {
       <span
         className={cn(
           status === "FAILED"
-            ? "font-medium text-destructive"
+            ? "text-destructive font-medium"
             : "text-muted-foreground",
         )}
       >

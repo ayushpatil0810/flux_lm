@@ -79,17 +79,18 @@ function UrlFormFields({
           placeholder={config.urlPlaceholder}
           aria-invalid={Boolean(fieldErrors.url)}
           aria-describedby={
-            fieldErrors.url
-              ? `${idPrefix}-url-error`
-              : `${idPrefix}-url-hint`
+            fieldErrors.url ? `${idPrefix}-url-error` : `${idPrefix}-url-hint`
           }
         />
         {fieldErrors.url ? (
-          <p id={`${idPrefix}-url-error`} className="text-sm text-destructive">
+          <p id={`${idPrefix}-url-error`} className="text-destructive text-sm">
             {fieldErrors.url}
           </p>
         ) : (
-          <p id={`${idPrefix}-url-hint`} className="text-xs text-muted-foreground">
+          <p
+            id={`${idPrefix}-url-hint`}
+            className="text-muted-foreground text-xs"
+          >
             {config.urlHint}
           </p>
         )}
@@ -98,7 +99,7 @@ function UrlFormFields({
       <div className="grid gap-1.5">
         <Label htmlFor={`${idPrefix}-title`}>
           Title{" "}
-          <span className="font-normal text-muted-foreground">(optional)</span>
+          <span className="text-muted-foreground font-normal">(optional)</span>
         </Label>
         <Input
           id={`${idPrefix}-title`}
@@ -109,7 +110,7 @@ function UrlFormFields({
           aria-invalid={Boolean(fieldErrors.title)}
         />
         {fieldErrors.title ? (
-          <p className="text-sm text-destructive">{fieldErrors.title}</p>
+          <p className="text-destructive text-sm">{fieldErrors.title}</p>
         ) : null}
       </div>
 
@@ -135,9 +136,7 @@ export function ImportWebsiteForm({ workspaceId, onDone }: ImportFormProps) {
     errorTitle: "Could not add website",
   };
   const form = useUrlForm(workspaceId, onDone, mutation, config);
-  return (
-    <UrlFormFields idPrefix="website" config={config} form={form} />
-  );
+  return <UrlFormFields idPrefix="website" config={config} form={form} />;
 }
 
 export function ImportYoutubeForm({ workspaceId, onDone }: ImportFormProps) {
@@ -153,7 +152,5 @@ export function ImportYoutubeForm({ workspaceId, onDone }: ImportFormProps) {
     errorTitle: "Could not add video",
   };
   const form = useUrlForm(workspaceId, onDone, mutation, config);
-  return (
-    <UrlFormFields idPrefix="youtube" config={config} form={form} />
-  );
+  return <UrlFormFields idPrefix="youtube" config={config} form={form} />;
 }

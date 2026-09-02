@@ -50,7 +50,7 @@ export function ImportTextForm({ workspaceId, onDone }: ImportFormProps) {
           aria-invalid={Boolean(fieldErrors.title)}
         />
         {fieldErrors.title ? (
-          <p className="text-sm text-destructive">{fieldErrors.title}</p>
+          <p className="text-destructive text-sm">{fieldErrors.title}</p>
         ) : null}
       </div>
 
@@ -66,7 +66,7 @@ export function ImportTextForm({ workspaceId, onDone }: ImportFormProps) {
           aria-invalid={Boolean(fieldErrors.content)}
         />
         {fieldErrors.content ? (
-          <p className="text-sm text-destructive">{fieldErrors.content}</p>
+          <p className="text-destructive text-sm">{fieldErrors.content}</p>
         ) : null}
       </div>
 
@@ -80,7 +80,7 @@ export function ImportTextForm({ workspaceId, onDone }: ImportFormProps) {
               value="TEXT"
               checked={format === "TEXT"}
               onChange={() => setFormat("TEXT")}
-              className="size-4 accent-primary"
+              className="accent-primary size-4"
             />
             Plain text
           </label>
@@ -91,7 +91,7 @@ export function ImportTextForm({ workspaceId, onDone }: ImportFormProps) {
               value="MARKDOWN"
               checked={format === "MARKDOWN"}
               onChange={() => setFormat("MARKDOWN")}
-              className="size-4 accent-primary"
+              className="accent-primary size-4"
             />
             Markdown
           </label>
@@ -101,10 +101,7 @@ export function ImportTextForm({ workspaceId, onDone }: ImportFormProps) {
       <DialogFooter>
         <Button
           type="submit"
-          disabled={
-            title.trim().length === 0 ||
-            content.trim().length === 0
-          }
+          disabled={title.trim().length === 0 || content.trim().length === 0}
         >
           Add text
         </Button>

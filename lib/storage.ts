@@ -53,7 +53,9 @@ export async function uploadToStorage({
 }: UploadFileOptions) {
   // Convert ArrayBuffer to Buffer if needed
   const bodyBuffer =
-    body instanceof ArrayBuffer ? Buffer.from(body) : (body as Buffer | Uint8Array);
+    body instanceof ArrayBuffer
+      ? Buffer.from(body)
+      : (body as Buffer | Uint8Array);
 
   const command = new PutObjectCommand({
     Bucket: R2_BUCKET_NAME,
@@ -106,5 +108,7 @@ export async function deleteFromStorage(key: string) {
 }
 
 if (!R2_BUCKET_NAME) {
-  log.warn("R2_BUCKET_NAME is not configured — PDF storage uploads will fail at runtime");
+  log.warn(
+    "R2_BUCKET_NAME is not configured — PDF storage uploads will fail at runtime",
+  );
 }

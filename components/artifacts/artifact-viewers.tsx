@@ -1,11 +1,9 @@
 "use client";
-import { HugeiconsIcon } from '@hugeicons/react';
-import { ListSettingIcon, ListIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ListSettingIcon, ListIcon } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
 import dynamic from "next/dynamic";
-;
-
 import type { LearningArtifact, LearningArtifactContent } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -15,11 +13,11 @@ const MindmapFlow = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-[580px] w-full items-center justify-center rounded-xl border border-border/80 bg-card/40 shadow-xs">
-        <div className="animate-spin h-6 w-6 rounded-full border-2 border-primary border-t-transparent" />
+      <div className="border-border/80 bg-card/40 flex h-[580px] w-full items-center justify-center rounded-xl border shadow-xs">
+        <div className="border-primary h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" />
       </div>
-    )
-  }
+    ),
+  },
 );
 
 /**
@@ -55,7 +53,7 @@ export function ArtifactViewer({ artifact }: { artifact: LearningArtifact }) {
 function ViewerFallback({ label }: { label: string }) {
   return (
     <div className="rounded-lg border border-dashed px-6 py-14 text-center">
-      <p className="text-sm text-muted-foreground">{label}</p>
+      <p className="text-muted-foreground text-sm">{label}</p>
     </div>
   );
 }
@@ -92,7 +90,7 @@ function ProseViewer({
   if (!text) return <ViewerFallback label={emptyLabel} />;
   return (
     <div className="mx-auto w-full max-w-2xl">
-      <div className="whitespace-pre-wrap font-serif text-base leading-relaxed">
+      <div className="font-serif text-base leading-relaxed whitespace-pre-wrap">
         {text}
       </div>
     </div>
@@ -135,8 +133,8 @@ function ReportViewer({ content }: { content: LearningArtifactContent }) {
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-9">
       {sections.map((section, index) => (
         <section key={index}>
-          <h2 className="font-serif text-heading">{section.title}</h2>
-          <div className="mt-2.5 whitespace-pre-wrap font-serif text-base leading-relaxed text-foreground/90">
+          <h2 className="text-heading font-serif">{section.title}</h2>
+          <div className="text-foreground/90 mt-2.5 font-serif text-base leading-relaxed whitespace-pre-wrap">
             {section.content}
           </div>
         </section>
@@ -157,7 +155,7 @@ function TakeawaysViewer({ content }: { content: LearningArtifactContent }) {
         <li key={index} className="flex gap-4">
           <span
             aria-hidden
-            className="mt-1 shrink-0 font-mono text-xs text-muted-foreground"
+            className="text-muted-foreground mt-1 shrink-0 font-mono text-xs"
           >
             {String(index + 1).padStart(2, "0")}
           </span>
@@ -214,15 +212,15 @@ function FlashcardsViewer({ content }: { content: LearningArtifactContent }) {
         onClick={() => setFlipped((value) => !value)}
         aria-pressed={flipped}
         aria-label={flipped ? "Show prompt" : "Show answer"}
-        className="flex min-h-[240px] w-full flex-col items-center justify-center rounded-lg border bg-card px-8 py-10 text-center transition-colors hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+        className="bg-card hover:bg-accent/40 focus-visible:ring-ring/60 flex min-h-[240px] w-full flex-col items-center justify-center rounded-lg border px-8 py-10 text-center transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
-        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
           {flipped ? "Answer" : "Prompt"}
         </span>
-        <span className="mt-4 font-serif text-heading leading-snug">
+        <span className="text-heading mt-4 font-serif leading-snug">
           {flipped ? current.back : current.front}
         </span>
-        <span className="mt-6 text-xs text-muted-foreground">
+        <span className="text-muted-foreground mt-6 text-xs">
           Select to flip
         </span>
       </button>
@@ -230,7 +228,7 @@ function FlashcardsViewer({ content }: { content: LearningArtifactContent }) {
         <Button variant="outline" size="sm" onClick={() => go(-1)}>
           Previous
         </Button>
-        <span className="text-xs text-muted-foreground" aria-live="polite">
+        <span className="text-muted-foreground text-xs" aria-live="polite">
           {Math.min(index, cards.length - 1) + 1} of {cards.length}
         </span>
         <Button variant="outline" size="sm" onClick={() => go(1)}>
@@ -240,7 +238,6 @@ function FlashcardsViewer({ content }: { content: LearningArtifactContent }) {
     </div>
   );
 }
-
 
 interface QuizQuestion {
   question: string;
@@ -313,7 +310,7 @@ function QuizViewer({ content }: { content: LearningArtifactContent }) {
   return (
     <div className="mx-auto w-full max-w-2xl">
       <div className="mb-6 flex items-center justify-between gap-4 border-b pb-3">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {answeredCount} of {questions.length} answered
           {answeredCount === questions.length
             ? ` · ${correctCount} correct`
@@ -334,8 +331,8 @@ function QuizViewer({ content }: { content: LearningArtifactContent }) {
           const answered = selection !== undefined;
           return (
             <li key={questionIndex}>
-              <p className="text-sm font-medium leading-relaxed">
-                <span className="mr-2 font-mono text-xs text-muted-foreground">
+              <p className="text-sm leading-relaxed font-medium">
+                <span className="text-muted-foreground mr-2 font-mono text-xs">
                   {questionIndex + 1}.
                 </span>
                 {question.question}
@@ -360,9 +357,11 @@ function QuizViewer({ content }: { content: LearningArtifactContent }) {
                         }))
                       }
                       className={cn(
-                        "rounded-md border px-3 py-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60",
+                        "focus-visible:ring-ring/60 rounded-md border px-3 py-2 text-left text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none",
                         !answered && "hover:bg-accent",
-                        answered && isCorrect && "border-success/60 bg-success/10",
+                        answered &&
+                          isCorrect &&
+                          "border-success/60 bg-success/10",
                         answered &&
                           isChosen &&
                           !isCorrect &&
@@ -372,12 +371,12 @@ function QuizViewer({ content }: { content: LearningArtifactContent }) {
                     >
                       {option}
                       {answered && isCorrect ? (
-                        <span className="ml-2 text-xs font-medium text-success">
+                        <span className="text-success ml-2 text-xs font-medium">
                           Correct
                         </span>
                       ) : null}
                       {answered && isChosen && !isCorrect ? (
-                        <span className="ml-2 text-xs font-medium text-destructive">
+                        <span className="text-destructive ml-2 text-xs font-medium">
                           Your answer
                         </span>
                       ) : null}
@@ -386,7 +385,7 @@ function QuizViewer({ content }: { content: LearningArtifactContent }) {
                 })}
               </div>
               {answered && question.explanation ? (
-                <p className="mt-2.5 border-l-2 pl-3 text-xs leading-relaxed text-muted-foreground">
+                <p className="text-muted-foreground mt-2.5 border-l-2 pl-3 text-xs leading-relaxed">
                   {question.explanation}
                 </p>
               ) : null}
@@ -397,7 +396,6 @@ function QuizViewer({ content }: { content: LearningArtifactContent }) {
     </div>
   );
 }
-
 
 interface MindmapNode {
   id: string;
@@ -490,7 +488,7 @@ function MindmapBranch({
         {node.label}
       </span>
       {children.length > 0 ? (
-        <ul className="ml-3 mt-1.5 space-y-1.5 border-l pl-4">
+        <ul className="mt-1.5 ml-3 space-y-1.5 border-l pl-4">
           {children.map((child) => (
             <MindmapBranch key={child.id} node={child} ancestry={next} />
           ))}
@@ -514,19 +512,23 @@ function MindmapViewer({ content }: { content: LearningArtifactContent }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-4">
       <div className="flex items-center justify-between px-1">
-        <p className="text-xs text-muted-foreground font-medium">
+        <p className="text-muted-foreground text-xs font-medium">
           {nodes.length} concepts · {edges.length} connections
         </p>
-        <div className="flex items-center gap-1 rounded-lg border border-border/60 bg-card p-1">
+        <div className="border-border/60 bg-card flex items-center gap-1 rounded-lg border p-1">
           <Button
             variant={viewMode === "flow" ? "secondary" : "ghost"}
             size="sm"
             onClick={() => setViewMode("flow")}
             className="h-7 gap-1.5 px-2.5 text-xs font-medium"
           >
-            <HugeiconsIcon icon={ListSettingIcon} strokeWidth={1.5} className="size-3.5" />
+            <HugeiconsIcon
+              icon={ListSettingIcon}
+              strokeWidth={1.5}
+              className="size-3.5"
+            />
             Interactive Diagram
           </Button>
           <Button
@@ -535,7 +537,11 @@ function MindmapViewer({ content }: { content: LearningArtifactContent }) {
             onClick={() => setViewMode("tree")}
             className="h-7 gap-1.5 px-2.5 text-xs font-medium"
           >
-            <HugeiconsIcon icon={ListIcon} strokeWidth={1.5} className="size-3.5" />
+            <HugeiconsIcon
+              icon={ListIcon}
+              strokeWidth={1.5}
+              className="size-3.5"
+            />
             Outline View
           </Button>
         </div>
@@ -544,7 +550,7 @@ function MindmapViewer({ content }: { content: LearningArtifactContent }) {
       {viewMode === "flow" ? (
         <MindmapFlow nodes={nodes} edges={edges} />
       ) : (
-        <div className="rounded-xl border bg-card p-6 shadow-xs">
+        <div className="bg-card rounded-xl border p-6 shadow-xs">
           <ul className="space-y-2">
             {roots.map((node) => (
               <MindmapBranch
@@ -560,4 +566,3 @@ function MindmapViewer({ content }: { content: LearningArtifactContent }) {
     </div>
   );
 }
-

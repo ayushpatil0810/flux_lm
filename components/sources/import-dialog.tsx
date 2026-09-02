@@ -42,17 +42,14 @@ export function ImportSourceDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="font-serif text-heading">
+          <DialogTitle className="text-heading font-serif">
             Add a source
           </DialogTitle>
           <DialogDescription>
             Flux reads it, indexes it, and cites it in answers.
           </DialogDescription>
         </DialogHeader>
-        <Tabs
-          value={tab}
-          onValueChange={(value) => setTab(value as ImportTab)}
-        >
+        <Tabs value={tab} onValueChange={(value) => setTab(value as ImportTab)}>
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="pdf">PDF</TabsTrigger>
             <TabsTrigger value="website">Website</TabsTrigger>

@@ -4,7 +4,11 @@ import { logger } from "@/lib/logger";
 import { scrapeUrl } from "@/lib/firecrawl";
 import { generateEmbeddings } from "@/lib/openai";
 import { parsePdf } from "@/lib/pdf";
-import { deleteVectorsBySourceId, deleteVectorsBySourceIds, upsertVectors } from "@/lib/pinecone";
+import {
+  deleteVectorsBySourceId,
+  deleteVectorsBySourceIds,
+  upsertVectors,
+} from "@/lib/pinecone";
 import { uploadToStorage } from "@/lib/storage";
 import { getYoutubeTranscript } from "@/lib/youtube";
 import { inngest } from "@/inngest/client";
@@ -44,7 +48,6 @@ function sanitizeExternalError(error: unknown, publicMessage: string): string {
   }
   return publicMessage;
 }
-
 
 /**
  * Service class encapsulating business logic and access control for Source management.
@@ -117,20 +120,22 @@ export class SourceService {
         "Failed to send Inngest event, falling back to local async processing",
       );
       // Fallback to local background execution if Inngest is unreachable
-      SourceService.processSourcePipeline(payload.sourceId).catch(async (err) => {
-        log.error(
-          { err, sourceId: payload.sourceId },
-          "Processing pipeline failed in local fallback",
-        );
-        try {
-          await SourceService.markSourceFailed(payload.sourceId, err);
-        } catch (markErr) {
+      SourceService.processSourcePipeline(payload.sourceId).catch(
+        async (err) => {
           log.error(
-            { err: markErr, sourceId: payload.sourceId },
-            "Failed to mark source as FAILED after fallback error",
+            { err, sourceId: payload.sourceId },
+            "Processing pipeline failed in local fallback",
           );
-        }
-      });
+          try {
+            await SourceService.markSourceFailed(payload.sourceId, err);
+          } catch (markErr) {
+            log.error(
+              { err: markErr, sourceId: payload.sourceId },
+              "Failed to mark source as FAILED after fallback error",
+            );
+          }
+        },
+      );
     }
   }
 
@@ -265,10 +270,7 @@ export class SourceService {
    * @param input - Payload containing workspaceId, title, content, and optional type.
    * @returns Newly created source record with PENDING status.
    */
-  static async importTextSource(
-    userId: string,
-    input: ImportTextSourceInput,
-  ) {
+  static async importTextSource(userId: string, input: ImportTextSourceInput) {
     // Verify workspace access
     await WorkspaceService.getWorkspaceById(input.workspaceId, userId);
 
@@ -372,7 +374,9 @@ export class SourceService {
 
     const text = sourceRecord.content?.trim();
     if (!text) {
-      throw ApiError.badRequest(`Source ${sourceId} has no extractable content`);
+      throw ApiError.badRequest(
+        `Source ${sourceId} has no extractable content`,
+      );
     }
 
     const metadata = sourceRecord.metadata ?? {};
@@ -451,7 +455,6 @@ export class SourceService {
       metadata?: SourceChunkMetadata | null;
     }>,
   ) {
-
     const batchSize = 50;
     const pineconeItems = [];
 
@@ -550,7 +553,10 @@ export class SourceService {
    * @param workspaceId - Workspace unique identifier.
    * @param sourceIds - Array of source unique identifiers.
    */
-  static async removeSourcesFromIndex(workspaceId: string, sourceIds: string[]) {
+  static async removeSourcesFromIndex(
+    workspaceId: string,
+    sourceIds: string[],
+  ) {
     if (sourceIds.length === 0) return;
     await deleteVectorsBySourceIds(sourceIds);
     await SourceChunkRepository.deleteBySourceIds(sourceIds);
@@ -628,4 +634,3 @@ export class SourceService {
     };
   }
 }
-

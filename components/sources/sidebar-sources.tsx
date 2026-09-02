@@ -1,6 +1,13 @@
 "use client";
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Cancel01Icon, MoreHorizontalIcon, FileUploadIcon, Link01Icon, PlayCircle02Icon, File01Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Cancel01Icon,
+  MoreHorizontalIcon,
+  FileUploadIcon,
+  Link01Icon,
+  PlayCircle02Icon,
+  File01Icon,
+} from "@hugeicons/core-free-icons";
 
 import * as React from "react";
 
@@ -53,25 +60,33 @@ const IMPORT_TYPES: {
     id: "pdf",
     label: "PDF",
     hint: "Upload a file",
-    Icon: (props) => <HugeiconsIcon icon={FileUploadIcon} strokeWidth={1.5} {...props} />,
+    Icon: (props) => (
+      <HugeiconsIcon icon={FileUploadIcon} strokeWidth={1.5} {...props} />
+    ),
   },
   {
     id: "website",
     label: "Website",
     hint: "Any web page",
-    Icon: (props) => <HugeiconsIcon icon={Link01Icon} strokeWidth={1.5} {...props} />,
+    Icon: (props) => (
+      <HugeiconsIcon icon={Link01Icon} strokeWidth={1.5} {...props} />
+    ),
   },
   {
     id: "youtube",
     label: "YouTube",
     hint: "Video transcript",
-    Icon: (props) => <HugeiconsIcon icon={PlayCircle02Icon} strokeWidth={1.5} {...props} />,
+    Icon: (props) => (
+      <HugeiconsIcon icon={PlayCircle02Icon} strokeWidth={1.5} {...props} />
+    ),
   },
   {
     id: "text",
     label: "Note",
     hint: "Plain text",
-    Icon: (props) => <HugeiconsIcon icon={File01Icon} strokeWidth={1.5} {...props} />,
+    Icon: (props) => (
+      <HugeiconsIcon icon={File01Icon} strokeWidth={1.5} {...props} />
+    ),
   },
 ];
 
@@ -103,10 +118,13 @@ function ImportTypeDialog({
   };
 
   return (
-    <Dialog open={importType !== null} onOpenChange={(open) => !open && onClose()}>
+    <Dialog
+      open={importType !== null}
+      onOpenChange={(open) => !open && onClose()}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-serif text-heading">
+          <DialogTitle className="text-heading font-serif">
             {importType ? titleMap[importType] : ""}
           </DialogTitle>
           <DialogDescription>
@@ -142,8 +160,13 @@ interface SidebarSourcesProps {
  * followed by the list of ingested sources.
  */
 export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
-  const { data: sources, isPending, isError, error, refetch } =
-    useSources(workspaceId);
+  const {
+    data: sources,
+    isPending,
+    isError,
+    error,
+    refetch,
+  } = useSources(workspaceId);
   const deleteSource = useDeleteSource(workspaceId);
   const { push } = useToast();
   const { setPreviewSource } = useWorkspacePreview();
@@ -174,11 +197,11 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex h-12 shrink-0 items-center justify-between pl-4 pr-2">
+      <div className="flex h-12 shrink-0 items-center justify-between pr-2 pl-4">
         <h2 className="text-sm font-medium">Sources</h2>
         <div className="flex items-center gap-1">
           {sources && sources.length > 0 ? (
-            <span className="text-xs text-muted-foreground/60">
+            <span className="text-muted-foreground/60 text-xs">
               {sources.length}
             </span>
           ) : null}
@@ -187,16 +210,21 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
               type="button"
               onClick={onClose}
               aria-label="Close sources panel"
-              className="ml-1 flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground ml-1 flex size-7 items-center justify-center rounded-md transition-colors hover:bg-white/5"
             >
-              <HugeiconsIcon icon={Cancel01Icon} strokeWidth={1.5} className="size-3.5" aria-hidden />
+              <HugeiconsIcon
+                icon={Cancel01Icon}
+                strokeWidth={1.5}
+                className="size-3.5"
+                aria-hidden
+              />
             </button>
           ) : null}
         </div>
       </div>
 
       {/* Upload type cards */}
-      <div className="shrink-0 px-3 pb-4 pt-2">
+      <div className="shrink-0 px-3 pt-2 pb-4">
         <div className="grid grid-cols-2 gap-2">
           {IMPORT_TYPES.map(({ id, label, hint, Icon }) => (
             <Tooltip key={id}>
@@ -204,28 +232,24 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                 <button
                   type="button"
                   onClick={() => setImportType(id)}
-                  className="group relative flex flex-col items-center gap-2 overflow-hidden rounded-xl border border-border/50 bg-card/40 px-2 py-3.5 text-center transition-colors duration-200 hover:border-primary/40 hover:bg-card/60"
+                  className="group border-border/50 bg-card/40 hover:border-primary/40 hover:bg-card/60 relative flex flex-col items-center gap-2 overflow-hidden rounded-xl border px-2 py-3.5 text-center transition-colors duration-200"
                 >
                   {/* Subtle noise texture */}
-                  <div
-                    className="absolute inset-0 z-0 opacity-40 mix-blend-overlay bg-noise"
-                  />
+                  <div className="bg-noise absolute inset-0 z-0 opacity-40 mix-blend-overlay" />
                   {/* Hover glow effect */}
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                  
-                  <div className="relative z-10 flex size-9 items-center justify-center rounded-[10px] bg-primary/10 text-primary shadow-sm transition-transform duration-300 group-hover:scale-110">
+                  <div className="from-primary/10 via-primary/5 pointer-events-none absolute inset-0 bg-gradient-to-br to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+                  <div className="bg-primary/10 text-primary relative z-10 flex size-9 items-center justify-center rounded-[10px] shadow-sm transition-transform duration-300 group-hover:scale-110">
                     <Icon className="size-4.5" aria-hidden />
                   </div>
                   <div className="relative z-10">
-                    <p className="text-[12px] font-semibold tracking-tight text-foreground/90 transition-colors group-hover:text-primary">
+                    <p className="text-foreground/90 group-hover:text-primary text-[12px] font-semibold tracking-tight transition-colors">
                       {label}
                     </p>
                   </div>
                 </button>
               </TooltipTrigger>
-              <TooltipContent sideOffset={8}>
-                {hint}
-              </TooltipContent>
+              <TooltipContent sideOffset={8}>{hint}</TooltipContent>
             </Tooltip>
           ))}
         </div>
@@ -246,41 +270,41 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
         ) : sources.length === 0 ? (
           <div className="flex flex-col items-center px-4 py-12 text-center">
             <p className="text-sm font-medium">No sources yet</p>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-xs leading-relaxed">
               Pick a type above to import your first source.
             </p>
           </div>
         ) : (
           <>
-            <div className="flex items-center gap-2 px-4 pb-1.5 pt-1">
-              <span className="h-px flex-1 bg-border/40" aria-hidden />
-              <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
+            <div className="flex items-center gap-2 px-4 pt-1 pb-1.5">
+              <span className="bg-border/40 h-px flex-1" aria-hidden />
+              <span className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
                 Your sources
               </span>
-              <span className="h-px flex-1 bg-border/40" aria-hidden />
+              <span className="bg-border/40 h-px flex-1" aria-hidden />
             </div>
             <ul className="flex flex-col p-2">
               {sources.map((source) => {
                 const subtitle = sourceSubtitle(source);
                 return (
                   <li key={source.id} className="group relative">
-                    <div className="flex items-start gap-1 rounded-lg px-3 py-2.5 transition-colors hover:bg-accent/60 focus-within:bg-accent/60">
+                    <div className="hover:bg-accent/60 focus-within:bg-accent/60 flex items-start gap-1 rounded-lg px-3 py-2.5 transition-colors">
                       <button
                         type="button"
                         onClick={() => setPreviewSource(source)}
                         className="min-w-0 flex-1 text-left focus-visible:outline-none"
                       >
-                        <span className="block truncate text-[13px] font-medium leading-snug text-foreground">
+                        <span className="text-foreground block truncate text-[13px] leading-snug font-medium">
                           {source.title}
                         </span>
                         {subtitle ? (
-                          <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                          <span className="text-muted-foreground mt-0.5 block truncate text-xs">
                             {subtitle}
                           </span>
                         ) : null}
                         <span className="mt-1.5 flex items-center gap-2">
                           <StatusIndicator status={source.status} />
-                          <span className="text-xs text-muted-foreground/70">
+                          <span className="text-muted-foreground/70 text-xs">
                             {formatRelativeTime(source.createdAt)}
                           </span>
                         </span>
@@ -291,10 +315,15 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="size-7 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 data-[state=open]:opacity-100"
+                            className="text-muted-foreground size-7 shrink-0 opacity-0 transition-opacity group-hover:opacity-100 data-[state=open]:opacity-100"
                             aria-label={`Options for ${source.title}`}
                           >
-                            <HugeiconsIcon icon={MoreHorizontalIcon} strokeWidth={1.5} className="size-4" aria-hidden />
+                            <HugeiconsIcon
+                              icon={MoreHorizontalIcon}
+                              strokeWidth={1.5}
+                              className="size-4"
+                              aria-hidden
+                            />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -353,7 +382,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
         description={
           <>
             This permanently deletes{" "}
-            <span className="font-medium text-foreground">
+            <span className="text-foreground font-medium">
               {deleteTarget?.title}
             </span>
             , including its extracted text and embeddings. This cannot be

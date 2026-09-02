@@ -5,24 +5,36 @@ import { CHAT_MODEL } from "@/lib/constants";
 import { SourceRepository } from "@/server/modules/source/source.repository";
 import { ApiError } from "@/server/utils/api-error";
 
-
 const MAX_CONTEXT_CHARS = 120_000;
 
 // Re-declare schemas
 const flashcardsSchema = z.object({
-  cards: z.array(z.object({ front: z.string(), back: z.string() })).min(3).max(30),
+  cards: z
+    .array(z.object({ front: z.string(), back: z.string() }))
+    .min(3)
+    .max(30),
 });
 const quizSchema = z.object({
-  questions: z.array(z.object({
-    question: z.string(),
-    options: z.array(z.string()).min(2).max(5),
-    correctIndex: z.number().int().min(0),
-    explanation: z.string(),
-  })).min(3).max(15),
+  questions: z
+    .array(
+      z.object({
+        question: z.string(),
+        options: z.array(z.string()).min(2).max(5),
+        correctIndex: z.number().int().min(0),
+        explanation: z.string(),
+      }),
+    )
+    .min(3)
+    .max(15),
 });
 const mindmapSchema = z.object({
-  nodes: z.array(z.object({ id: z.string(), label: z.string() })).min(2).max(40),
-  edges: z.array(z.object({ id: z.string(), source: z.string(), target: z.string() })),
+  nodes: z
+    .array(z.object({ id: z.string(), label: z.string() }))
+    .min(2)
+    .max(40),
+  edges: z.array(
+    z.object({ id: z.string(), source: z.string(), target: z.string() }),
+  ),
 });
 const takeawaysSchema = z.object({
   items: z.array(z.string()).min(3).max(20),
@@ -39,7 +51,10 @@ export async function gatherSourceContext(
   workspaceId: string,
   sourceIds?: string[],
 ) {
-  const selected = await SourceRepository.findReadyByWorkspaceId(workspaceId, sourceIds);
+  const selected = await SourceRepository.findReadyByWorkspaceId(
+    workspaceId,
+    sourceIds,
+  );
 
   if (selected.length === 0) {
     throw ApiError.badRequest(
@@ -72,7 +87,8 @@ export async function gatherSourceContext(
 /**
  * Generates structured or markdown content for a learning artifact using the AI SDK.
  */
-type ArtifactType = "SUMMARY" | "TAKEAWAYS" | "FLASHCARDS" | "QUIZ" | "MINDMAP" | "REPORT";
+type ArtifactType =
+  "SUMMARY" | "TAKEAWAYS" | "FLASHCARDS" | "QUIZ" | "MINDMAP" | "REPORT";
 
 export async function generateArtifactContent(
   type: ArtifactType,

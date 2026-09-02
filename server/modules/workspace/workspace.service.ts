@@ -1,6 +1,9 @@
 import { ApiError } from "@/server/utils/api-error";
 import { WorkspaceRepository } from "./workspace.repository";
-import { CreateWorkspaceInput, UpdateWorkspaceInput } from "./workspace.validator";
+import {
+  CreateWorkspaceInput,
+  UpdateWorkspaceInput,
+} from "./workspace.validator";
 
 /**
  * Service class encapsulating business logic and rules for Workspace management.
@@ -54,7 +57,7 @@ export class WorkspaceService {
   static async updateWorkspace(
     id: string,
     userId: string,
-    input: UpdateWorkspaceInput
+    input: UpdateWorkspaceInput,
   ) {
     // Verify existence & ownership
     await WorkspaceService.getWorkspaceById(id, userId);

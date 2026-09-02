@@ -1,7 +1,7 @@
 import { ApiResponse } from "./api-response";
 
 export function asyncHandler<T extends (...args: any[]) => Promise<Response>>(
-  fn: T
+  fn: T,
 ): T {
   return (async (...args: Parameters<T>): Promise<Response> => {
     try {

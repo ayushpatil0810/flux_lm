@@ -1,6 +1,6 @@
 "use client";
-import { HugeiconsIcon } from '@hugeicons/react';
-import { File01Icon, BookOpen01Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from "@hugeicons/react";
+import { File01Icon, BookOpen01Icon } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
 import ReactMarkdown from "react-markdown";
@@ -84,10 +84,10 @@ export function MessageList({
             <TranscriptMessage role="USER" content={streamError.userText} />
             <div
               role="alert"
-              className="rounded-lg border border-destructive/40 px-4 py-3"
+              className="border-destructive/40 rounded-lg border px-4 py-3"
             >
               <p className="text-sm font-medium">The reply failed</p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="text-muted-foreground mt-1 text-xs">
                 {streamError.message}
               </p>
               <Button
@@ -123,33 +123,40 @@ function TranscriptMessage({
 
   if (isUser) {
     return (
-      <article className="flex w-full justify-end animate-in fade-in duration-200">
-        <div className="max-w-[80%] rounded-2xl bg-primary px-4 py-2.5 text-sm leading-relaxed text-primary-foreground">
-          <p className="whitespace-pre-wrap break-words">{content}</p>
+      <article className="animate-in fade-in flex w-full justify-end duration-200">
+        <div className="bg-primary text-primary-foreground max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed">
+          <p className="break-words whitespace-pre-wrap">{content}</p>
         </div>
       </article>
     );
   }
 
   return (
-    <article className="w-full animate-in fade-in duration-200">
+    <article className="animate-in fade-in w-full duration-200">
       {content ? (
-        <div className="prose prose-sm max-w-none dark:prose-invert break-words prose-p:leading-relaxed prose-pre:rounded-lg prose-pre:border prose-pre:border-border/60 prose-pre:bg-muted/50">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {content}
-          </ReactMarkdown>
+        <div className="prose prose-sm dark:prose-invert prose-p:leading-relaxed prose-pre:rounded-lg prose-pre:border prose-pre:border-border/60 prose-pre:bg-muted/50 max-w-none break-words">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
           {streaming && (
             <span
               aria-hidden
-              className="ml-1.5 inline-block size-3.5 animate-spin rounded-full border-2 border-primary border-t-transparent align-middle"
+              className="border-primary ml-1.5 inline-block size-3.5 animate-spin rounded-full border-2 border-t-transparent align-middle"
             />
           )}
         </div>
       ) : streaming ? (
         <div className="flex items-center gap-1.5 py-2">
-          <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground/60" style={{ animationDelay: "0ms" }} />
-          <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground/60" style={{ animationDelay: "150ms" }} />
-          <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground/60" style={{ animationDelay: "300ms" }} />
+          <span
+            className="bg-muted-foreground/60 size-1.5 animate-bounce rounded-full"
+            style={{ animationDelay: "0ms" }}
+          />
+          <span
+            className="bg-muted-foreground/60 size-1.5 animate-bounce rounded-full"
+            style={{ animationDelay: "150ms" }}
+          />
+          <span
+            className="bg-muted-foreground/60 size-1.5 animate-bounce rounded-full"
+            style={{ animationDelay: "300ms" }}
+          />
         </div>
       ) : null}
 
@@ -179,28 +186,38 @@ function CitationList({ citations }: { citations: CitationMetadata[] }) {
           className="group relative cursor-default"
           tabIndex={0}
         >
-          <div className="flex items-center gap-1.5 rounded-md border border-border/60 px-2 py-1 text-xs text-muted-foreground transition-colors hover:border-border hover:text-foreground">
-            <HugeiconsIcon icon={BookOpen01Icon} strokeWidth={1.5} className="size-3" aria-hidden />
-            <span className="font-medium text-primary">{i + 1}</span>
+          <div className="border-border/60 text-muted-foreground hover:border-border hover:text-foreground flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs transition-colors">
+            <HugeiconsIcon
+              icon={BookOpen01Icon}
+              strokeWidth={1.5}
+              className="size-3"
+              aria-hidden
+            />
+            <span className="text-primary font-medium">{i + 1}</span>
             <span className="max-w-[160px] truncate">
               {citation.sourceTitle}
             </span>
           </div>
 
-          <div className="absolute bottom-full left-0 z-50 mb-2 hidden w-72 rounded-lg border border-border/60 bg-popover p-3 text-popover-foreground shadow-lg group-hover:block group-focus:block group-active:block animate-in fade-in slide-in-from-bottom-1">
-            <div className="flex items-center gap-2 border-b border-border/60 pb-2">
-              <HugeiconsIcon icon={File01Icon} strokeWidth={1.5} className="size-3.5 text-primary" aria-hidden />
+          <div className="border-border/60 bg-popover text-popover-foreground animate-in fade-in slide-in-from-bottom-1 absolute bottom-full left-0 z-50 mb-2 hidden w-72 rounded-lg border p-3 shadow-lg group-hover:block group-focus:block group-active:block">
+            <div className="border-border/60 flex items-center gap-2 border-b pb-2">
+              <HugeiconsIcon
+                icon={File01Icon}
+                strokeWidth={1.5}
+                className="text-primary size-3.5"
+                aria-hidden
+              />
               <p className="truncate text-xs font-medium">
                 {citation.sourceTitle}
               </p>
               {citation.page ? (
-                <span className="ml-auto rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                <span className="bg-muted text-muted-foreground ml-auto rounded px-1.5 py-0.5 text-[10px]">
                   pg {citation.page}
                 </span>
               ) : null}
             </div>
             {citation.excerpt && (
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              <p className="text-muted-foreground mt-2 text-xs leading-relaxed">
                 &ldquo;{citation.excerpt}&rdquo;
               </p>
             )}

@@ -32,8 +32,10 @@ export function useCreateMemory() {
       }),
     onMutate: async (text: string) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.memories.all });
-      const previousMemories = queryClient.getQueryData<MemoryItem[]>(queryKeys.memories.all);
-      
+      const previousMemories = queryClient.getQueryData<MemoryItem[]>(
+        queryKeys.memories.all,
+      );
+
       const optimisticMemory: MemoryItem = {
         id: `temp-${Date.now()}`,
         memory: text,
@@ -41,17 +43,19 @@ export function useCreateMemory() {
         updated_at: new Date().toISOString(),
         isOptimistic: true,
       };
-      
-      queryClient.setQueryData<MemoryItem[]>(
-        queryKeys.memories.all,
-        (old) => (old ? [optimisticMemory, ...old] : [optimisticMemory])
+
+      queryClient.setQueryData<MemoryItem[]>(queryKeys.memories.all, (old) =>
+        old ? [optimisticMemory, ...old] : [optimisticMemory],
       );
-      
+
       return { previousMemories };
     },
     onError: (err, newMemory, context) => {
       if (context?.previousMemories) {
-        queryClient.setQueryData(queryKeys.memories.all, context.previousMemories);
+        queryClient.setQueryData(
+          queryKeys.memories.all,
+          context.previousMemories,
+        );
       }
     },
     onSettled: () => {
@@ -70,18 +74,22 @@ export function useUpdateMemory() {
       }),
     onMutate: async (input) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.memories.all });
-      const previousMemories = queryClient.getQueryData<MemoryItem[]>(queryKeys.memories.all);
-      
-      queryClient.setQueryData<MemoryItem[]>(
+      const previousMemories = queryClient.getQueryData<MemoryItem[]>(
         queryKeys.memories.all,
-        (old) => old?.map(m => m.id === input.id ? { ...m, memory: input.text } : m)
       );
-      
+
+      queryClient.setQueryData<MemoryItem[]>(queryKeys.memories.all, (old) =>
+        old?.map((m) => (m.id === input.id ? { ...m, memory: input.text } : m)),
+      );
+
       return { previousMemories };
     },
     onError: (err, newMemory, context) => {
       if (context?.previousMemories) {
-        queryClient.setQueryData(queryKeys.memories.all, context.previousMemories);
+        queryClient.setQueryData(
+          queryKeys.memories.all,
+          context.previousMemories,
+        );
       }
     },
     onSettled: () => {
@@ -97,18 +105,22 @@ export function useDeleteMemory() {
       apiFetch<unknown>(endpoints.memories.detail(id), { method: "DELETE" }),
     onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.memories.all });
-      const previousMemories = queryClient.getQueryData<MemoryItem[]>(queryKeys.memories.all);
-      
-      queryClient.setQueryData<MemoryItem[]>(
+      const previousMemories = queryClient.getQueryData<MemoryItem[]>(
         queryKeys.memories.all,
-        (old) => old?.filter(m => m.id !== id)
       );
-      
+
+      queryClient.setQueryData<MemoryItem[]>(queryKeys.memories.all, (old) =>
+        old?.filter((m) => m.id !== id),
+      );
+
       return { previousMemories };
     },
     onError: (err, id, context) => {
       if (context?.previousMemories) {
-        queryClient.setQueryData(queryKeys.memories.all, context.previousMemories);
+        queryClient.setQueryData(
+          queryKeys.memories.all,
+          context.previousMemories,
+        );
       }
     },
     onSettled: () => {

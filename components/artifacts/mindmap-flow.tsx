@@ -45,7 +45,12 @@ function MindmapNode({
   data,
   selected,
 }: {
-  data: { label: string; depth: number; childCount?: number; isDimmed: boolean };
+  data: {
+    label: string;
+    depth: number;
+    childCount?: number;
+    isDimmed: boolean;
+  };
   selected?: boolean;
 }) {
   const { depth, isDimmed } = data;
@@ -57,27 +62,29 @@ function MindmapNode({
       className={cn(
         "group relative flex items-center justify-between gap-2.5 shadow-sm transition-all duration-300",
         isDimmed && "opacity-30 blur-[0.5px]",
-        selected && !isDimmed && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+        selected &&
+          !isDimmed &&
+          "ring-primary ring-offset-background ring-2 ring-offset-2",
         isRoot
-          ? "rounded-2xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-md"
+          ? "bg-primary text-primary-foreground rounded-2xl px-5 py-2.5 text-sm font-semibold shadow-md"
           : isLevel1
-            ? "rounded-xl border border-primary/30 border-l-2 border-l-primary/60 bg-card px-4 py-2 text-xs font-medium text-foreground hover:border-primary/50"
-            : "rounded-lg border border-border/50 bg-card/60 px-3 py-1.5 text-xs text-muted-foreground hover:border-border/80"
+            ? "border-primary/30 border-l-primary/60 bg-card text-foreground hover:border-primary/50 rounded-xl border border-l-2 px-4 py-2 text-xs font-medium"
+            : "border-border/50 bg-card/60 text-muted-foreground hover:border-border/80 rounded-lg border px-3 py-1.5 text-xs",
       )}
     >
       <Handle
         type="target"
         position={Position.Left}
-        className="!size-2.5 !border-2 !border-background !bg-primary/80 opacity-0 transition-opacity group-hover:opacity-100"
+        className="!border-background !bg-primary/80 !size-2.5 !border-2 opacity-0 transition-opacity group-hover:opacity-100"
       />
-      <span className="truncate max-w-[220px] leading-snug">{data.label}</span>
+      <span className="max-w-[220px] truncate leading-snug">{data.label}</span>
       {data.childCount && data.childCount > 0 ? (
         <span
           className={cn(
             "flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold",
             isRoot
               ? "bg-primary-foreground/20 text-primary-foreground"
-              : "bg-muted text-muted-foreground"
+              : "bg-muted text-muted-foreground",
           )}
         >
           {data.childCount}
@@ -86,7 +93,7 @@ function MindmapNode({
       <Handle
         type="source"
         position={Position.Right}
-        className="!size-2.5 !border-2 !border-background !bg-primary/80 opacity-0 transition-opacity group-hover:opacity-100"
+        className="!border-background !bg-primary/80 !size-2.5 !border-2 opacity-0 transition-opacity group-hover:opacity-100"
       />
     </div>
   );
@@ -108,7 +115,7 @@ function getLayoutedElements(rawNodes: RawNode[], rawEdges: RawEdge[]) {
   // Find root nodes (no incoming edges)
   const targetNodeIds = new Set(rawEdges.map((e) => e.target));
   const rootNodeIds = new Set(
-    rawNodes.filter((n) => !targetNodeIds.has(n.id)).map((n) => n.id)
+    rawNodes.filter((n) => !targetNodeIds.has(n.id)).map((n) => n.id),
   );
   if (rootNodeIds.size === 0 && rawNodes.length > 0) {
     rootNodeIds.add(rawNodes[0].id);
@@ -213,12 +220,15 @@ function getLayoutedElements(rawNodes: RawNode[], rawEdges: RawEdge[]) {
   return { nodes, edges };
 }
 
-export function MindmapFlow({ nodes: rawNodes, edges: rawEdges }: MindmapFlowProps) {
+export function MindmapFlow({
+  nodes: rawNodes,
+  edges: rawEdges,
+}: MindmapFlowProps) {
   const [viewMode, setViewMode] = React.useState<"flow" | "tree">("flow");
 
   const layout = React.useMemo(
     () => getLayoutedElements(rawNodes, rawEdges),
-    [rawNodes, rawEdges]
+    [rawNodes, rawEdges],
   );
 
   const [nodes, setNodes, onNodesChange] = useNodesState(layout.nodes);
@@ -257,8 +267,15 @@ export function MindmapFlow({ nodes: rawNodes, edges: rawEdges }: MindmapFlowPro
 
       // If node has no children, reset dimming
       if (descendants.size === 1) {
-        setNodes((nds) => nds.map((n) => ({ ...n, data: { ...n.data, isDimmed: false } })));
-        setEdges((eds) => eds.map((e) => ({ ...e, style: { ...e.style, opacity: e.source === '0' ? 0.5 : 0.7 } })));
+        setNodes((nds) =>
+          nds.map((n) => ({ ...n, data: { ...n.data, isDimmed: false } })),
+        );
+        setEdges((eds) =>
+          eds.map((e) => ({
+            ...e,
+            style: { ...e.style, opacity: e.source === "0" ? 0.5 : 0.7 },
+          })),
+        );
         return;
       }
 
@@ -266,7 +283,7 @@ export function MindmapFlow({ nodes: rawNodes, edges: rawEdges }: MindmapFlowPro
         nds.map((n) => ({
           ...n,
           data: { ...n.data, isDimmed: !descendants.has(n.id) },
-        }))
+        })),
       );
       setEdges((eds) =>
         eds.map((e) => {
@@ -276,22 +293,31 @@ export function MindmapFlow({ nodes: rawNodes, edges: rawEdges }: MindmapFlowPro
             ...e,
             style: { ...e.style, opacity: inTree ? defaultOpacity : 0.1 },
           };
-        })
+        }),
       );
     },
-    [edges, setNodes, setEdges]
+    [edges, setNodes, setEdges],
   );
 
   const handlePaneClick = React.useCallback(() => {
-    setNodes((nds) => nds.map((n) => ({ ...n, data: { ...n.data, isDimmed: false } })));
-    setEdges((eds) => eds.map((e) => ({ ...e, style: { ...e.style, opacity: e.markerEnd ? 0.5 : 0.7 } })));
+    setNodes((nds) =>
+      nds.map((n) => ({ ...n, data: { ...n.data, isDimmed: false } })),
+    );
+    setEdges((eds) =>
+      eds.map((e) => ({
+        ...e,
+        style: { ...e.style, opacity: e.markerEnd ? 0.5 : 0.7 },
+      })),
+    );
   }, [setNodes, setEdges]);
 
   return (
-    <div className="relative w-full h-[500px] rounded-xl border border-border/80 bg-card/40 backdrop-blur-xs overflow-hidden shadow-xs">
+    <div className="border-border/80 bg-card/40 relative h-[500px] w-full overflow-hidden rounded-xl border shadow-xs backdrop-blur-xs">
       {viewMode === "tree" ? (
         <div className="flex h-full w-full flex-col items-center justify-center">
-          <p className="text-sm text-muted-foreground">Outline view not implemented yet.</p>
+          <p className="text-muted-foreground text-sm">
+            Outline view not implemented yet.
+          </p>
         </div>
       ) : (
         <ReactFlow
@@ -308,21 +334,29 @@ export function MindmapFlow({ nodes: rawNodes, edges: rawEdges }: MindmapFlowPro
           maxZoom={2}
           proOptions={{ hideAttribution: true }}
         >
-          <Background variant={BackgroundVariant.Lines} gap={32} size={0.5} className="opacity-20" />
-          <Controls showInteractive={false} className="!border-border/30 !bg-card !shadow-sm !rounded-xl" />
+          <Background
+            variant={BackgroundVariant.Lines}
+            gap={32}
+            size={0.5}
+            className="opacity-20"
+          />
+          <Controls
+            showInteractive={false}
+            className="!border-border/30 !bg-card !rounded-xl !shadow-sm"
+          />
         </ReactFlow>
       )}
 
       {/* Floating Panel for view toggle */}
       <div className="absolute top-2 right-2 z-10 p-2">
-        <div className="flex rounded-lg overflow-hidden border border-border/40 bg-card/80 backdrop-blur-md shadow-sm">
+        <div className="border-border/40 bg-card/80 flex overflow-hidden rounded-lg border shadow-sm backdrop-blur-md">
           <button
             onClick={() => setViewMode("flow")}
             className={cn(
               "px-3 py-1.5 text-xs font-medium transition-colors",
               viewMode === "flow"
                 ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:bg-accent"
+                : "text-muted-foreground hover:bg-accent",
             )}
           >
             Map
@@ -330,10 +364,10 @@ export function MindmapFlow({ nodes: rawNodes, edges: rawEdges }: MindmapFlowPro
           <button
             onClick={() => setViewMode("tree")}
             className={cn(
-              "px-3 py-1.5 text-xs font-medium border-l border-border/40 transition-colors",
+              "border-border/40 border-l px-3 py-1.5 text-xs font-medium transition-colors",
               viewMode === "tree"
                 ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:bg-accent"
+                : "text-muted-foreground hover:bg-accent",
             )}
           >
             Outline

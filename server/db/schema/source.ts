@@ -63,7 +63,10 @@ export const sourceChunk = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [
-    unique("source_chunk_sourceId_index_unique").on(table.sourceId, table.index),
+    unique("source_chunk_sourceId_index_unique").on(
+      table.sourceId,
+      table.index,
+    ),
     index("source_chunk_sourceId_idx").on(table.sourceId),
   ],
 );

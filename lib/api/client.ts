@@ -96,7 +96,11 @@ export async function apiFetch<T>(
 
   if (!response.ok) {
     if (envelope && envelope.success === false) {
-      throw new ApiClientError(response.status, envelope.error, envelope.details);
+      throw new ApiClientError(
+        response.status,
+        envelope.error,
+        envelope.details,
+      );
     }
     throw new ApiClientError(
       response.status,

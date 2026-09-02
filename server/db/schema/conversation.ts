@@ -13,10 +13,7 @@ import { getWorkspaceEntityBase, workspace } from "./workspace";
 import { timestamps } from "./utils";
 import { CitationMetadata } from "./types";
 
-export const messageRoleEnum = pgEnum("message_role", [
-  "USER",
-  "ASSISTANT",
-]);
+export const messageRoleEnum = pgEnum("message_role", ["USER", "ASSISTANT"]);
 
 export const conversation = pgTable(
   "conversation",
@@ -59,13 +56,16 @@ export const message = pgTable(
   ],
 );
 
-export const conversationRelations = relations(conversation, ({ one, many }) => ({
-  workspace: one(workspace, {
-    fields: [conversation.workspaceId],
-    references: [workspace.id],
+export const conversationRelations = relations(
+  conversation,
+  ({ one, many }) => ({
+    workspace: one(workspace, {
+      fields: [conversation.workspaceId],
+      references: [workspace.id],
+    }),
+    messages: many(message),
   }),
-  messages: many(message),
-}));
+);
 
 export const messageRelations = relations(message, ({ one }) => ({
   conversation: one(conversation, {

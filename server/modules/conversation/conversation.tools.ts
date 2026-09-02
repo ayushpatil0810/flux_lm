@@ -6,7 +6,10 @@ import { logger } from "@/lib/logger";
 const log = logger.child({ module: "WebSearchTool" });
 
 const searchParameters = z.object({
-  query: z.string().min(1).describe("The search query to look up on the web. Must not be empty."),
+  query: z
+    .string()
+    .min(1)
+    .describe("The search query to look up on the web. Must not be empty."),
 });
 
 // The `as any` cast is necessary because this project uses Zod v4 (or a different version)

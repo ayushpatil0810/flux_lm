@@ -84,7 +84,7 @@ export function CreateWorkspaceDialog({
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle className="font-serif text-heading">
+            <DialogTitle className="text-heading font-serif">
               New workspace
             </DialogTitle>
             <DialogDescription>
@@ -109,7 +109,10 @@ export function CreateWorkspaceDialog({
                 }
               />
               {fieldErrors.title ? (
-                <p id="workspace-title-error" className="text-sm text-destructive">
+                <p
+                  id="workspace-title-error"
+                  className="text-destructive text-sm"
+                >
                   {fieldErrors.title}
                 </p>
               ) : null}
@@ -117,7 +120,7 @@ export function CreateWorkspaceDialog({
             <div className="grid gap-1.5">
               <Label htmlFor="workspace-description">
                 Description{" "}
-                <span className="font-normal text-muted-foreground">
+                <span className="text-muted-foreground font-normal">
                   (optional)
                 </span>
               </Label>
@@ -138,7 +141,7 @@ export function CreateWorkspaceDialog({
               {fieldErrors.description ? (
                 <p
                   id="workspace-description-error"
-                  className="text-sm text-destructive"
+                  className="text-destructive text-sm"
                 >
                   {fieldErrors.description}
                 </p>

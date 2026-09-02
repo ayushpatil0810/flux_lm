@@ -88,7 +88,10 @@ export class SourceController {
       );
     }
 
-    const newSource = await SourceService.createSource(user.id, validation.data);
+    const newSource = await SourceService.createSource(
+      user.id,
+      validation.data,
+    );
     return ApiResponse.created(newSource, "Source created successfully");
   });
 
@@ -98,7 +101,10 @@ export class SourceController {
    */
   static importWebsiteSource = asyncHandler(async (req: NextRequest) => {
     const user = await getAuthenticatedUser(req);
-    await checkRateLimit(`source_import:${user.id}`, { maxRequests: 15, windowMs: 60 * 1000 });
+    await checkRateLimit(`source_import:${user.id}`, {
+      maxRequests: 15,
+      windowMs: 60 * 1000,
+    });
     const body = await req.json();
 
     const validation = importWebsiteSourceSchema.safeParse(body);
@@ -125,7 +131,10 @@ export class SourceController {
    */
   static importPdfSource = asyncHandler(async (req: NextRequest) => {
     const user = await getAuthenticatedUser(req);
-    await checkRateLimit(`source_import:${user.id}`, { maxRequests: 15, windowMs: 60 * 1000 });
+    await checkRateLimit(`source_import:${user.id}`, {
+      maxRequests: 15,
+      windowMs: 60 * 1000,
+    });
     const formData = await req.formData();
 
     const file = formData.get("file") as File | null;
@@ -171,10 +180,7 @@ export class SourceController {
       },
     });
 
-    return ApiResponse.created(
-      imported,
-      "PDF source imported successfully",
-    );
+    return ApiResponse.created(imported, "PDF source imported successfully");
   });
 
   /**
@@ -183,7 +189,10 @@ export class SourceController {
    */
   static importTextSource = asyncHandler(async (req: NextRequest) => {
     const user = await getAuthenticatedUser(req);
-    await checkRateLimit(`source_import:${user.id}`, { maxRequests: 15, windowMs: 60 * 1000 });
+    await checkRateLimit(`source_import:${user.id}`, {
+      maxRequests: 15,
+      windowMs: 60 * 1000,
+    });
     const body = await req.json();
 
     const validation = importTextSourceSchema.safeParse(body);
@@ -198,10 +207,7 @@ export class SourceController {
       user.id,
       validation.data,
     );
-    return ApiResponse.created(
-      imported,
-      "Text source imported successfully",
-    );
+    return ApiResponse.created(imported, "Text source imported successfully");
   });
 
   /**
@@ -210,7 +216,10 @@ export class SourceController {
    */
   static importYoutubeSource = asyncHandler(async (req: NextRequest) => {
     const user = await getAuthenticatedUser(req);
-    await checkRateLimit(`source_import:${user.id}`, { maxRequests: 15, windowMs: 60 * 1000 });
+    await checkRateLimit(`source_import:${user.id}`, {
+      maxRequests: 15,
+      windowMs: 60 * 1000,
+    });
     const body = await req.json();
 
     const validation = importYoutubeSourceSchema.safeParse(body);

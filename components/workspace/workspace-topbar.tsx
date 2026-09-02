@@ -1,6 +1,11 @@
 "use client";
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Loading02Icon, Settings01Icon, SidebarLeftIcon, SidebarRightIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Loading02Icon,
+  Settings01Icon,
+  SidebarLeftIcon,
+  SidebarRightIcon,
+} from "@hugeicons/core-free-icons";
 
 import * as React from "react";
 import Link from "next/link";
@@ -26,7 +31,7 @@ export function WorkspaceTopbar({
 }: WorkspaceTopbarProps) {
   const { data: sources } = useSources(workspaceId);
   const { data: artifacts } = useArtifacts(workspaceId);
-  
+
   const sourcesCount = sources?.length ?? 0;
   const artifactsCount = artifacts?.length ?? 0;
   const { leftOpen, setLeftOpen, rightOpen, setRightOpen } =
@@ -72,7 +77,7 @@ export function WorkspaceTopbar({
     .join(" · ");
 
   return (
-    <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border/30 bg-background px-3">
+    <header className="border-border/30 bg-background flex h-12 shrink-0 items-center gap-2 border-b px-3">
       {/* Left panel toggle */}
       <Button
         type="button"
@@ -81,25 +86,30 @@ export function WorkspaceTopbar({
         onClick={() => setLeftOpen(!leftOpen)}
         aria-label={leftOpen ? "Close sources panel" : "Open sources panel"}
         className={cn(
-          "gap-1.5 text-muted-foreground",
+          "text-muted-foreground gap-1.5",
           leftOpen && "bg-muted text-foreground",
         )}
       >
-        <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={1.5} className="size-4" aria-hidden />
+        <HugeiconsIcon
+          icon={SidebarLeftIcon}
+          strokeWidth={1.5}
+          className="size-4"
+          aria-hidden
+        />
         <span className="hidden sm:inline">Sources</span>
       </Button>
 
       {/* Logo — links to dashboard */}
       <Link
         href="/dashboard"
-        className="flex items-center gap-2 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+        className="focus-visible:ring-primary/60 flex items-center gap-2 rounded-sm focus-visible:ring-2 focus-visible:outline-none"
         aria-label="Back to dashboard"
       >
-        <FluxLogo className="size-5 text-primary" />
+        <FluxLogo className="text-primary size-5" />
       </Link>
 
       {/* Divider */}
-      <span aria-hidden className="h-4 w-px bg-border/50" />
+      <span aria-hidden className="bg-border/50 h-4 w-px" />
 
       {/* Workspace title — click to edit inline */}
       <div className="flex min-w-0 flex-1 items-center gap-2">
@@ -114,7 +124,7 @@ export function WorkspaceTopbar({
               if (e.key === "Enter") inputRef.current?.blur();
               if (e.key === "Escape") cancelEdit();
             }}
-            className="min-w-0 flex-1 rounded-md bg-transparent px-1.5 py-0.5 text-sm font-medium text-foreground ring-1 ring-primary/40 outline-none focus:ring-primary/70"
+            className="text-foreground ring-primary/40 focus:ring-primary/70 min-w-0 flex-1 rounded-md bg-transparent px-1.5 py-0.5 text-sm font-medium ring-1 outline-none"
             maxLength={100}
             autoFocus
           />
@@ -122,7 +132,7 @@ export function WorkspaceTopbar({
           <button
             type="button"
             onClick={startEditing}
-            className="max-w-xs truncate rounded-md px-1.5 py-0.5 text-sm font-medium text-foreground transition-colors hover:bg-white/5"
+            className="text-foreground max-w-xs truncate rounded-md px-1.5 py-0.5 text-sm font-medium transition-colors hover:bg-white/5"
             title="Click to rename"
           >
             {workspace?.title ?? "Workspace"}
@@ -130,14 +140,16 @@ export function WorkspaceTopbar({
         )}
 
         {updateWorkspace.isPending && (
-          <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5}
-            className="size-3.5 shrink-0 animate-spin text-muted-foreground"
+          <HugeiconsIcon
+            icon={Loading02Icon}
+            strokeWidth={1.5}
+            className="text-muted-foreground size-3.5 shrink-0 animate-spin"
             aria-hidden
           />
         )}
 
         {!editing && countLabel ? (
-          <span className="hidden shrink-0 text-xs text-muted-foreground sm:block">
+          <span className="text-muted-foreground hidden shrink-0 text-xs sm:block">
             {countLabel}
           </span>
         ) : null}
@@ -150,9 +162,14 @@ export function WorkspaceTopbar({
         size="sm"
         onClick={onOpenSettings}
         aria-label="Workspace settings"
-        className="gap-1.5 text-muted-foreground"
+        className="text-muted-foreground gap-1.5"
       >
-        <HugeiconsIcon icon={Settings01Icon} strokeWidth={1.5} className="size-4" aria-hidden />
+        <HugeiconsIcon
+          icon={Settings01Icon}
+          strokeWidth={1.5}
+          className="size-4"
+          aria-hidden
+        />
         <span className="hidden sm:inline">Settings</span>
       </Button>
 
@@ -162,14 +179,21 @@ export function WorkspaceTopbar({
         variant="ghost"
         size="sm"
         onClick={() => setRightOpen(!rightOpen)}
-        aria-label={rightOpen ? "Close artifacts panel" : "Open artifacts panel"}
+        aria-label={
+          rightOpen ? "Close artifacts panel" : "Open artifacts panel"
+        }
         className={cn(
-          "gap-1.5 text-muted-foreground",
+          "text-muted-foreground gap-1.5",
           rightOpen && "bg-muted text-foreground",
         )}
       >
         <span className="hidden sm:inline">Artifacts</span>
-        <HugeiconsIcon icon={SidebarRightIcon} strokeWidth={1.5} className="size-4" aria-hidden />
+        <HugeiconsIcon
+          icon={SidebarRightIcon}
+          strokeWidth={1.5}
+          className="size-4"
+          aria-hidden
+        />
       </Button>
     </header>
   );

@@ -23,7 +23,12 @@
 import { generateText, Output } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
-import { RAG_CANDIDATE_FETCH_K, RAG_FINAL_TOP_K, RAG_HYDE_MODEL, RAG_MIN_SCORE } from "@/lib/constants";
+import {
+  RAG_CANDIDATE_FETCH_K,
+  RAG_FINAL_TOP_K,
+  RAG_HYDE_MODEL,
+  RAG_MIN_SCORE,
+} from "@/lib/constants";
 import { generateEmbedding } from "@/lib/openai";
 import { querySimilarity, type ScoredChunkResult } from "@/lib/pinecone";
 import { logger } from "@/lib/logger";
@@ -174,7 +179,10 @@ export async function retrieveWorkspaceContextAdvanced(
   try {
     enhancement = await enhanceQuery(userQuery);
   } catch (err) {
-    log.warn({ err }, "[RAG] query enhancement failed, falling back to raw query");
+    log.warn(
+      { err },
+      "[RAG] query enhancement failed, falling back to raw query",
+    );
     enhancement = { enhancedQuery: userQuery, hydePassage: userQuery };
   }
 

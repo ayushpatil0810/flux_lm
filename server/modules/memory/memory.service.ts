@@ -1,4 +1,9 @@
-import { getUserMemories, addMemory, updateUserMemory, deleteUserMemory } from "@/lib/mem0";
+import {
+  getUserMemories,
+  addMemory,
+  updateUserMemory,
+  deleteUserMemory,
+} from "@/lib/mem0";
 import { CreateMemoryInput, UpdateMemoryInput } from "./memory.validator";
 import { ApiError } from "@/server/utils/api-error";
 
@@ -22,7 +27,9 @@ export class MemoryService {
     try {
       const memory = await addMemory(userId, input.text);
       if (!memory) {
-        throw ApiError.internal("Memory creation returned no data, check MEM0_API_KEY");
+        throw ApiError.internal(
+          "Memory creation returned no data, check MEM0_API_KEY",
+        );
       }
       return memory;
     } catch (error: unknown) {
@@ -38,7 +45,9 @@ export class MemoryService {
     try {
       const updated = await updateUserMemory(memoryId, input.text);
       if (!updated) {
-        throw ApiError.internal("Memory update returned no data, check MEM0_API_KEY");
+        throw ApiError.internal(
+          "Memory update returned no data, check MEM0_API_KEY",
+        );
       }
       return updated;
     } catch (error: unknown) {
@@ -54,7 +63,9 @@ export class MemoryService {
     try {
       const response = await deleteUserMemory(memoryId);
       if (!response) {
-        throw ApiError.internal("Memory deletion returned no data, check MEM0_API_KEY");
+        throw ApiError.internal(
+          "Memory deletion returned no data, check MEM0_API_KEY",
+        );
       }
       return response;
     } catch (error: unknown) {

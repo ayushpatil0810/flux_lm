@@ -51,7 +51,7 @@ export function SourceDetailDialog({
         {source ? (
           <>
             <DialogHeader>
-              <DialogTitle className="pr-6 font-serif text-heading">
+              <DialogTitle className="text-heading pr-6 font-serif">
                 {source.title}
               </DialogTitle>
               <DialogDescription>
@@ -69,13 +69,13 @@ export function SourceDetailDialog({
               </div>
               {source.url ? (
                 <div className="flex items-start justify-between gap-4">
-                  <dt className="shrink-0 text-muted-foreground">Link</dt>
+                  <dt className="text-muted-foreground shrink-0">Link</dt>
                   <dd className="min-w-0 text-right">
                     <a
                       href={source.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="break-all underline underline-offset-4 transition-colors hover:text-foreground"
+                      className="hover:text-foreground break-all underline underline-offset-4 transition-colors"
                     >
                       {displayUrl(source.url)}
                     </a>
@@ -99,12 +99,12 @@ export function SourceDetailDialog({
             {source.status === "FAILED" ? (
               <div
                 role="alert"
-                className="rounded-md border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm"
+                className="border-destructive/40 bg-destructive/5 rounded-md border px-4 py-3 text-sm"
               >
-                <p className="font-medium text-destructive">
+                <p className="text-destructive font-medium">
                   Processing failed
                 </p>
-                <p className="mt-1 text-muted-foreground">
+                <p className="text-muted-foreground mt-1">
                   {processingError ??
                     "The source could not be processed. Delete it and try importing again."}
                 </p>
@@ -113,11 +113,11 @@ export function SourceDetailDialog({
 
             {source.content ? (
               <div>
-                <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <p className="text-muted-foreground mb-1.5 text-xs font-medium tracking-wide uppercase">
                   Extracted text
                 </p>
-                <div className="max-h-56 overflow-y-auto rounded-md border bg-muted/40 p-3">
-                  <p className="whitespace-pre-wrap text-xs leading-relaxed text-foreground/90">
+                <div className="bg-muted/40 max-h-56 overflow-y-auto rounded-md border p-3">
+                  <p className="text-foreground/90 text-xs leading-relaxed whitespace-pre-wrap">
                     {source.content.length > 4000
                       ? `${source.content.slice(0, 4000)}…`
                       : source.content}

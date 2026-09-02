@@ -1,6 +1,10 @@
 "use client";
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Loading02Icon, MoreHorizontalIcon, PlusSignIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Loading02Icon,
+  MoreHorizontalIcon,
+  PlusSignIcon,
+} from "@hugeicons/core-free-icons";
 
 import * as React from "react";
 
@@ -8,7 +12,11 @@ import { getErrorMessage, type MemoryItem } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { useDeleteMemory, useMemories } from "@/hooks/use-memories";
 import { useToast } from "@/components/providers/toast-provider";
-import { EmptyState, ErrorState, LoadingState } from "@/components/shell/states";
+import {
+  EmptyState,
+  ErrorState,
+  LoadingState,
+} from "@/components/shell/states";
 import { ConfirmDeleteDialog } from "@/components/sources/confirm-delete-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -80,7 +88,12 @@ export function MemoriesView() {
               copy="As you chat, Flux quietly remembers facts and preferences that make later answers better. You can also add one yourself."
               action={
                 <Button onClick={() => setAddOpen(true)}>
-                  <HugeiconsIcon icon={PlusSignIcon} strokeWidth={1.5} className="size-4" aria-hidden />
+                  <HugeiconsIcon
+                    icon={PlusSignIcon}
+                    strokeWidth={1.5}
+                    className="size-4"
+                    aria-hidden
+                  />
                   Add memory
                 </Button>
               }
@@ -89,60 +102,75 @@ export function MemoriesView() {
             <>
               <div className="mb-6 flex items-center justify-end">
                 <Button onClick={() => setAddOpen(true)}>
-                  <HugeiconsIcon icon={PlusSignIcon} strokeWidth={1.5} className="size-4" aria-hidden />
+                  <HugeiconsIcon
+                    icon={PlusSignIcon}
+                    strokeWidth={1.5}
+                    className="size-4"
+                    aria-hidden
+                  />
                   Add memory
                 </Button>
               </div>
               <ul className="border-y">
-              {memories.map((memory, index) => {
-                const dateLine = memoryDateLine(memory);
-                return (
-                  <li
-                    key={memory.id ?? index}
-                    className={`flex items-start justify-between gap-4 border-b py-4 last:border-0 ${memory.isOptimistic ? "opacity-50" : ""}`}
-                  >
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm leading-relaxed flex items-center gap-2">
-                        {memory.memory}
-                        {memory.isOptimistic && (
-                          <HugeiconsIcon icon={Loading02Icon} strokeWidth={1.5} className="size-3 animate-spin text-muted-foreground" aria-hidden />
-                        )}
-                      </p>
-                      {dateLine ? (
-                        <p className="mt-1.5 text-xs text-muted-foreground">
-                          {dateLine}
+                {memories.map((memory, index) => {
+                  const dateLine = memoryDateLine(memory);
+                  return (
+                    <li
+                      key={memory.id ?? index}
+                      className={`flex items-start justify-between gap-4 border-b py-4 last:border-0 ${memory.isOptimistic ? "opacity-50" : ""}`}
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="flex items-center gap-2 text-sm leading-relaxed">
+                          {memory.memory}
+                          {memory.isOptimistic && (
+                            <HugeiconsIcon
+                              icon={Loading02Icon}
+                              strokeWidth={1.5}
+                              className="text-muted-foreground size-3 animate-spin"
+                              aria-hidden
+                            />
+                          )}
                         </p>
-                      ) : null}
-                    </div>
-                    {!memory.isOptimistic && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label="Memory options"
-                          >
-                            <HugeiconsIcon icon={MoreHorizontalIcon} strokeWidth={1.5} className="size-4" aria-hidden />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onSelect={() => setEditTarget(memory)}
-                          >
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            variant="destructive"
-                            onSelect={() => setDeleteTarget(memory)}
-                          >
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                  </li>
-                );
-              })}
+                        {dateLine ? (
+                          <p className="text-muted-foreground mt-1.5 text-xs">
+                            {dateLine}
+                          </p>
+                        ) : null}
+                      </div>
+                      {!memory.isOptimistic && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              aria-label="Memory options"
+                            >
+                              <HugeiconsIcon
+                                icon={MoreHorizontalIcon}
+                                strokeWidth={1.5}
+                                className="size-4"
+                                aria-hidden
+                              />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onSelect={() => setEditTarget(memory)}
+                            >
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onSelect={() => setDeleteTarget(memory)}
+                            >
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </>
           )}
@@ -167,7 +195,7 @@ export function MemoriesView() {
         description={
           <>
             Flux will no longer use this in conversations:
-            <span className="mt-2 block max-h-28 overflow-y-auto rounded-md border bg-muted/40 px-3 py-2 text-sm text-foreground/80">
+            <span className="bg-muted/40 text-foreground/80 mt-2 block max-h-28 overflow-y-auto rounded-md border px-3 py-2 text-sm">
               {deleteTarget?.memory}
             </span>
           </>

@@ -15,12 +15,18 @@ const eslintConfig = defineConfig([
   ]),
   {
     files: ["**/*.{ts,tsx}"],
-    ignores: ["lib/env.ts", "next.config.ts", "drizzle.config.ts", "server/db/seed.ts"],
+    ignores: [
+      "lib/env.ts",
+      "next.config.ts",
+      "drizzle.config.ts",
+      "server/db/seed.ts",
+    ],
     rules: {
       "no-restricted-syntax": [
         "error",
         {
-          selector: "MemberExpression[object.name='process'][property.name='env']",
+          selector:
+            "MemberExpression[object.name='process'][property.name='env']",
           message: "Use env from '@/lib/env' instead of process.env.",
         },
       ],

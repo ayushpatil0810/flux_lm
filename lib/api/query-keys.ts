@@ -11,7 +11,8 @@ export const queryKeys = {
     detail: (id: string) => ["workspaces", id] as const,
   },
   sources: {
-    all: (workspaceId: string) => ["workspaces", workspaceId, "sources"] as const,
+    all: (workspaceId: string) =>
+      ["workspaces", workspaceId, "sources"] as const,
     list: (workspaceId: string, filters: SourceListFilters = {}) =>
       ["workspaces", workspaceId, "sources", "list", filters] as const,
     detail: (id: string) => ["sources", id] as const,
@@ -23,7 +24,8 @@ export const queryKeys = {
     messages: (id: string) => ["conversations", id, "messages"] as const,
   },
   artifacts: {
-    all: (workspaceId: string) => ["workspaces", workspaceId, "artifacts"] as const,
+    all: (workspaceId: string) =>
+      ["workspaces", workspaceId, "artifacts"] as const,
     detail: (workspaceId: string, artifactId: string) =>
       ["workspaces", workspaceId, "artifacts", artifactId] as const,
   },

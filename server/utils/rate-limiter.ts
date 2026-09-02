@@ -27,19 +27,22 @@ if (env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN) {
 
 // Periodic memory cleanup every 5 minutes to prune expired rate limit records
 if (typeof setInterval !== "undefined") {
-  const cleanupInterval = setInterval(() => {
-    const now = Date.now();
-    for (const [key, record] of memoryStore.entries()) {
-      const activeTimestamps = record.timestamps.filter(
-        (ts) => now - ts < 300000,
-      );
-      if (activeTimestamps.length === 0) {
-        memoryStore.delete(key);
-      } else {
-        record.timestamps = activeTimestamps;
+  const cleanupInterval = setInterval(
+    () => {
+      const now = Date.now();
+      for (const [key, record] of memoryStore.entries()) {
+        const activeTimestamps = record.timestamps.filter(
+          (ts) => now - ts < 300000,
+        );
+        if (activeTimestamps.length === 0) {
+          memoryStore.delete(key);
+        } else {
+          record.timestamps = activeTimestamps;
+        }
       }
-    }
-  }, 5 * 60 * 1000);
+    },
+    5 * 60 * 1000,
+  );
 
   if (cleanupInterval.unref) {
     cleanupInterval.unref();
@@ -49,12 +52,18 @@ if (typeof setInterval !== "undefined") {
 function getRatelimiter(config: RateLimitConfig): Ratelimit | null {
   if (!redisClient) return null;
 
-  const key = JSON.stringify({ maxRequests: config.maxRequests, windowMs: config.windowMs });
+  const key = JSON.stringify({
+    maxRequests: config.maxRequests,
+    windowMs: config.windowMs,
+  });
   if (!ratelimiters.has(key)) {
     const windowSeconds = Math.ceil(config.windowMs / 1000);
     const ratelimiter = new Ratelimit({
       redis: redisClient,
-      limiter: Ratelimit.slidingWindow(config.maxRequests, `${windowSeconds} s`),
+      limiter: Ratelimit.slidingWindow(
+        config.maxRequests,
+        `${windowSeconds} s`,
+      ),
     });
     ratelimiters.set(key, ratelimiter);
   }
@@ -73,7 +82,7 @@ export async function checkRateLimit(
   config: RateLimitConfig = { maxRequests: 20, windowMs: 60 * 1000 },
 ) {
   const ratelimiter = getRatelimiter(config);
-  
+
   if (ratelimiter) {
     const { success, reset } = await ratelimiter.limit(identifier);
     if (!success) {
