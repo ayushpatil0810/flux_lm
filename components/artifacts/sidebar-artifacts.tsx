@@ -25,7 +25,11 @@ import {
   ARTIFACT_TYPE_DESCRIPTIONS,
   ARTIFACT_TYPE_ORDER,
 } from "./artifact-meta";
-;
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // ── Type-to-icon mapping ────────────────────────────────────────────────────
 
@@ -114,41 +118,44 @@ export function SidebarArtifacts({
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         {/* Generate section */}
-        <div className="px-3 pb-4 pt-2">
+        <div className="shrink-0 px-3 pb-4 pt-2">
           <p className="mb-3 pl-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
             Generate New
           </p>
-          <div className="grid grid-cols-1 gap-2.5">
+          <div className="grid grid-cols-2 gap-2">
             {ARTIFACT_TYPE_ORDER.map((type) => {
               const Icon = ARTIFACT_TYPE_ICONS[type];
               return (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setActiveType(type)}
-                  className="group relative flex w-full items-center gap-3.5 overflow-hidden rounded-xl border border-border/50 bg-card/40 p-3 text-left transition-colors duration-200 hover:border-primary/40 hover:bg-card/60"
-                >
-                  {/* Subtle noise texture */}
-                  <div 
-                    className="pointer-events-none absolute inset-0 opacity-[0.02] mix-blend-overlay" 
-                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} 
-                  />
-                  {/* Hover glow effect */}
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                  
-                  <div className="relative z-10 flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-primary/10 text-primary shadow-sm transition-transform duration-300 group-hover:scale-110">
-                    <Icon className="size-4.5" aria-hidden />
-                  </div>
-                  
-                  <div className="relative z-10 min-w-0 flex-1">
-                    <p className="text-[13px] font-semibold tracking-tight text-foreground/90 transition-colors group-hover:text-primary">
-                      {ARTIFACT_TYPE_LABELS[type]}
-                    </p>
-                    <p className="mt-0.5 truncate text-[11.5px] leading-relaxed text-muted-foreground/80">
-                      {ARTIFACT_TYPE_DESCRIPTIONS[type]}
-                    </p>
-                  </div>
-                </button>
+                <Tooltip key={type}>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => setActiveType(type)}
+                      className="group relative flex flex-col items-center gap-2 overflow-hidden rounded-xl border border-border/50 bg-card/40 px-2 py-3.5 text-center transition-colors duration-200 hover:border-primary/40 hover:bg-card/60"
+                    >
+                      {/* Subtle noise texture */}
+                      <div 
+                        className="pointer-events-none absolute inset-0 opacity-[0.02] mix-blend-overlay" 
+                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} 
+                      />
+                      {/* Hover glow effect */}
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                      
+                      <div className="relative z-10 flex size-9 items-center justify-center rounded-[10px] bg-primary/10 text-primary shadow-sm transition-transform duration-300 group-hover:scale-110">
+                        <Icon className="size-4.5" aria-hidden />
+                      </div>
+                      
+                      <div className="relative z-10">
+                        <p className="text-[12px] font-semibold tracking-tight text-foreground/90 transition-colors group-hover:text-primary">
+                          {ARTIFACT_TYPE_LABELS[type]}
+                        </p>
+                      </div>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent sideOffset={8}>
+                    {ARTIFACT_TYPE_DESCRIPTIONS[type]}
+                  </TooltipContent>
+                </Tooltip>
               );
             })}
           </div>
