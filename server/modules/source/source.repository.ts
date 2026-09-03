@@ -46,6 +46,7 @@ export class SourceRepository {
         workspaceId: source.workspaceId,
         type: source.type,
         title: source.title,
+        content: source.content,
         url: source.url,
         status: source.status,
         metadata: source.metadata,

@@ -4,6 +4,7 @@ import {
   Cancel01Icon,
   LinkSquare01Icon,
   File01Icon,
+  Loading02Icon,
 } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
@@ -34,6 +35,17 @@ function getYouTubeEmbedUrl(url: string) {
 }
 
 export function SourcePreview({ source, onClose }: SourcePreviewProps) {
+  const [viewMode, setViewMode] = React.useState<"pdf" | "text">("pdf");
+  const [isPdfLoading, setIsPdfLoading] = React.useState(true);
+  const isPdf = source.type === "PDF";
+
+  // Reset loading spinner whenever source or viewMode changes
+  React.useEffect(() => {
+    if (isPdf && viewMode === "pdf") {
+      setIsPdfLoading(true);
+    }
+  }, [source.id, viewMode, isPdf]);
+
   return (
     <div className="bg-background flex h-full w-full flex-col overflow-hidden">
       {/* Header */}
@@ -76,29 +88,73 @@ export function SourcePreview({ source, onClose }: SourcePreviewProps) {
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close preview"
-          className="text-muted-foreground hover:text-foreground ml-2 flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-muted"
-        >
-          <HugeiconsIcon
-            icon={Cancel01Icon}
-            strokeWidth={1.5}
-            className="size-3.5"
-            aria-hidden
-          />
-        </button>
+        <div className="flex items-center gap-2">
+          {isPdf && source.content ? (
+            <div className="flex items-center rounded-lg border border-border/60 bg-muted/40 p-0.5 text-xs">
+              <button
+                type="button"
+                onClick={() => setViewMode("pdf")}
+                className={`rounded-md px-2 py-0.5 text-[11px] font-medium transition-colors ${
+                  viewMode === "pdf"
+                    ? "bg-background text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                PDF
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("text")}
+                className={`rounded-md px-2 py-0.5 text-[11px] font-medium transition-colors ${
+                  viewMode === "text"
+                    ? "bg-background text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Text
+              </button>
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close preview"
+            className="text-muted-foreground hover:text-foreground flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-muted"
+          >
+            <HugeiconsIcon
+              icon={Cancel01Icon}
+              strokeWidth={1.5}
+              className="size-3.5"
+              aria-hidden
+            />
+          </button>
+        </div>
       </header>
 
       {/* Body */}
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">
-        {source.type === "PDF" && source.url ? (
-          <iframe
-            src={source.url}
-            title={source.title}
-            className="h-full w-full border-0"
-          />
+        {isPdf && viewMode === "pdf" ? (
+          <div className="relative h-full w-full">
+            {isPdfLoading ? (
+              <div className="bg-background/90 absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 backdrop-blur-xs">
+                <HugeiconsIcon
+                  icon={Loading02Icon}
+                  strokeWidth={1.5}
+                  className="size-6 animate-spin text-primary"
+                />
+                <p className="font-inter text-muted-foreground text-xs font-medium">
+                  Loading PDF document…
+                </p>
+              </div>
+            ) : null}
+            <iframe
+              src={`/api/sources/${source.id}/file`}
+              title={source.title}
+              onLoad={() => setIsPdfLoading(false)}
+              className="h-full w-full border-0"
+            />
+          </div>
         ) : source.type === "YOUTUBE" && source.url ? (
           <div className="flex h-full w-full items-center justify-center p-4 md:p-6 lg:p-8">
             <div className="aspect-video w-full max-w-5xl overflow-hidden rounded-xl bg-black shadow-lg">

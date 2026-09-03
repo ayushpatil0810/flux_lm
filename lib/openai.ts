@@ -23,8 +23,12 @@ export const openai = new OpenAI({
  * @param text - Input text string to embed.
  * @returns Array of floating point numbers (dimension determined by EMBEDDING_DIMENSIONS).
  */
+// OpenAI text-embedding-3-* has a strict limit of 8,192 tokens per input (~30,000 chars).
+// Clamping to 24,000 chars (~6,000 tokens) safely prevents 400 Bad Request errors on huge chunks.
+const MAX_EMBEDDING_CHARS = 24000;
+
 export async function generateEmbedding(text: string): Promise<number[]> {
-  const sanitizedText = text.replace(/\n/g, " ");
+  const sanitizedText = text.replace(/\n/g, " ").slice(0, MAX_EMBEDDING_CHARS);
 
   const response = await openai.embeddings.create({
     model: EMBEDDING_MODEL,
@@ -44,7 +48,9 @@ export async function generateEmbedding(text: string): Promise<number[]> {
 export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
   if (texts.length === 0) return [];
 
-  const sanitizedInputs = texts.map((t) => t.replace(/\n/g, " "));
+  const sanitizedInputs = texts.map((t) =>
+    t.replace(/\n/g, " ").slice(0, MAX_EMBEDDING_CHARS),
+  );
 
   const response = await openai.embeddings.create({
     model: EMBEDDING_MODEL,
