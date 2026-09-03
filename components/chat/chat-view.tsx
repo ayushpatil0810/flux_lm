@@ -19,6 +19,12 @@ import { useWorkspaceContext } from "@/components/shell/workspace-context";
 import { useConversations, useMessages } from "@/hooks/use-conversations";
 import { useSources } from "@/hooks/use-sources";
 import { useToast } from "@/components/providers/toast-provider";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { FileUploadIcon } from "@hugeicons/core-free-icons";
+import {
+  useWorkspacePanel,
+  useWorkspacePreview,
+} from "@/components/shell/workspace-panel-context";
 import { ErrorState, LoadingState } from "@/components/shell/states";
 import { ChatSkeleton } from "./chat-skeleton";
 import { Composer } from "./composer";
@@ -40,6 +46,8 @@ interface ChatViewProps {
 export function ChatView({ workspaceId }: ChatViewProps) {
   const queryClient = useQueryClient();
   const { push } = useToast();
+  const { setLeftOpen } = useWorkspacePanel();
+  const { setPreviewSource } = useWorkspacePreview();
 
   const { data: workspace } = useWorkspaceContext();
   const { data: conversations, isPending: isConversationsPending } =
@@ -210,7 +218,7 @@ export function ChatView({ workspaceId }: ChatViewProps) {
   }
 
   return (
-    <div className="bg-background flex h-full w-full overflow-hidden">
+    <div className="bg-background flex h-full w-full overflow-hidden font-inter font-normal">
       <section
         aria-label="Conversation"
         className="bg-background flex min-w-0 flex-1 flex-col"
@@ -242,6 +250,10 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                 }
                 streamError={streamError}
                 onRetry={retry}
+                onOpenSource={(sourceId) => {
+                  const src = sources?.find((s) => s.id === sourceId);
+                  if (src) setPreviewSource(src);
+                }}
               />
             )}
 
@@ -259,10 +271,10 @@ export function ChatView({ workspaceId }: ChatViewProps) {
           <>
             <div className="flex min-h-0 flex-1 flex-col items-center justify-center p-6 sm:p-12">
               <div className="animate-in fade-in flex w-full max-w-xl flex-col items-center text-center duration-300">
-                <h1 className="text-foreground font-serif text-3xl font-medium tracking-tight sm:text-4xl">
+                <h1 className="text-foreground font-heading text-3xl font-medium tracking-tight sm:text-4xl">
                   Ask {workspace?.title ?? "this workspace"}
                 </h1>
-                <p className="text-muted-foreground mt-2 max-w-md text-sm leading-relaxed">
+                <p className="text-muted-foreground mt-2 max-w-md text-sm leading-relaxed font-inter font-normal">
                   Answers grounded in your sources, with citations.
                   {sourcesCount > 0
                     ? ` ${sourcesCount} ${sourcesCount === 1 ? "source" : "sources"} connected.`
@@ -270,10 +282,27 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                 </p>
 
                 {noSources ? (
-                  <p className="border-border/60 text-muted-foreground mt-8 rounded-lg border border-dashed px-5 py-4 text-sm">
-                    No sources yet — add a PDF, link, or note to start asking
-                    questions.
-                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setLeftOpen(true)}
+                    className="group border-border/60 hover:border-primary/50 hover:bg-primary/5 mt-8 flex items-center gap-3.5 rounded-2xl border border-dashed p-4 text-left transition-all duration-200 cursor-pointer shadow-xs hover:shadow-sm"
+                  >
+                    <div className="bg-primary/10 text-primary flex size-10 shrink-0 items-center justify-center rounded-xl transition-colors group-hover:bg-primary/15">
+                      <HugeiconsIcon
+                        icon={FileUploadIcon}
+                        strokeWidth={1.5}
+                        className="size-5"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                        Add your first source →
+                      </p>
+                      <p className="text-muted-foreground mt-0.5 text-xs font-inter font-normal">
+                        Import a PDF, web page, YouTube video, or note
+                      </p>
+                    </div>
+                  </button>
                 ) : (
                   <div className="mt-8 grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
                     {[

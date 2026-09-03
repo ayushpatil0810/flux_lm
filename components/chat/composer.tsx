@@ -64,6 +64,28 @@ export function Composer({
     if (autoFocus) textareaRef.current?.focus();
   }, [autoFocus]);
 
+  // Focus composer with '/' or 'Cmd+K' / 'Ctrl+K' when not already typing in an input
+  React.useEffect(() => {
+    function handleGlobalKeyDown(e: KeyboardEvent) {
+      const activeTag = document.activeElement?.tagName.toLowerCase();
+      const isInputFocused =
+        activeTag === "input" ||
+        activeTag === "textarea" ||
+        (document.activeElement as HTMLElement)?.isContentEditable;
+
+      if (
+        (e.key === "/" && !isInputFocused) ||
+        ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k")
+      ) {
+        e.preventDefault();
+        textareaRef.current?.focus();
+      }
+    }
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, []);
+
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value);
     const el = e.target;
@@ -103,7 +125,7 @@ export function Composer({
                 submit();
               }
             }}
-            placeholder="Ask anything about this workspace..."
+            placeholder="Ask anything about this workspace... (press / to focus)"
             aria-label="Message input"
             // We intentionally do NOT disable the textarea while streaming so users can queue up thoughts.
             className="text-foreground placeholder:text-muted-foreground/50 max-h-[300px] min-h-[60px] w-full resize-none bg-transparent px-4 py-4 text-base leading-relaxed focus:outline-none"

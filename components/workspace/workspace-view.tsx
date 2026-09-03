@@ -8,6 +8,7 @@ import { SidebarArtifacts } from "@/components/artifacts/sidebar-artifacts";
 import { ArtifactPreview } from "@/components/artifacts/artifact-preview";
 import { ChatView } from "@/components/chat/chat-view";
 import { EditWorkspaceDialog } from "@/components/shell/edit-workspace-dialog";
+import { MemoriesSheet } from "@/components/memories/memories-sheet";
 import { useWorkspaceContext } from "@/components/shell/workspace-context";
 import { useSources } from "@/hooks/use-sources";
 import { useArtifacts } from "@/hooks/use-artifacts";
@@ -15,6 +16,9 @@ import {
   useWorkspacePanel,
   useWorkspacePreview,
 } from "@/components/shell/workspace-panel-context";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { SidebarLeftIcon, SidebarRightIcon } from "@hugeicons/core-free-icons";
+import { Button } from "@/components/ui/button";
 import { WorkspaceTopbar } from "./workspace-topbar";
 import { usePanelResize } from "@/hooks/use-panel-resize";
 
@@ -40,8 +44,11 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
   } = useWorkspacePreview();
 
   const [settingsOpen, setSettingsOpen] = React.useState(false);
+  const [memoriesOpen, setMemoriesOpen] = React.useState(false);
 
   const { data: workspace } = useWorkspaceContext();
+  const { data: sources } = useSources(workspaceId);
+  const { data: artifacts } = useArtifacts(workspaceId);
 
   // Resizing hooks
   const leftResize = usePanelResize({
@@ -70,20 +77,100 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
 
   const hasPreview = !!previewSource || !!previewArtifactId;
 
+  // Handle Escape key to dismiss preview pane or close open sidebars
+  React.useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        if (previewSource || previewArtifactId) {
+          setPreviewSource(null);
+          setPreviewArtifactId(null);
+        } else if (leftOpen) {
+          setLeftOpen(false);
+        } else if (rightOpen) {
+          setRightOpen(false);
+        }
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    previewSource,
+    previewArtifactId,
+    leftOpen,
+    rightOpen,
+    setPreviewSource,
+    setPreviewArtifactId,
+    setLeftOpen,
+    setRightOpen,
+  ]);
+
   return (
     <div className="bg-background flex h-full flex-col overflow-hidden">
       {/* Topbar */}
       <WorkspaceTopbar
         workspaceId={workspaceId}
         onOpenSettings={() => setSettingsOpen(true)}
+        onOpenMemories={() => setMemoriesOpen(true)}
       />
 
       {/* Three-column body */}
       <div className="relative flex min-h-0 flex-1 overflow-hidden">
+        {/* Floating Left Toggle: Open Sources (Visible only when left panel is closed) */}
+        {!leftOpen && (
+          <div className="absolute top-3 left-3 z-30 animate-in fade-in zoom-in-95 duration-200">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setLeftOpen(true)}
+              aria-label="Open sources panel"
+              className="h-8 gap-2 rounded-xl border-border/60 bg-background/85 px-3 text-xs font-medium text-foreground backdrop-blur-md shadow-xs transition-all hover:bg-background hover:border-primary/40 hover:shadow-sm"
+            >
+              <HugeiconsIcon
+                icon={SidebarLeftIcon}
+                strokeWidth={1.5}
+                className="size-3.5 text-muted-foreground"
+              />
+              <span>Sources</span>
+              {sources && sources.length > 0 && (
+                <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-mono leading-none text-muted-foreground">
+                  {sources.length}
+                </span>
+              )}
+            </Button>
+          </div>
+        )}
+
+        {/* Floating Right Toggle: Open Artifacts (Visible only when right panel is closed) */}
+        {!rightOpen && (
+          <div className="absolute top-3 right-3 z-30 animate-in fade-in zoom-in-95 duration-200">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setRightOpen(true)}
+              aria-label="Open artifacts panel"
+              className="h-8 gap-2 rounded-xl border-border/60 bg-background/85 px-3 text-xs font-medium text-foreground backdrop-blur-md shadow-xs transition-all hover:bg-background hover:border-primary/40 hover:shadow-sm"
+            >
+              <span>Artifacts</span>
+              {artifacts && artifacts.length > 0 && (
+                <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-mono leading-none text-muted-foreground">
+                  {artifacts.length}
+                </span>
+              )}
+              <HugeiconsIcon
+                icon={SidebarRightIcon}
+                strokeWidth={1.5}
+                className="size-3.5 text-muted-foreground"
+              />
+            </Button>
+          </div>
+        )}
+
         {/* ── Left Panel (Sources) ────────────────────────────────────────── */}
         {leftOpen && (
           <div
-            className="border-border/30 animate-in slide-in-from-left-4 relative hidden shrink-0 border-r duration-300 md:flex md:flex-col"
+            className="border-border/40 animate-in slide-in-from-left-4 relative hidden shrink-0 border-r duration-300 md:flex md:flex-col"
             style={{ width: leftResize.width }}
           >
             <SidebarSources
@@ -165,7 +252,7 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
         {/* ── Right Panel (Artifacts) ──────────────────────────────────────── */}
         {rightOpen && (
           <div
-            className="border-border/30 animate-in slide-in-from-right-4 relative hidden shrink-0 border-l duration-300 md:flex md:flex-col"
+            className="border-border/40 animate-in slide-in-from-right-4 relative hidden shrink-0 border-l duration-300 md:flex md:flex-col"
             style={{ width: rightResize.width }}
           >
             {/* Drag Handle */}
@@ -207,6 +294,7 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
       />
+      <MemoriesSheet open={memoriesOpen} onOpenChange={setMemoriesOpen} />
     </div>
   );
 }

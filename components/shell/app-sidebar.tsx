@@ -255,7 +255,7 @@ export function AppSidebar({
             className="flex min-w-0 flex-1 items-center gap-2"
           >
             <FluxLogo className="text-primary size-8 shrink-0" />
-            <span className="truncate text-xl font-semibold tracking-tight">
+            <span className="truncate text-xl font-mono font-normal tracking-tight">
               Flux
             </span>
           </Link>

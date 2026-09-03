@@ -8,12 +8,13 @@
   /*
    * Typography.
    * The var() references are injected by next/font in app/layout.tsx:
-   * Inter (UI/body), Newsreader (editorial serif, display), Geist Mono (code/labels).
+   * Schibsted Grotesk (Main UI/body, headings), Inter (descriptions, chat), Geist Mono (code/labels, logo).
    */
-  --font-sans: var(--font-inter);
-  --font-serif: var(--font-newsreader);
-  --font-heading: var(--font-inter);
+  --font-sans: var(--font-schibsted);
+  --font-serif: var(--font-schibsted);
+  --font-heading: var(--font-schibsted);
   --font-mono: var(--font-geist-mono);
+  --font-inter: var(--font-inter);
 
   /*
    * Type scale. Apply with font-serif/font-sans to control voice:

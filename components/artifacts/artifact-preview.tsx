@@ -83,42 +83,46 @@ export function ArtifactPreview({
   } else {
     content = (
       <div className="bg-background flex h-full min-h-0 flex-col">
-        <div className="border-border/40 bg-card/40 flex shrink-0 items-start justify-between gap-4 border-b px-5 py-4">
-          <div className="min-w-0">
-            <h1 className="font-serif text-lg font-semibold">
-              {artifact.title}
-            </h1>
-            <p className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-              <span>{ARTIFACT_TYPE_LABELS[artifact.type]}</span>
-              <span aria-hidden>·</span>
+        <header className="border-border/40 bg-background flex h-14 shrink-0 items-center justify-between border-b px-4">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-foreground truncate text-sm font-semibold tracking-tight">
+                {artifact.title}
+              </h2>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                {ARTIFACT_TYPE_LABELS[artifact.type]}
+              </span>
+            </div>
+            <p className="text-muted-foreground mt-0.5 flex items-center gap-2 text-[11px] font-inter font-normal">
               <StatusIndicator status={artifact.status} />
               <span aria-hidden>·</span>
-              <span>Created {formatDate(artifact.createdAt)}</span>
+              <span>{formatDate(artifact.createdAt)}</span>
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 shrink-0 ml-3">
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
+              className="text-muted-foreground hover:text-destructive h-7 px-2 text-xs rounded-lg hover:bg-destructive/10"
               onClick={() => setDeleteOpen(true)}
             >
               Delete
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-muted-foreground"
+            <button
+              type="button"
               onClick={onClose}
               aria-label="Close preview"
+              className="text-muted-foreground hover:text-foreground flex size-7 items-center justify-center rounded-lg transition-colors hover:bg-muted"
             >
               <HugeiconsIcon
                 icon={Cancel01Icon}
                 strokeWidth={1.5}
-                className="size-4"
+                className="size-3.5"
+                aria-hidden
               />
-            </Button>
+            </button>
           </div>
-        </div>
+        </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
           {generating ? (

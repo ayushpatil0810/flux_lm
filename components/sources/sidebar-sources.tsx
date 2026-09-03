@@ -12,7 +12,7 @@ import {
 import * as React from "react";
 
 import type { Source } from "@/lib/api";
-import { formatRelativeTime } from "@/lib/utils";
+import { cn, formatRelativeTime } from "@/lib/utils";
 import { useSources, useDeleteSource } from "@/hooks/use-sources";
 import { useToast } from "@/components/providers/toast-provider";
 import { ErrorState, LoadingState } from "@/components/shell/states";
@@ -169,7 +169,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
   } = useSources(workspaceId);
   const deleteSource = useDeleteSource(workspaceId);
   const { push } = useToast();
-  const { setPreviewSource } = useWorkspacePreview();
+  const { previewSource, setPreviewSource } = useWorkspacePreview();
 
   const [importType, setImportType] = React.useState<ImportType | null>(null);
   const [detailSource, setDetailSource] = React.useState<Source | null>(null);
@@ -195,36 +195,38 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
   }
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-background">
       {/* Header */}
-      <div className="flex h-12 shrink-0 items-center justify-between pr-2 pl-4">
-        <h2 className="text-sm font-medium">Sources</h2>
-        <div className="flex items-center gap-1">
-          {sources && sources.length > 0 ? (
-            <span className="text-muted-foreground/60 text-xs">
+      <div className="flex h-14 shrink-0 items-center justify-between border-b border-border/40 px-4">
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-semibold tracking-tight text-foreground">
+            Sources
+          </h2>
+          {sources && sources.length > 0 && (
+            <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-mono leading-none text-muted-foreground">
               {sources.length}
             </span>
-          ) : null}
-          {onClose ? (
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close sources panel"
-              className="text-muted-foreground hover:text-foreground ml-1 flex size-7 items-center justify-center rounded-md transition-colors hover:bg-white/5"
-            >
-              <HugeiconsIcon
-                icon={Cancel01Icon}
-                strokeWidth={1.5}
-                className="size-3.5"
-                aria-hidden
-              />
-            </button>
-          ) : null}
+          )}
         </div>
+        {onClose ? (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close sources panel"
+            className="text-muted-foreground hover:text-foreground flex size-7 items-center justify-center rounded-lg transition-colors hover:bg-muted"
+          >
+            <HugeiconsIcon
+              icon={Cancel01Icon}
+              strokeWidth={1.5}
+              className="size-3.5"
+              aria-hidden
+            />
+          </button>
+        ) : null}
       </div>
 
       {/* Upload type cards */}
-      <div className="shrink-0 px-3 pt-2 pb-4">
+      <div className="shrink-0 p-3">
         <div className="grid grid-cols-2 gap-2">
           {IMPORT_TYPES.map(({ id, label, hint, Icon }) => (
             <Tooltip key={id}>
@@ -232,21 +234,14 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                 <button
                   type="button"
                   onClick={() => setImportType(id)}
-                  className="group border-border/50 bg-card/40 hover:border-primary/40 hover:bg-card/60 relative flex flex-col items-center gap-2 overflow-hidden rounded-xl border px-2 py-3.5 text-center transition-colors duration-200"
+                  className="group flex flex-col items-center gap-2 rounded-xl border border-border/50 bg-card/60 p-3 text-center transition-all duration-150 hover:border-primary/40 hover:bg-card hover:shadow-xs"
                 >
-                  {/* Subtle noise texture */}
-                  <div className="bg-noise absolute inset-0 z-0 opacity-40 mix-blend-overlay" />
-                  {/* Hover glow effect */}
-                  <div className="from-primary/10 via-primary/5 pointer-events-none absolute inset-0 bg-gradient-to-br to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
-                  <div className="bg-primary/10 text-primary relative z-10 flex size-9 items-center justify-center rounded-[10px] shadow-sm transition-transform duration-300 group-hover:scale-110">
+                  <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
                     <Icon className="size-4.5" aria-hidden />
                   </div>
-                  <div className="relative z-10">
-                    <p className="text-foreground/90 group-hover:text-primary text-[12px] font-semibold tracking-tight transition-colors">
-                      {label}
-                    </p>
-                  </div>
+                  <p className="text-[12px] font-medium tracking-tight text-foreground">
+                    {label}
+                  </p>
                 </button>
               </TooltipTrigger>
               <TooltipContent sideOffset={8}>{hint}</TooltipContent>
@@ -268,23 +263,20 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
             />
           </div>
         ) : sources.length === 0 ? (
-          <div className="mx-3 my-4 relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-border/40 bg-card/30 px-4 py-10 text-center shadow-sm">
-            <div className="bg-noise absolute inset-0 z-0 opacity-[0.15] mix-blend-overlay" />
-            <div className="relative z-10 flex flex-col items-center">
-              <div className="mb-3 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary ring-4 ring-primary/5">
-                <HugeiconsIcon
-                  icon={FileUploadIcon}
-                  strokeWidth={1.5}
-                  className="size-5"
-                />
-              </div>
-              <h3 className="text-[13px] font-semibold tracking-tight text-foreground">
-                No sources yet
-              </h3>
-              <p className="mt-1.5 max-w-[180px] text-xs text-muted-foreground leading-relaxed">
-                Pick a type above to import your first piece of knowledge.
-              </p>
+          <div className="mx-3 my-4 flex flex-col items-center justify-center rounded-2xl border border-border/40 bg-card/40 px-4 py-10 text-center shadow-xs">
+            <div className="mb-3 flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary ring-4 ring-primary/5">
+              <HugeiconsIcon
+                icon={FileUploadIcon}
+                strokeWidth={1.5}
+                className="size-5"
+              />
             </div>
+            <h3 className="text-sm font-semibold tracking-tight text-foreground">
+              No sources yet
+            </h3>
+            <p className="mt-1.5 max-w-[200px] text-xs leading-relaxed text-muted-foreground font-inter font-normal">
+              Pick a type above to import PDFs, websites, YouTube videos, or notes.
+            </p>
           </div>
         ) : (
           <>
@@ -295,28 +287,64 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
               </span>
               <span className="bg-border/40 h-px flex-1" aria-hidden />
             </div>
-            <ul className="flex flex-col p-2">
+            <ul className="flex flex-col gap-1 p-2">
               {sources.map((source) => {
                 const subtitle = sourceSubtitle(source);
+                const isSelected = previewSource?.id === source.id;
                 return (
-                  <li key={source.id} className="group relative">
-                    <div className="border border-transparent hover:border-border/50 hover:bg-card/40 focus-within:border-border/50 focus-within:bg-card/40 hover:shadow-sm flex items-start gap-1 rounded-xl px-3 py-2.5 transition-all duration-200">
+                  <li key={source.id}>
+                    <div
+                      className={cn(
+                        "group flex items-start gap-2.5 rounded-xl border p-2.5 transition-all duration-150",
+                        isSelected
+                          ? "border-primary/40 bg-primary/5 shadow-xs"
+                          : "border-transparent hover:border-border/60 hover:bg-card/60",
+                      )}
+                    >
+                      <div className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted/70">
+                        {source.type === "pdf" ? (
+                          <HugeiconsIcon
+                            icon={FileUploadIcon}
+                            strokeWidth={1.5}
+                            className="size-4 text-blue-500"
+                          />
+                        ) : source.type === "website" ? (
+                          <HugeiconsIcon
+                            icon={Link01Icon}
+                            strokeWidth={1.5}
+                            className="size-4 text-emerald-500"
+                          />
+                        ) : source.type === "youtube" ? (
+                          <HugeiconsIcon
+                            icon={PlayCircle02Icon}
+                            strokeWidth={1.5}
+                            className="size-4 text-red-500"
+                          />
+                        ) : (
+                          <HugeiconsIcon
+                            icon={File01Icon}
+                            strokeWidth={1.5}
+                            className="size-4 text-amber-500"
+                          />
+                        )}
+                      </div>
+
                       <button
                         type="button"
                         onClick={() => setPreviewSource(source)}
                         className="min-w-0 flex-1 text-left focus-visible:outline-none"
                       >
-                        <span className="text-foreground block truncate text-[13px] leading-snug font-medium">
+                        <span className="text-foreground block truncate text-xs font-medium leading-snug">
                           {source.title}
                         </span>
                         {subtitle ? (
-                          <span className="text-muted-foreground mt-0.5 block truncate text-xs">
+                          <span className="text-muted-foreground mt-0.5 block truncate text-[11px] font-inter font-normal">
                             {subtitle}
                           </span>
                         ) : null}
-                        <span className="mt-1.5 flex items-center gap-2">
+                        <span className="mt-1.5 flex items-center gap-2 text-[11px]">
                           <StatusIndicator status={source.status} />
-                          <span className="text-muted-foreground/70 text-xs">
+                          <span className="text-muted-foreground/70">
                             {formatRelativeTime(source.createdAt)}
                           </span>
                         </span>
@@ -327,7 +355,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="text-muted-foreground size-7 shrink-0 opacity-0 transition-opacity group-hover:opacity-100 data-[state=open]:opacity-100"
+                            className="text-muted-foreground/60 hover:text-foreground size-7 shrink-0 rounded-lg hover:bg-muted"
                             aria-label={`Options for ${source.title}`}
                           >
                             <HugeiconsIcon
@@ -338,7 +366,10 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                             />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-40 rounded-xl"
+                        >
                           <DropdownMenuItem
                             onSelect={() => setDetailSource(source)}
                           >

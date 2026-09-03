@@ -24,6 +24,7 @@ interface MessageListProps {
   stream: StreamState | null;
   streamError: StreamError | null;
   onRetry: (text: string) => void;
+  onOpenSource?: (sourceId: string) => void;
 }
 
 /**
@@ -36,6 +37,7 @@ export function MessageList({
   stream,
   streamError,
   onRetry,
+  onOpenSource,
 }: MessageListProps) {
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const pinnedToBottom = React.useRef(true);
@@ -67,6 +69,7 @@ export function MessageList({
             role={message.role}
             content={message.content}
             citations={message.citations}
+            onOpenSource={onOpenSource}
           />
         ))}
         {stream ? (
@@ -111,6 +114,7 @@ interface TranscriptMessageProps {
   content: string;
   citations?: CitationMetadata[] | null;
   streaming?: boolean;
+  onOpenSource?: (sourceId: string) => void;
 }
 
 function TranscriptMessage({
@@ -118,6 +122,7 @@ function TranscriptMessage({
   content,
   citations,
   streaming,
+  onOpenSource,
 }: TranscriptMessageProps) {
   const isUser = role === "USER";
 
@@ -161,13 +166,19 @@ function TranscriptMessage({
       ) : null}
 
       {citations && citations.length > 0 ? (
-        <CitationList citations={citations} />
+        <CitationList citations={citations} onOpenSource={onOpenSource} />
       ) : null}
     </article>
   );
 }
 
-function CitationList({ citations }: { citations: CitationMetadata[] }) {
+function CitationList({
+  citations,
+  onOpenSource,
+}: {
+  citations: CitationMetadata[];
+  onOpenSource?: (sourceId: string) => void;
+}) {
   const unique = React.useMemo(() => {
     const seen = new Set<string>();
     return citations.filter((citation) => {
@@ -181,25 +192,26 @@ function CitationList({ citations }: { citations: CitationMetadata[] }) {
   return (
     <div className="mt-3 flex flex-wrap gap-1.5">
       {unique.map((citation, i) => (
-        <div
-          key={citation.chunkId}
-          className="group relative cursor-default"
-          tabIndex={0}
-        >
-          <div className="border-border/60 text-muted-foreground hover:border-border hover:text-foreground flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs transition-colors">
+        <div key={citation.chunkId} className="group relative">
+          <button
+            type="button"
+            onClick={() => onOpenSource?.(citation.sourceId)}
+            className="border-border/60 text-muted-foreground hover:border-primary/50 hover:bg-primary/5 hover:text-foreground flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs transition-all duration-150 cursor-pointer text-left focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:outline-none"
+            title="Click to preview source"
+          >
             <HugeiconsIcon
               icon={BookOpen01Icon}
               strokeWidth={1.5}
-              className="size-3"
+              className="size-3 text-primary"
               aria-hidden
             />
             <span className="text-primary font-medium">{i + 1}</span>
             <span className="max-w-[160px] truncate">
               {citation.sourceTitle}
             </span>
-          </div>
+          </button>
 
-          <div className="border-border/60 bg-popover text-popover-foreground animate-in fade-in slide-in-from-bottom-1 absolute bottom-full left-0 z-50 mb-2 hidden w-72 rounded-lg border p-3 shadow-lg group-hover:block group-focus:block group-active:block">
+          <div className="border-border/60 bg-popover text-popover-foreground animate-in fade-in slide-in-from-bottom-1 pointer-events-none absolute bottom-full left-0 z-50 mb-2 hidden w-72 rounded-xl border p-3 shadow-xl backdrop-blur-md group-hover:block">
             <div className="border-border/60 flex items-center gap-2 border-b pb-2">
               <HugeiconsIcon
                 icon={File01Icon}
@@ -217,10 +229,13 @@ function CitationList({ citations }: { citations: CitationMetadata[] }) {
               ) : null}
             </div>
             {citation.excerpt && (
-              <p className="text-muted-foreground mt-2 text-xs leading-relaxed">
+              <p className="text-muted-foreground mt-2 text-xs leading-relaxed font-inter font-normal">
                 &ldquo;{citation.excerpt}&rdquo;
               </p>
             )}
+            <p className="text-primary/80 mt-2 text-[10px] font-medium">
+              Click to view source in preview →
+            </p>
           </div>
         </div>
       ))}

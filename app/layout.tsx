@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
-import { Inter, Geist_Mono, Newsreader } from "next/font/google";
+import {
+  Inter,
+  Geist_Mono,
+  Schibsted_Grotesk,
+} from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { cn } from "@/lib/utils";
 
+const schibstedGrotesk = Schibsted_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-schibsted",
+});
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
-});
-
-const newsreader = Newsreader({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  axes: ["opsz"],
-  variable: "--font-newsreader",
 });
 
 const geistMono = Geist_Mono({
@@ -42,8 +44,8 @@ export default function RootLayout({
       className={cn(
         "h-full",
         "antialiased",
+        schibstedGrotesk.variable,
         inter.variable,
-        newsreader.variable,
         geistMono.variable,
       )}
     >

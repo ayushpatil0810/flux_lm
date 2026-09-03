@@ -37,9 +37,9 @@ export function SourcePreview({ source, onClose }: SourcePreviewProps) {
   return (
     <div className="bg-background flex h-full w-full flex-col overflow-hidden">
       {/* Header */}
-      <header className="border-border/30 flex h-12 shrink-0 items-center justify-between border-b px-3">
+      <header className="border-border/40 bg-background flex h-14 shrink-0 items-center justify-between border-b px-4">
         <div className="flex min-w-0 items-center gap-2.5">
-          <div className="bg-muted text-muted-foreground flex size-7 shrink-0 items-center justify-center rounded-md">
+          <div className="bg-muted text-muted-foreground flex size-7 shrink-0 items-center justify-center rounded-lg">
             <HugeiconsIcon
               icon={File01Icon}
               strokeWidth={1.5}
@@ -48,10 +48,10 @@ export function SourcePreview({ source, onClose }: SourcePreviewProps) {
             />
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className="text-foreground truncate text-sm leading-tight font-medium">
+            <h2 className="text-foreground truncate text-sm leading-tight font-semibold tracking-tight">
               {source.title}
             </h2>
-            <div className="text-muted-foreground flex items-center gap-1.5 text-[11px] font-medium">
+            <div className="text-muted-foreground flex items-center gap-1.5 text-[11px] font-normal font-inter">
               <span>{SOURCE_TYPE_LABELS[source.type]}</span>
               {source.type !== "PDF" && source.url && (
                 <>
@@ -80,12 +80,12 @@ export function SourcePreview({ source, onClose }: SourcePreviewProps) {
           type="button"
           onClick={onClose}
           aria-label="Close preview"
-          className="text-muted-foreground hover:text-foreground ml-2 flex size-8 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-white/5"
+          className="text-muted-foreground hover:text-foreground ml-2 flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-muted"
         >
           <HugeiconsIcon
             icon={Cancel01Icon}
             strokeWidth={1.5}
-            className="size-4"
+            className="size-3.5"
             aria-hidden
           />
         </button>
