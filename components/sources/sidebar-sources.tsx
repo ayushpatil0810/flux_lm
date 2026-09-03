@@ -302,19 +302,19 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                       )}
                     >
                       <div className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted/70">
-                        {source.type === "pdf" ? (
+                        {source.type === "PDF" ? (
                           <HugeiconsIcon
                             icon={FileUploadIcon}
                             strokeWidth={1.5}
                             className="size-4 text-blue-500"
                           />
-                        ) : source.type === "website" ? (
+                        ) : source.type === "WEBSITE" ? (
                           <HugeiconsIcon
                             icon={Link01Icon}
                             strokeWidth={1.5}
                             className="size-4 text-emerald-500"
                           />
-                        ) : source.type === "youtube" ? (
+                        ) : source.type === "YOUTUBE" ? (
                           <HugeiconsIcon
                             icon={PlayCircle02Icon}
                             strokeWidth={1.5}
