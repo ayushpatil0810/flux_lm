@@ -49,8 +49,8 @@ export function SourcePreview({ source, onClose }: SourcePreviewProps) {
   return (
     <div className="bg-background flex h-full w-full flex-col overflow-hidden">
       {/* Header */}
-      <header className="border-border/40 bg-background flex h-14 shrink-0 items-center justify-between border-b px-4">
-        <div className="flex min-w-0 items-center gap-2.5">
+      <header className="border-border/40 bg-background flex h-14 shrink-0 items-center justify-between border-b px-2.5 sm:px-4">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-2.5">
           <div className="bg-muted text-muted-foreground flex size-7 shrink-0 items-center justify-center rounded-lg">
             <HugeiconsIcon
               icon={File01Icon}
@@ -156,7 +156,7 @@ export function SourcePreview({ source, onClose }: SourcePreviewProps) {
             />
           </div>
         ) : source.type === "YOUTUBE" && source.url ? (
-          <div className="flex h-full w-full items-center justify-center p-4 md:p-6 lg:p-8">
+          <div className="flex h-full w-full items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8">
             <div className="aspect-video w-full max-w-5xl overflow-hidden rounded-xl bg-black shadow-lg">
               <iframe
                 src={getYouTubeEmbedUrl(source.url)}
@@ -168,7 +168,7 @@ export function SourcePreview({ source, onClose }: SourcePreviewProps) {
             </div>
           </div>
         ) : (
-          <div className="mx-auto w-full max-w-3xl p-6 md:p-10">
+          <div className="mx-auto w-full max-w-3xl p-4 sm:p-6 md:p-10">
             <div className="prose prose-sm dark:prose-invert prose-p:leading-relaxed prose-pre:rounded-lg prose-pre:border prose-pre:border-border/60 prose-pre:bg-muted/50 max-w-none break-words">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {source.content || "*No content extracted.*"}

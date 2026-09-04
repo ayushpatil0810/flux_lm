@@ -213,7 +213,7 @@ export default function LoginPage() {
                   onChange={(event) => setName(event.target.value)}
                   autoComplete="name"
                   disabled={isBusy}
-                  className="border-border/60 bg-card/40 focus-visible:ring-primary/40 h-9.5 rounded-xl px-3 text-xs shadow-xs"
+                  className="border-border/60 bg-card/40 focus-visible:ring-primary/40 h-9.5 rounded-xl px-3 text-base sm:text-xs shadow-xs"
                 />
               </div>
             )}
@@ -234,7 +234,7 @@ export default function LoginPage() {
                 onChange={(event) => setEmail(event.target.value)}
                 autoComplete="email"
                 disabled={isBusy}
-                className="border-border/60 bg-card/40 focus-visible:ring-primary/40 h-9.5 rounded-xl px-3 text-xs shadow-xs"
+                className="border-border/60 bg-card/40 focus-visible:ring-primary/40 h-9.5 rounded-xl px-3 text-base sm:text-xs shadow-xs"
               />
             </div>
 
@@ -255,7 +255,7 @@ export default function LoginPage() {
                 onChange={(event) => setPassword(event.target.value)}
                 autoComplete={isSignUp ? "new-password" : "current-password"}
                 disabled={isBusy}
-                className="border-border/60 bg-card/40 focus-visible:ring-primary/40 h-9.5 rounded-xl px-3 text-xs shadow-xs"
+                className="border-border/60 bg-card/40 focus-visible:ring-primary/40 h-9.5 rounded-xl px-3 text-base sm:text-xs shadow-xs"
               />
               {isSignUp && (
                 <p className="font-inter text-muted-foreground text-[11px]">

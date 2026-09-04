@@ -431,3 +431,182 @@
 @utility bg-noise {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
+
+/* ── Markdown & Prose Styles ────────────────────────────────────────────── */
+.prose {
+  color: var(--foreground);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  max-width: none;
+}
+
+.prose > *:first-child {
+  margin-top: 0 !important;
+}
+
+.prose > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+.prose p {
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.65;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  color: var(--foreground);
+  font-family: var(--font-schibsted), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+
+.prose h1 {
+  font-size: 1.35rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose h2 {
+  font-size: 1.15rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.prose h3 {
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 0.375rem;
+}
+
+.prose h4 {
+  font-size: 0.875rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.prose ul {
+  list-style-type: disc;
+  margin-left: 1.25rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-left: 0;
+}
+
+.prose ol {
+  list-style-type: decimal;
+  margin-left: 1.25rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-left: 0;
+}
+
+.prose li {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  padding-left: 0.25rem;
+  line-height: 1.6;
+}
+
+.prose li > p {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.prose strong,
+.prose b {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.prose em,
+.prose i {
+  font-style: italic;
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--primary);
+  padding-left: 0.875rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+.prose code:not(pre code) {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.8em;
+  background-color: var(--muted);
+  color: var(--foreground);
+  padding: 0.15em 0.4em;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(128, 128, 128, 0.15);
+}
+
+.prose pre {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.8rem;
+  background-color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.875rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+
+.prose pre code {
+  background: transparent;
+  padding: 0;
+  border: 0;
+  font-size: inherit;
+  color: inherit;
+}
+
+.prose a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 0.15s;
+}
+
+.prose a:hover {
+  opacity: 0.8;
+}
+
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid var(--border);
+  padding: 0.375rem 0.625rem;
+  text-align: left;
+}
+
+.prose th {
+  background-color: var(--muted);
+  font-weight: 600;
+  color: var(--foreground);
+}
+

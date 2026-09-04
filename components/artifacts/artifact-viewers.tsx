@@ -4,6 +4,8 @@ import { ListSettingIcon, ListIcon } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
 import dynamic from "next/dynamic";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { LearningArtifact, LearningArtifactContent } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -21,17 +23,65 @@ const MindmapFlow = dynamic(
 );
 
 /**
- * Per-type renderers for generated artifact content. The generator's
- * output shapes are known (learning-artifact-generation.ts), but every
- * viewer still validates defensively and falls back to an honest message.
+ * Reusable Markdown renderer with GFM plugin and secure external link handling.
+ */
+function MarkdownRenderer({
+  content,
+  className,
+}: {
+  content: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "prose prose-sm dark:prose-invert max-w-none break-words",
+        className,
+      )}
+    >
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          a: ({ node, ...props }) => (
+            <a target="_blank" rel="noopener noreferrer" {...props} />
+          ),
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
+  );
+}
+
+/**
+ * Per-type renderers for generated artifact content. Resiliently handles
+ * objects, JSON strings, or raw markdown strings.
  */
 export function ArtifactViewer({ artifact }: { artifact: LearningArtifact }) {
-  const content = artifact.content ?? {};
+  const content = React.useMemo(() => {
+    const raw = artifact.content;
+    if (!raw) return {};
+    if (typeof raw === "string") {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") return parsed;
+      } catch {
+        return { markdown: raw, text: raw };
+      }
+    }
+    return raw as LearningArtifactContent;
+  }, [artifact.content]);
+
   switch (artifact.type) {
     case "SUMMARY":
       return (
         <ProseViewer
-          text={firstString(content.markdown, content.summary, content.text)}
+          text={firstString(
+            content.markdown,
+            content.summary,
+            content.text,
+            (content as Record<string, unknown>).content,
+          )}
           emptyLabel="This summary has no content."
         />
       );
@@ -79,7 +129,7 @@ function normalizeStringList(value: unknown): string[] {
   );
 }
 
-/** Long-form text in the reading serif. */
+/** Long-form markdown content viewer. */
 function ProseViewer({
   text,
   emptyLabel,
@@ -89,10 +139,8 @@ function ProseViewer({
 }) {
   if (!text) return <ViewerFallback label={emptyLabel} />;
   return (
-    <div className="mx-auto w-full max-w-2xl">
-      <div className="font-serif text-base leading-relaxed whitespace-pre-wrap">
-        {text}
-      </div>
+    <div className="mx-auto w-full max-w-3xl px-1">
+      <MarkdownRenderer content={text} />
     </div>
   );
 }
@@ -121,45 +169,54 @@ function normalizeSections(content: LearningArtifactContent): ReportSection[] {
 
 function ReportViewer({ content }: { content: LearningArtifactContent }) {
   const sections = normalizeSections(content);
+  const fullMarkdown = firstString(
+    content.markdown,
+    content.text,
+    (content as Record<string, unknown>).content,
+  );
+
   if (sections.length === 0) {
     return (
       <ProseViewer
-        text={firstString(content.markdown, content.text)}
+        text={fullMarkdown}
         emptyLabel="This report has no content."
       />
     );
   }
+
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-9">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-1">
       {sections.map((section, index) => (
-        <section key={index}>
-          <h2 className="text-heading font-serif">{section.title}</h2>
-          <div className="text-foreground/90 mt-2.5 font-serif text-base leading-relaxed whitespace-pre-wrap">
-            {section.content}
-          </div>
+        <section key={index} className="space-y-3">
+          <h2 className="text-foreground text-base md:text-lg font-semibold tracking-tight border-b border-border/40 pb-2">
+            {section.title}
+          </h2>
+          <MarkdownRenderer content={section.content} />
         </section>
       ))}
     </div>
   );
 }
 
-/** Takeaways as a numbered editorial list: mono index, serif text. */
+/** Takeaways as an editorial numbered list with markdown support. */
 function TakeawaysViewer({ content }: { content: LearningArtifactContent }) {
   const items = normalizeStringList(content.takeaways ?? content.items);
   if (items.length === 0) {
     return <ViewerFallback label="No takeaways were generated." />;
   }
   return (
-    <ol className="mx-auto w-full max-w-2xl space-y-4">
+    <ol className="mx-auto w-full max-w-2xl space-y-4 px-1">
       {items.map((item, index) => (
-        <li key={index} className="flex gap-4">
+        <li key={index} className="flex gap-4 items-start">
           <span
             aria-hidden
-            className="text-muted-foreground mt-1 shrink-0 font-mono text-xs"
+            className="text-muted-foreground mt-0.5 shrink-0 font-mono text-xs font-semibold"
           >
             {String(index + 1).padStart(2, "0")}
           </span>
-          <p className="font-serif text-base leading-relaxed">{item}</p>
+          <div className="flex-1 min-w-0">
+            <MarkdownRenderer content={item} className="text-sm text-foreground/90" />
+          </div>
         </li>
       ))}
     </ol>
@@ -212,12 +269,12 @@ function FlashcardsViewer({ content }: { content: LearningArtifactContent }) {
         onClick={() => setFlipped((value) => !value)}
         aria-pressed={flipped}
         aria-label={flipped ? "Show prompt" : "Show answer"}
-        className="bg-card hover:bg-accent/40 focus-visible:ring-ring/60 flex min-h-[240px] w-full flex-col items-center justify-center rounded-lg border px-8 py-10 text-center transition-colors focus-visible:ring-2 focus-visible:outline-none"
+        className="bg-card hover:bg-accent/40 focus-visible:ring-ring/60 flex min-h-[200px] sm:min-h-[240px] w-full flex-col items-center justify-center rounded-xl border px-4 py-8 sm:px-8 sm:py-10 text-center transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
         <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
           {flipped ? "Answer" : "Prompt"}
         </span>
-        <span className="text-heading mt-4 font-serif leading-snug">
+        <span className="text-heading mt-4 font-medium font-heading leading-snug text-base sm:text-lg">
           {flipped ? current.back : current.front}
         </span>
         <span className="text-muted-foreground mt-6 text-xs">
@@ -484,7 +541,7 @@ function MindmapBranch({
   const children = node.children.filter((child) => !next.has(child.id));
   return (
     <li>
-      <span className={isRoot ? "font-serif text-base font-medium" : "text-sm"}>
+      <span className={isRoot ? "font-heading text-base font-semibold" : "text-sm"}>
         {node.label}
       </span>
       {children.length > 0 ? (
@@ -513,36 +570,36 @@ function MindmapViewer({ content }: { content: LearningArtifactContent }) {
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4">
-      <div className="flex items-center justify-between px-1">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-1">
         <p className="text-muted-foreground text-xs font-medium">
           {nodes.length} concepts · {edges.length} connections
         </p>
-        <div className="border-border/60 bg-card flex items-center gap-1 rounded-lg border p-1">
+        <div className="border-border/60 bg-card flex items-center gap-1 rounded-lg border p-1 self-start sm:self-auto">
           <Button
             variant={viewMode === "flow" ? "secondary" : "ghost"}
             size="sm"
             onClick={() => setViewMode("flow")}
-            className="h-7 gap-1.5 px-2.5 text-xs font-medium"
+            className="h-7 gap-1.5 px-2 sm:px-2.5 text-xs font-medium"
           >
             <HugeiconsIcon
               icon={ListSettingIcon}
               strokeWidth={1.5}
               className="size-3.5"
             />
-            Interactive Diagram
+            <span className="hidden xs:inline">Interactive </span>Diagram
           </Button>
           <Button
             variant={viewMode === "tree" ? "secondary" : "ghost"}
             size="sm"
             onClick={() => setViewMode("tree")}
-            className="h-7 gap-1.5 px-2.5 text-xs font-medium"
+            className="h-7 gap-1.5 px-2 sm:px-2.5 text-xs font-medium"
           >
             <HugeiconsIcon
               icon={ListIcon}
               strokeWidth={1.5}
               className="size-3.5"
             />
-            Outline View
+            <span className="hidden xs:inline">Outline </span>View
           </Button>
         </div>
       </div>

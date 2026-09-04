@@ -62,7 +62,7 @@ export function MessageList({
       onScroll={handleScroll}
       className="min-h-0 flex-1 overflow-y-auto"
     >
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-6 md:px-8 md:py-10">
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-3 pt-14 pb-6 sm:px-6 sm:pt-8 md:px-8 md:py-10">
         {messages.map((message) => (
           <TranscriptMessage
             key={message.id}
@@ -129,7 +129,7 @@ function TranscriptMessage({
   if (isUser) {
     return (
       <article className="animate-in fade-in flex w-full justify-end duration-200">
-        <div className="bg-primary text-primary-foreground max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed">
+        <div className="bg-primary text-primary-foreground max-w-[88%] sm:max-w-[80%] rounded-2xl px-3.5 py-2.5 sm:px-4 text-sm leading-relaxed">
           <p className="break-words whitespace-pre-wrap">{content}</p>
         </div>
       </article>
@@ -211,7 +211,7 @@ function CitationList({
             </span>
           </button>
 
-          <div className="border-border/60 bg-popover text-popover-foreground animate-in fade-in slide-in-from-bottom-1 pointer-events-none absolute bottom-full left-0 z-50 mb-2 hidden w-72 rounded-xl border p-3 shadow-xl backdrop-blur-md group-hover:block">
+          <div className="border-border/60 bg-popover text-popover-foreground animate-in fade-in slide-in-from-bottom-1 pointer-events-none absolute bottom-full left-0 z-50 mb-2 hidden w-72 max-w-[calc(100vw-2rem)] rounded-xl border p-3 shadow-xl backdrop-blur-md md:group-hover:block">
             <div className="border-border/60 flex items-center gap-2 border-b pb-2">
               <HugeiconsIcon
                 icon={File01Icon}

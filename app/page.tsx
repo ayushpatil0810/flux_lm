@@ -42,24 +42,24 @@ const USE_CASES = [
 function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-3 sm:px-6">
         <Link
           href="/"
-          className="flex items-center gap-2.5 transition-opacity hover:opacity-85"
+          className="flex items-center gap-2 sm:gap-2.5 transition-opacity hover:opacity-85"
           aria-label="Flux home"
         >
-          <FluxLogo className="text-primary size-5.5 shrink-0" />
+          <FluxLogo className="text-primary size-5 sm:size-5.5 shrink-0" />
           <span className="font-mono text-base font-normal tracking-tight text-foreground">
             Flux
           </span>
         </Link>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1.5 sm:gap-2.5">
           <ThemeSwitch className="size-8" />
-          <Button asChild variant="ghost" size="sm" className="text-xs">
+          <Button asChild variant="ghost" size="sm" className="text-xs px-2.5 sm:px-3">
             <Link href="/login">Log in</Link>
           </Button>
-          <Button asChild size="sm" className="h-8 rounded-lg text-xs">
+          <Button asChild size="sm" className="h-8 rounded-lg text-xs px-3 sm:px-3.5">
             <Link href="/dashboard">Try Flux</Link>
           </Button>
         </div>
@@ -76,11 +76,11 @@ function Hero() {
           Your AI-Powered Research Partner
         </p>
 
-        <h1 className="font-heading mt-4 text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-foreground text-balance">
+        <h1 className="font-heading mt-4 text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-foreground text-balance">
           Understand Anything
         </h1>
 
-        <p className="font-inter font-normal mt-5 max-w-2xl text-base sm:text-xl leading-relaxed text-muted-foreground text-balance">
+        <p className="font-inter font-normal mt-4 sm:mt-5 max-w-2xl text-sm sm:text-xl leading-relaxed text-muted-foreground text-balance">
           Your research and thinking partner, grounded in the information you
           trust.
         </p>
@@ -116,7 +116,7 @@ function UseCases() {
           </h2>
         </div>
 
-        <div className="mt-12 grid gap-10 sm:grid-cols-3">
+        <div className="mt-8 sm:mt-12 grid gap-8 sm:gap-10 sm:grid-cols-3">
           {USE_CASES.map((item) => (
             <div
               key={item.title}
@@ -180,13 +180,13 @@ function FinalCta() {
 function Footer() {
   return (
     <footer className="border-t border-border/40 py-8 bg-background">
-      <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-4 px-4 sm:px-6 sm:flex-row">
-        <div className="flex items-center gap-2">
+      <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-4 px-4 sm:px-6 sm:flex-row text-center sm:text-left">
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
           <FluxLogo className="text-primary size-4.5" />
           <span className="font-mono text-sm font-normal text-foreground">
             Flux
           </span>
-          <span className="text-xs text-muted-foreground/60 ml-2 font-inter">
+          <span className="text-xs text-muted-foreground/60 ml-1 sm:ml-2 font-inter">
             © 2026 Flux. Your AI-Powered Research Partner.
           </span>
         </div>

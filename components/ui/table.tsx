@@ -59,7 +59,7 @@ export function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "text-muted-foreground h-10 px-4 text-left align-middle font-medium",
+        "text-muted-foreground h-9 sm:h-10 px-2.5 sm:px-4 text-left align-middle text-xs sm:text-sm font-medium",
         className,
       )}
       {...props}
@@ -68,7 +68,7 @@ export function TableHead({ className, ...props }: React.ComponentProps<"th">) {
 }
 
 export function TableCell({ className, ...props }: React.ComponentProps<"td">) {
-  return <td className={cn("p-4 align-middle", className)} {...props} />;
+  return <td className={cn("p-2.5 sm:p-4 align-middle text-xs sm:text-sm", className)} {...props} />;
 }
 
 export function TableCaption({

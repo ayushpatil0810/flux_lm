@@ -37,7 +37,7 @@ export function Shell({ children }: ShellProps) {
     return (
       <WorkspaceContext.Provider value={workspaceQuery}>
         <WorkspacePanelProvider>
-          <div className="bg-background flex h-svh w-full flex-col overflow-hidden">
+          <div className="bg-background flex h-dvh w-full flex-col overflow-hidden">
             {children}
           </div>
         </WorkspacePanelProvider>
@@ -55,7 +55,7 @@ export function Shell({ children }: ShellProps) {
         Skip to content
       </a>
 
-      <div className="bg-background flex h-svh w-full flex-col overflow-hidden">
+      <div className="bg-background flex h-dvh w-full flex-col overflow-hidden">
         <DashboardTopbar onMemoriesOpen={() => setMemoriesOpen(true)} />
         <main id="main-content" className="no-scrollbar flex-1 overflow-y-auto">
           {children}

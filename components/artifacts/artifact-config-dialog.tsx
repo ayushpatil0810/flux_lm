@@ -78,7 +78,7 @@ function SegmentGroup<T extends string | number>({
       <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
         {label}
       </p>
-      <div className="flex gap-1">
+      <div className="flex flex-wrap gap-1.5">
         {options.map((opt) => (
           <button
             key={String(opt)}
@@ -334,7 +334,7 @@ export function ArtifactConfigDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-md">
+      <DialogContent className="flex w-[calc(100%-2rem)] max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:w-full sm:max-w-md">
         {/* Header — pinned */}
         <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4">
           <DialogTitle className="text-heading font-serif">

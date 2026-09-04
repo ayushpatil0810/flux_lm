@@ -21,6 +21,7 @@ import { SidebarLeftIcon, SidebarRightIcon } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { WorkspaceTopbar } from "./workspace-topbar";
 import { usePanelResize } from "@/hooks/use-panel-resize";
+import { cn } from "@/lib/utils";
 
 interface WorkspaceViewProps {
   workspaceId: string;
@@ -28,14 +29,22 @@ interface WorkspaceViewProps {
 
 /**
  * Three-column workspace:
- * - Left panel: Sources (resizable)
+ * - Left panel: Sources (resizable on desktop, overlay drawer on mobile)
  * - Center: Chat (flex-1)
- * - Right panel: Artifacts (resizable)
+ * - Right panel: Artifacts (resizable on desktop, overlay drawer on mobile)
  * Includes mobile overlay states and topbar orchestration.
  */
 export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
-  const { leftOpen, setLeftOpen, rightOpen, setRightOpen } =
-    useWorkspacePanel();
+  const {
+    leftOpen,
+    setLeftOpen,
+    rightOpen,
+    setRightOpen,
+    mobileLeftOpen,
+    setMobileLeftOpen,
+    mobileRightOpen,
+    setMobileRightOpen,
+  } = useWorkspacePanel();
   const {
     previewSource,
     setPreviewSource,
@@ -84,6 +93,10 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
         if (previewSource || previewArtifactId) {
           setPreviewSource(null);
           setPreviewArtifactId(null);
+        } else if (mobileLeftOpen) {
+          setMobileLeftOpen(false);
+        } else if (mobileRightOpen) {
+          setMobileRightOpen(false);
         } else if (leftOpen) {
           setLeftOpen(false);
         } else if (rightOpen) {
@@ -98,10 +111,14 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
     previewArtifactId,
     leftOpen,
     rightOpen,
+    mobileLeftOpen,
+    mobileRightOpen,
     setPreviewSource,
     setPreviewArtifactId,
     setLeftOpen,
     setRightOpen,
+    setMobileLeftOpen,
+    setMobileRightOpen,
   ]);
 
   return (
@@ -115,23 +132,32 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
 
       {/* Three-column body */}
       <div className="relative flex min-h-0 flex-1 overflow-hidden">
-        {/* Floating Left Toggle: Open Sources (Visible only when left panel is closed) */}
-        {!leftOpen && (
-          <div className="absolute top-3 left-3 z-30 animate-in fade-in zoom-in-95 duration-200">
+        {/* Floating Left Toggle: Open Sources (Visible when desktop left panel or mobile left drawer is closed) */}
+        {(!leftOpen || !mobileLeftOpen) && (
+          <div
+            className={cn(
+              "absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-30 animate-in fade-in zoom-in-95 duration-200",
+              leftOpen ? "flex md:hidden" : "flex",
+              mobileLeftOpen ? "hidden md:flex" : ""
+            )}
+          >
             <Button
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setLeftOpen(true)}
+              onClick={() => {
+                setLeftOpen(true);
+                setMobileLeftOpen(true);
+              }}
               aria-label="Open sources panel"
-              className="h-8 gap-2 rounded-xl border-border/60 bg-background/85 px-3 text-xs font-medium text-foreground backdrop-blur-md shadow-xs transition-all hover:bg-background hover:border-primary/40 hover:shadow-sm"
+              className="h-8 gap-1.5 sm:gap-2 rounded-xl border-border/60 bg-background/85 px-2 sm:px-3 text-xs font-medium text-foreground backdrop-blur-md shadow-xs transition-all hover:bg-background hover:border-primary/40 hover:shadow-sm"
             >
               <HugeiconsIcon
                 icon={SidebarLeftIcon}
                 strokeWidth={1.5}
                 className="size-3.5 text-muted-foreground"
               />
-              <span>Sources</span>
+              <span className="hidden sm:inline">Sources</span>
               {sources && sources.length > 0 && (
                 <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-mono leading-none text-muted-foreground">
                   {sources.length}
@@ -141,18 +167,27 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
           </div>
         )}
 
-        {/* Floating Right Toggle: Open Artifacts (Visible only when right panel is closed) */}
-        {!rightOpen && (
-          <div className="absolute top-3 right-3 z-30 animate-in fade-in zoom-in-95 duration-200">
+        {/* Floating Right Toggle: Open Artifacts (Visible when desktop right panel or mobile right drawer is closed) */}
+        {(!rightOpen || !mobileRightOpen) && (
+          <div
+            className={cn(
+              "absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-30 animate-in fade-in zoom-in-95 duration-200",
+              rightOpen ? "flex md:hidden" : "flex",
+              mobileRightOpen ? "hidden md:flex" : ""
+            )}
+          >
             <Button
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setRightOpen(true)}
+              onClick={() => {
+                setRightOpen(true);
+                setMobileRightOpen(true);
+              }}
               aria-label="Open artifacts panel"
-              className="h-8 gap-2 rounded-xl border-border/60 bg-background/85 px-3 text-xs font-medium text-foreground backdrop-blur-md shadow-xs transition-all hover:bg-background hover:border-primary/40 hover:shadow-sm"
+              className="h-8 gap-1.5 sm:gap-2 rounded-xl border-border/60 bg-background/85 px-2 sm:px-3 text-xs font-medium text-foreground backdrop-blur-md shadow-xs transition-all hover:bg-background hover:border-primary/40 hover:shadow-sm"
             >
-              <span>Artifacts</span>
+              <span className="hidden sm:inline">Artifacts</span>
               {artifacts && artifacts.length > 0 && (
                 <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-mono leading-none text-muted-foreground">
                   {artifacts.length}
@@ -167,7 +202,7 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
           </div>
         )}
 
-        {/* ── Left Panel (Sources) ────────────────────────────────────────── */}
+        {/* ── Left Panel (Sources) Desktop ────────────────────────────────── */}
         {leftOpen && (
           <div
             className="border-border/40 animate-in slide-in-from-left-4 relative hidden shrink-0 border-r duration-300 md:flex md:flex-col"
@@ -187,30 +222,30 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
           </div>
         )}
 
-        {/* Mobile Left Overlay */}
-        {leftOpen && (
+        {/* Mobile Left Overlay (Closed by default on mobile) */}
+        {mobileLeftOpen && (
           <div className="fixed inset-0 z-40 md:hidden">
             <div
               className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
-              onClick={() => setLeftOpen(false)}
+              onClick={() => setMobileLeftOpen(false)}
               aria-hidden
             />
-            <div className="bg-background animate-in slide-in-from-left absolute inset-y-0 left-0 flex w-[85vw] max-w-sm flex-col shadow-2xl duration-300">
+            <div className="bg-background animate-in slide-in-from-left absolute inset-y-0 left-0 flex w-[85vw] max-w-sm flex-col shadow-2xl duration-300 pb-[env(safe-area-inset-bottom)]">
               <SidebarSources
                 workspaceId={workspaceId}
-                onClose={() => setLeftOpen(false)}
+                onClose={() => setMobileLeftOpen(false)}
               />
             </div>
           </div>
         )}
 
         {/* ── Center (Chat) ────────────────────────────────────────────────── */}
-        <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
+        <main className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          <div className="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
             {hasPreview ? (
               <>
                 <div
-                  className="border-border/30 relative flex min-h-0 w-full shrink-0 flex-col border-b md:w-[var(--preview-width)] md:border-r md:border-b-0"
+                  className="border-border/30 relative flex min-h-0 w-full shrink-0 flex-col border-b h-[45vh] md:h-full md:w-[var(--preview-width)] md:border-r md:border-b-0"
                   style={
                     {
                       "--preview-width": `${previewResize.width}px`,
@@ -237,19 +272,19 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
                     <div className="bg-border/80 h-8 w-0.5 rounded-full" />
                   </div>
                 </div>
-                <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+                <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
                   <ChatView workspaceId={workspaceId} />
                 </div>
               </>
             ) : (
-              <div className="min-w-0 flex-1">
+              <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
                 <ChatView workspaceId={workspaceId} />
               </div>
             )}
           </div>
         </main>
 
-        {/* ── Right Panel (Artifacts) ──────────────────────────────────────── */}
+        {/* ── Right Panel (Artifacts) Desktop ──────────────────────────────── */}
         {rightOpen && (
           <div
             className="border-border/40 animate-in slide-in-from-right-4 relative hidden shrink-0 border-l duration-300 md:flex md:flex-col"
@@ -270,18 +305,18 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
           </div>
         )}
 
-        {/* Mobile Right Overlay */}
-        {rightOpen && (
+        {/* Mobile Right Overlay (Closed by default on mobile) */}
+        {mobileRightOpen && (
           <div className="fixed inset-0 z-40 md:hidden">
             <div
               className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
-              onClick={() => setRightOpen(false)}
+              onClick={() => setMobileRightOpen(false)}
               aria-hidden
             />
-            <div className="bg-background animate-in slide-in-from-right absolute inset-y-0 right-0 flex w-[85vw] max-w-sm flex-col shadow-2xl duration-300">
+            <div className="bg-background animate-in slide-in-from-right absolute inset-y-0 right-0 flex w-[85vw] max-w-sm flex-col shadow-2xl duration-300 pb-[env(safe-area-inset-bottom)]">
               <SidebarArtifacts
                 workspaceId={workspaceId}
-                onClose={() => setRightOpen(false)}
+                onClose={() => setMobileRightOpen(false)}
                 onPreviewArtifact={(id) => setPreviewArtifactId(id)}
               />
             </div>

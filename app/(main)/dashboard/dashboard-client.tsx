@@ -74,10 +74,10 @@ export function DashboardClient({
       {/* Subtle background texture for the entire dashboard */}
       <div className="bg-grid absolute inset-0 z-0 opacity-[0.03] pointer-events-none" />
 
-      <div className="relative z-10 mx-auto flex max-w-6xl flex-col px-4 py-8 md:px-8 md:py-12">
+      <div className="relative z-10 mx-auto flex max-w-6xl flex-col px-3.5 py-6 sm:px-4 sm:py-8 md:px-8 md:py-12">
         {/* Hero Section */}
-        <section className="relative mb-8 md:mb-10 flex flex-col items-start pt-4">
-          <h1 className="font-heading text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
+        <section className="relative mb-6 sm:mb-8 md:mb-10 flex flex-col items-start pt-2 sm:pt-4">
+          <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
             {greetingPrefix}
             {firstName ? (
               <>
@@ -90,14 +90,14 @@ export function DashboardClient({
         {/* Workspace Grid */}
         <section className="flex flex-col">
           {workspaces && workspaces.length > 0 ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {/* New Workspace Tile */}
               <button
                 onClick={() => setCreateOpen(true)}
                 type="button"
-                className="group relative flex min-h-[12rem] cursor-pointer flex-col justify-between rounded-2xl border-2 border-dashed border-foreground/30 bg-card/80 p-5 text-left shadow-sm transition-colors duration-200 hover:border-foreground/45 hover:bg-card/95"
+                className="group relative flex min-h-[11rem] sm:min-h-[12rem] cursor-pointer flex-col justify-between rounded-2xl border-2 border-dashed border-foreground/30 bg-card/80 p-4 sm:p-5 text-left shadow-sm transition-colors duration-200 hover:border-foreground/45 hover:bg-card/95"
               >
-                <div className="flex size-11 items-center justify-center rounded-xl border border-foreground/30 bg-background text-black dark:text-white shadow-xs transition-colors duration-200 group-hover:border-foreground/50">
+                <div className="flex size-10 sm:size-11 items-center justify-center rounded-xl border border-foreground/30 bg-background text-black dark:text-white shadow-xs transition-colors duration-200 group-hover:border-foreground/50">
                   <HugeiconsIcon
                     icon={PlusSignIcon}
                     strokeWidth={2.2}
@@ -106,10 +106,10 @@ export function DashboardClient({
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold tracking-tight text-black dark:text-white">
+                  <h3 className="text-base sm:text-lg font-semibold tracking-tight text-black dark:text-white">
                     New Workspace
                   </h3>
-                  <p className="font-inter text-muted-foreground mt-1 line-clamp-2 text-[13px] leading-relaxed font-normal">
+                  <p className="font-inter text-muted-foreground mt-1 line-clamp-2 text-xs sm:text-[13px] leading-relaxed font-normal">
                     Create a new workspace to organize sources, notes, and AI conversations.
                   </p>
                 </div>
@@ -119,7 +119,7 @@ export function DashboardClient({
               {workspaces.map((ws) => (
                 <div
                   key={ws.id}
-                  className="group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-white/15 bg-blue-950 p-5 shadow-sm"
+                  className="group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-white/15 bg-blue-950 p-4 sm:p-5 shadow-sm"
                 >
                   {/* Card Background Image */}
                   <div
@@ -207,7 +207,7 @@ export function DashboardClient({
               ))}
             </div>
           ) : (
-            <div className="relative mt-8 flex flex-col items-center justify-center px-6 py-20 text-center">
+            <div className="relative mt-4 sm:mt-8 flex flex-col items-center justify-center px-4 py-12 sm:px-6 sm:py-20 text-center">
               <div className="flex flex-col items-center">
                 <HugeiconsIcon
                   icon={Folder01Icon}

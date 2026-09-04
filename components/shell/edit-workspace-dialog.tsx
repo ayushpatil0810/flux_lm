@@ -124,17 +124,17 @@ export function EditWorkspaceDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-sm">
+      <DialogContent className="w-[calc(100%-2rem)] gap-0 overflow-hidden p-0 sm:w-full sm:max-w-sm">
         <form onSubmit={handleSubmit}>
           {/* Header */}
-          <DialogHeader className="border-border/30 border-b px-5 pt-5 pb-4">
+          <DialogHeader className="border-border/30 border-b px-4 sm:px-5 pt-5 pb-4">
             <DialogTitle className="text-sm font-medium">
               Workspace settings
             </DialogTitle>
           </DialogHeader>
 
           {/* Body */}
-          <div className="space-y-4 px-5 py-4">
+          <div className="space-y-4 px-4 sm:px-5 py-4">
             {/* Title */}
             <div className="space-y-1.5">
               <label
@@ -190,7 +190,7 @@ export function EditWorkspaceDialog({
               <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 Default model
               </p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
                 {MODEL_OPTIONS.map((option) => (
                   <label
                     key={option.value}
@@ -222,11 +222,11 @@ export function EditWorkspaceDialog({
           </div>
 
           {/* Footer */}
-          <div className="border-border/30 flex items-center justify-between gap-3 border-t px-5 py-3">
+          <div className="border-border/30 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 border-t px-4 sm:px-5 py-3">
             <button
               type="button"
               onClick={() => setDeleteOpen(true)}
-              className="text-muted-foreground/60 hover:text-destructive flex items-center gap-1.5 text-xs transition-colors"
+              className="text-muted-foreground/60 hover:text-destructive flex items-center justify-center sm:justify-start gap-1.5 text-xs py-1 transition-colors"
             >
               <HugeiconsIcon
                 icon={Delete01Icon}
@@ -237,11 +237,12 @@ export function EditWorkspaceDialog({
               Delete workspace
             </button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2">
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
+                className="flex-1 sm:flex-none"
                 onClick={() => onOpenChange(false)}
               >
                 Cancel
@@ -249,6 +250,7 @@ export function EditWorkspaceDialog({
               <Button
                 type="submit"
                 size="sm"
+                className="flex-1 sm:flex-none"
                 disabled={
                   updateWorkspace.isPending ||
                   title.trim().length === 0 ||

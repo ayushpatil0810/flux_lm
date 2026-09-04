@@ -59,17 +59,17 @@ export function WorkspaceTopbar({
   }
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 w-full shrink-0 items-center justify-between border-b border-border/40 bg-background/80 px-4 backdrop-blur-md">
+    <header className="sticky top-0 z-40 flex h-14 w-full shrink-0 items-center justify-between border-b border-border/40 bg-background/80 px-2.5 sm:px-4 backdrop-blur-md">
       {/* 1. Left Zone: Breadcrumb + Editable Workspace Title */}
-      <div className="flex min-w-0 items-center gap-3">
+      <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
         {/* Flux Logo + Wordmark */}
         <Link
           href="/dashboard"
-          className="group flex shrink-0 items-center gap-2.5 transition-opacity hover:opacity-85"
+          className="group flex shrink-0 items-center gap-2 transition-opacity hover:opacity-85"
           title="Back to dashboard"
         >
-          <FluxLogo className="text-primary size-5.5 shrink-0" />
-          <span className="font-mono text-base font-normal tracking-tight text-foreground">
+          <FluxLogo className="text-primary size-5 sm:size-5.5 shrink-0" />
+          <span className="font-mono text-base font-normal tracking-tight text-foreground hidden sm:inline">
             Flux
           </span>
         </Link>
@@ -82,11 +82,11 @@ export function WorkspaceTopbar({
         </span>
 
         {/* Editable Workspace Title */}
-        <div className="flex min-w-0 items-center gap-1.5">
+        <div className="flex min-w-0 items-center gap-1 sm:gap-1.5">
           <HugeiconsIcon
             icon={Folder01Icon}
             strokeWidth={1.5}
-            className="size-4 shrink-0 text-muted-foreground"
+            className="size-4 shrink-0 text-muted-foreground hidden xs:block"
           />
 
           {editing ? (
@@ -100,7 +100,7 @@ export function WorkspaceTopbar({
                 if (e.key === "Enter") inputRef.current?.blur();
                 if (e.key === "Escape") cancelEdit();
               }}
-              className="text-foreground ring-primary/40 focus:ring-primary/70 min-w-0 max-w-xs md:max-w-md rounded-md bg-transparent px-2 py-0.5 text-sm font-semibold tracking-tight ring-1 outline-none"
+              className="text-foreground ring-primary/40 focus:ring-primary/70 min-w-0 max-w-[120px] xs:max-w-[160px] sm:max-w-xs md:max-w-md rounded-md bg-transparent px-1.5 sm:px-2 py-0.5 text-xs sm:text-sm font-semibold tracking-tight ring-1 outline-none"
               maxLength={100}
               autoFocus
             />
@@ -108,10 +108,10 @@ export function WorkspaceTopbar({
             <button
               type="button"
               onClick={startEditing}
-              className="text-foreground hover:bg-muted/80 flex min-w-0 items-center gap-1 rounded-md px-2 py-0.5 text-sm font-medium tracking-tight transition-colors"
+              className="text-foreground hover:bg-muted/80 flex min-w-0 items-center gap-1 rounded-md px-1.5 sm:px-2 py-0.5 text-xs sm:text-sm font-medium tracking-tight transition-colors"
               title="Click to rename"
             >
-              <span className="truncate max-w-[180px] sm:max-w-xs md:max-w-md">
+              <span className="truncate max-w-[110px] xs:max-w-[160px] sm:max-w-xs md:max-w-md">
                 {workspace?.title ?? "Workspace"}
               </span>
             </button>
@@ -129,7 +129,7 @@ export function WorkspaceTopbar({
       </div>
 
       {/* 2. Right Zone: Settings + Theme + Avatar */}
-      <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+      <div className="flex shrink-0 items-center gap-1 sm:gap-2">
         {/* Settings Button */}
         <Button
           type="button"

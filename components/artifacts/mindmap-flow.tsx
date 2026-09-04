@@ -312,7 +312,7 @@ export function MindmapFlow({
   }, [setNodes, setEdges]);
 
   return (
-    <div className="border-border/80 bg-card/40 relative h-[500px] w-full overflow-hidden rounded-xl border shadow-xs backdrop-blur-xs">
+    <div className="border-border/80 bg-card/40 relative h-[340px] sm:h-[440px] md:h-[500px] w-full overflow-hidden rounded-xl border shadow-xs backdrop-blur-xs">
       {viewMode === "tree" ? (
         <div className="flex h-full w-full flex-col items-center justify-center">
           <p className="text-muted-foreground text-sm">

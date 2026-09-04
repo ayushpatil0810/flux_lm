@@ -218,10 +218,10 @@ export function ChatView({ workspaceId }: ChatViewProps) {
   }
 
   return (
-    <div className="bg-background flex h-full w-full overflow-hidden font-inter font-normal">
+    <div className="bg-background flex h-full w-full min-h-0 overflow-hidden font-inter font-normal">
       <section
         aria-label="Conversation"
-        className="bg-background flex min-w-0 flex-1 flex-col"
+        className="bg-background flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
       >
         {hasEverStreamedRef.current ||
         activeConversationId ||
@@ -269,12 +269,12 @@ export function ChatView({ workspaceId }: ChatViewProps) {
           </>
         ) : (
           <>
-            <div className="flex min-h-0 flex-1 flex-col items-center justify-center p-6 sm:p-12">
-              <div className="animate-in fade-in flex w-full max-w-xl flex-col items-center text-center duration-300">
-                <h1 className="text-foreground font-heading text-3xl font-medium tracking-tight sm:text-4xl">
+            <div className="flex min-h-0 flex-1 flex-col items-center p-3 pt-14 pb-2 sm:p-8 sm:pt-8 md:p-12 overflow-y-auto">
+              <div className="animate-in fade-in my-auto flex w-full max-w-xl flex-col items-center text-center duration-300">
+                <h1 className="text-foreground font-heading text-xl xs:text-2xl sm:text-3xl md:text-4xl font-medium tracking-tight text-balance">
                   Ask {workspace?.title ?? "this workspace"}
                 </h1>
-                <p className="text-muted-foreground mt-2 max-w-md text-sm leading-relaxed font-inter font-normal">
+                <p className="text-muted-foreground mt-1.5 sm:mt-2 max-w-md text-xs sm:text-sm leading-relaxed font-inter font-normal text-balance">
                   Answers grounded in your sources, with citations.
                   {sourcesCount > 0
                     ? ` ${sourcesCount} ${sourcesCount === 1 ? "source" : "sources"} connected.`
@@ -285,26 +285,26 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                   <button
                     type="button"
                     onClick={() => setLeftOpen(true)}
-                    className="group border-border/60 hover:border-primary/50 hover:bg-primary/5 mt-8 flex items-center gap-3.5 rounded-2xl border border-dashed p-4 text-left transition-all duration-200 cursor-pointer shadow-xs hover:shadow-sm"
+                    className="group border-border/60 hover:border-primary/50 hover:bg-primary/5 mt-4 sm:mt-8 flex items-center gap-3.5 rounded-2xl border border-dashed p-3 sm:p-4 text-left transition-all duration-200 cursor-pointer shadow-xs hover:shadow-sm"
                   >
-                    <div className="bg-primary/10 text-primary flex size-10 shrink-0 items-center justify-center rounded-xl transition-colors group-hover:bg-primary/15">
+                    <div className="bg-primary/10 text-primary flex size-9 sm:size-10 shrink-0 items-center justify-center rounded-xl transition-colors group-hover:bg-primary/15">
                       <HugeiconsIcon
                         icon={FileUploadIcon}
                         strokeWidth={1.5}
-                        className="size-5"
+                        className="size-4.5 sm:size-5"
                       />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                      <p className="text-xs sm:text-sm font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors">
                         Add your first source →
                       </p>
-                      <p className="text-muted-foreground mt-0.5 text-xs font-inter font-normal">
+                      <p className="text-muted-foreground mt-0.5 text-[11px] sm:text-xs font-inter font-normal">
                         Import a PDF, web page, YouTube video, or note
                       </p>
                     </div>
                   </button>
                 ) : (
-                  <div className="mt-8 grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
+                  <div className="mt-4 sm:mt-8 grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
                     {[
                       {
                         label: "Summarize key takeaways",
@@ -328,12 +328,12 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                       <button
                         key={item.label}
                         onClick={() => void send(item.prompt)}
-                        className="group border-border/50 bg-card/40 hover:border-primary/40 hover:bg-card/60 focus-visible:ring-ring flex flex-col justify-between rounded-xl border p-4 text-left transition-all duration-300 hover:shadow-sm focus-visible:ring-2 focus-visible:outline-none"
+                        className="group border-border/50 bg-card/40 hover:border-primary/40 hover:bg-card/60 focus-visible:ring-ring flex flex-col justify-between rounded-xl border p-2.5 sm:p-4 text-left transition-all duration-300 hover:shadow-sm focus-visible:ring-2 focus-visible:outline-none"
                       >
-                        <span className="text-foreground text-sm font-medium">
+                        <span className="text-foreground text-xs sm:text-sm font-medium">
                           {item.label}
                         </span>
-                        <span className="text-muted-foreground mt-1 line-clamp-1 text-xs">
+                        <span className="text-muted-foreground mt-0.5 sm:mt-1 line-clamp-1 text-[11px] sm:text-xs">
                           {item.prompt}
                         </span>
                       </button>
@@ -350,7 +350,6 @@ export function ChatView({ workspaceId }: ChatViewProps) {
               onModelChange={setModel}
               webSearch={webSearch}
               onWebSearchChange={setWebSearch}
-              autoFocus
             />
           </>
         )}

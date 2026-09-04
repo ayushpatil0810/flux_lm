@@ -105,7 +105,7 @@ export function Composer({
   }
 
   return (
-    <div className="shrink-0 px-4 pt-2 pb-6 md:px-8">
+    <div className="shrink-0 px-2.5 pt-1.5 sm:pt-2 sm:px-4 md:px-8 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-6">
       <form
         className="mx-auto w-full max-w-3xl"
         onSubmit={(event) => {
@@ -125,32 +125,32 @@ export function Composer({
                 submit();
               }
             }}
-            placeholder="Ask anything about this workspace... (press / to focus)"
+            placeholder="Ask anything about this workspace..."
             aria-label="Message input"
             // We intentionally do NOT disable the textarea while streaming so users can queue up thoughts.
-            className="text-foreground placeholder:text-muted-foreground/50 max-h-[300px] min-h-[60px] w-full resize-none bg-transparent px-4 py-4 text-base leading-relaxed focus:outline-none"
+            className="text-foreground placeholder:text-muted-foreground/50 max-h-[160px] sm:max-h-[300px] min-h-[46px] sm:min-h-[60px] w-full resize-none bg-transparent px-3 py-2.5 sm:px-4 sm:py-3.5 text-base sm:text-sm leading-relaxed focus:outline-none"
           />
 
-          <div className="flex items-center justify-between gap-2 px-3 pt-1 pb-3">
-            <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-between gap-1.5 sm:gap-2 px-2.5 sm:px-3 pt-1 pb-2.5 sm:pb-3">
+            <div className="flex items-center gap-1 sm:gap-1.5">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
                     aria-label="Choose model"
-                    className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                    className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring flex h-8 items-center gap-1 sm:gap-1.5 rounded-lg px-2 sm:px-2.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
                   >
                     <HugeiconsIcon
                       icon={CpuIcon}
                       strokeWidth={1.5}
-                      className="size-4"
+                      className="size-4 shrink-0"
                       aria-hidden
                     />
-                    <span>{MODEL_LABELS[model]}</span>
+                    <span className="truncate max-w-[90px] xs:max-w-none">{MODEL_LABELS[model]}</span>
                     <HugeiconsIcon
                       icon={ArrowDown01Icon}
                       strokeWidth={1.5}
-                      className="size-3.5 opacity-60"
+                      className="size-3.5 shrink-0 opacity-60"
                       aria-hidden
                     />
                   </button>
@@ -178,7 +178,7 @@ export function Composer({
                 aria-pressed={webSearch}
                 onClick={() => onWebSearchChange(!webSearch)}
                 className={cn(
-                  "focus-visible:ring-ring flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none",
+                  "focus-visible:ring-ring flex h-8 items-center gap-1 sm:gap-1.5 rounded-lg px-2 sm:px-2.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none",
                   webSearch
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -187,7 +187,7 @@ export function Composer({
                 <HugeiconsIcon
                   icon={Link01Icon}
                   strokeWidth={1.5}
-                  className="size-4"
+                  className="size-4 shrink-0"
                   aria-hidden
                 />
                 <span className="hidden sm:inline">Web Search</span>
@@ -202,7 +202,7 @@ export function Composer({
                   size="icon"
                   onClick={onStop}
                   aria-label="Stop generating"
-                  className="size-9 rounded-xl shadow-none"
+                  className="size-8.5 sm:size-9 rounded-xl shadow-none"
                 >
                   <HugeiconsIcon
                     icon={Layers01Icon}
@@ -218,7 +218,7 @@ export function Composer({
                   disabled={value.trim().length === 0}
                   aria-label="Send message"
                   className={cn(
-                    "size-9 rounded-xl shadow-none transition-all duration-200",
+                    "size-8.5 sm:size-9 rounded-xl shadow-none transition-all duration-200",
                     value.trim().length > 0
                       ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md"
                       : "bg-muted text-muted-foreground/40",
