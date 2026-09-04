@@ -3,21 +3,25 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Cancel01Icon,
   MoreHorizontalIcon,
+  Add01Icon,
+  Search01Icon,
+  SidebarLeftIcon,
+  Pdf01Icon,
+  InternetIcon,
+  YoutubeIcon,
+  NoteIcon,
   FileUploadIcon,
-  Link01Icon,
-  PlayCircle02Icon,
-  File01Icon,
+  Loading02Icon,
 } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
 
 import type { Source } from "@/lib/api";
-import { cn, formatRelativeTime } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useSources, useDeleteSource } from "@/hooks/use-sources";
 import { useToast } from "@/components/providers/toast-provider";
 import { ErrorState, LoadingState } from "@/components/shell/states";
 import { Button } from "@/components/ui/button";
-import { StatusIndicator } from "@/components/ui/status-indicator";
 import { useWorkspacePreview } from "@/components/shell/workspace-panel-context";
 import { SourceDetailDialog } from "./source-detail-dialog";
 import { ConfirmDeleteDialog } from "./confirm-delete-dialog";
@@ -29,7 +33,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { sourceSubtitle } from "./source-meta";
 import {
   Tooltip,
   TooltipContent,
@@ -48,9 +51,9 @@ import { ImportTextForm } from "./import-text-form";
 
 // ── Source-type picker cards ────────────────────────────────────────────────
 
-type ImportType = "pdf" | "website" | "youtube" | "text";
+export type ImportType = "pdf" | "website" | "youtube" | "text";
 
-const IMPORT_TYPES: {
+export const IMPORT_TYPES: {
   id: ImportType;
   label: string;
   hint: string;
@@ -59,47 +62,47 @@ const IMPORT_TYPES: {
   {
     id: "pdf",
     label: "PDF",
-    hint: "Upload a file",
+    hint: "Upload a PDF document",
     Icon: (props) => (
-      <HugeiconsIcon icon={FileUploadIcon} strokeWidth={1.5} {...props} />
+      <HugeiconsIcon icon={Pdf01Icon} strokeWidth={1.5} {...props} />
     ),
   },
   {
     id: "website",
-    label: "Website",
-    hint: "Any web page",
+    label: "Web",
+    hint: "Extract text from any URL",
     Icon: (props) => (
-      <HugeiconsIcon icon={Link01Icon} strokeWidth={1.5} {...props} />
+      <HugeiconsIcon icon={InternetIcon} strokeWidth={1.5} {...props} />
     ),
   },
   {
     id: "youtube",
     label: "YouTube",
-    hint: "Video transcript",
+    hint: "Import video transcript",
     Icon: (props) => (
-      <HugeiconsIcon icon={PlayCircle02Icon} strokeWidth={1.5} {...props} />
+      <HugeiconsIcon icon={YoutubeIcon} strokeWidth={1.5} {...props} />
     ),
   },
   {
     id: "text",
     label: "Note",
-    hint: "Plain text",
+    hint: "Create a plain text note",
     Icon: (props) => (
-      <HugeiconsIcon icon={File01Icon} strokeWidth={1.5} {...props} />
+      <HugeiconsIcon icon={NoteIcon} strokeWidth={1.5} {...props} />
     ),
   },
 ];
 
 // ── Import dialog (single type) ─────────────────────────────────────────────
 
-interface ImportTypeDialogProps {
+export interface ImportTypeDialogProps {
   workspaceId: string;
   importType: ImportType | null;
   onClose: () => void;
   onImported?: () => void;
 }
 
-function ImportTypeDialog({
+export function ImportTypeDialog({
   workspaceId,
   importType,
   onClose,
@@ -156,8 +159,8 @@ interface SidebarSourcesProps {
 }
 
 /**
- * Sources panel — upload type cards (PDF / Website / YouTube / Note)
- * followed by the list of ingested sources.
+ * Sources panel — upload type strip (PDF / Web / YouTube / Note)
+ * with live filter followed by the list of ingested sources.
  */
 export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
   const {
@@ -172,9 +175,21 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
   const { previewSource, setPreviewSource } = useWorkspacePreview();
 
   const [importType, setImportType] = React.useState<ImportType | null>(null);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [detailSource, setDetailSource] = React.useState<Source | null>(null);
   const [renameSource, setRenameSource] = React.useState<Source | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<Source | null>(null);
+
+  const filteredSources = React.useMemo(() => {
+    if (!sources) return [];
+    if (!searchQuery.trim()) return sources;
+    const q = searchQuery.toLowerCase();
+    return sources.filter(
+      (s) =>
+        s.title.toLowerCase().includes(q) ||
+        (s.url && s.url.toLowerCase().includes(q)),
+    );
+  }, [sources, searchQuery]);
 
   async function confirmDelete() {
     if (!deleteTarget) return;
@@ -195,65 +210,114 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
   }
 
   return (
-    <div className="flex h-full flex-col bg-background">
+    <div className="flex h-full flex-col bg-card">
       {/* Header */}
-      <div className="flex h-14 shrink-0 items-center justify-between border-b border-border/40 px-4">
+      <div className="flex h-13 shrink-0 items-center justify-between border-b border-border/50 px-3.5 sm:px-4 bg-card">
         <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold tracking-tight text-foreground">
+          <h2 className="text-base font-semibold tracking-tight text-foreground">
             Sources
           </h2>
           {sources && sources.length > 0 && (
-            <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-mono leading-none text-muted-foreground">
+            <span className="rounded-full bg-primary/10 text-primary px-2.5 py-0.5 text-xs font-mono font-medium leading-none">
               {sources.length}
             </span>
           )}
         </div>
-        {onClose ? (
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close sources panel"
-            className="text-muted-foreground hover:text-foreground flex size-7 items-center justify-center rounded-lg transition-colors hover:bg-muted"
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setImportType("pdf")}
+            className="h-8 gap-1.5 px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground rounded-lg"
+            title="Import new source"
           >
             <HugeiconsIcon
-              icon={Cancel01Icon}
-              strokeWidth={1.5}
-              className="size-3.5"
-              aria-hidden
+              icon={Add01Icon}
+              strokeWidth={2}
+              className="size-3.5 text-primary"
             />
-          </button>
-        ) : null}
+            <span>Add</span>
+          </Button>
+
+          {onClose ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label="Collapse sources panel"
+                  className="text-muted-foreground hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors hover:bg-muted active:scale-95"
+                >
+                  <HugeiconsIcon
+                    icon={SidebarLeftIcon}
+                    strokeWidth={1.5}
+                    className="size-5"
+                    aria-hidden
+                  />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" sideOffset={6}>
+                Collapse panel (<kbd className="font-mono text-[10px]">⌘B</kbd>)
+              </TooltipContent>
+            </Tooltip>
+          ) : null}
+        </div>
       </div>
 
-      {/* Upload type cards */}
-      <div className="shrink-0 p-3">
-        <div className="grid grid-cols-2 gap-2">
+      {/* Upload type 4-button strip */}
+      <div className="shrink-0 px-3.5 pt-2.5 pb-2">
+        <div className="grid grid-cols-4 gap-1 rounded-xl bg-muted/40 p-1 border border-border/50">
           {IMPORT_TYPES.map(({ id, label, hint, Icon }) => (
             <Tooltip key={id}>
               <TooltipTrigger asChild>
                 <button
                   type="button"
                   onClick={() => setImportType(id)}
-                  className="group flex flex-col items-center gap-2 rounded-xl border border-border/50 bg-card/60 p-3 text-center transition-all duration-150 hover:border-primary/40 hover:bg-card hover:shadow-xs"
+                  className="group flex flex-col items-center justify-center gap-1 rounded-lg py-1.5 px-1 text-center transition-all hover:bg-background hover:shadow-2xs active:scale-95"
                 >
-                  <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
-                    <Icon className="size-4.5" aria-hidden />
+                  <div className="flex size-7 items-center justify-center text-primary transition-transform group-hover:scale-110">
+                    <Icon className="size-5" aria-hidden />
                   </div>
-                  <p className="text-[12px] font-medium tracking-tight text-foreground">
+                  <span className="text-[11px] font-medium tracking-tight text-foreground line-clamp-1">
                     {label}
-                  </p>
+                  </span>
                 </button>
               </TooltipTrigger>
-              <TooltipContent sideOffset={8}>{hint}</TooltipContent>
+              <TooltipContent side="bottom" sideOffset={6}>
+                {hint}
+              </TooltipContent>
             </Tooltip>
           ))}
         </div>
       </div>
 
-      {/* Divider + source list */}
+      {/* Filter search bar (visible when more than 2 sources exist) */}
+      {sources && sources.length > 2 && (
+        <div className="px-3.5 pb-2 shrink-0">
+          <div className="relative flex items-center">
+            <HugeiconsIcon
+              icon={Search01Icon}
+              strokeWidth={1.5}
+              className="absolute left-3 size-4 text-muted-foreground/60 pointer-events-none"
+            />
+            <input
+              type="text"
+              placeholder="Filter sources..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-9 w-full rounded-xl border border-border/60 bg-muted/25 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary/40 focus:bg-background focus:outline-none transition-colors"
+            />
+          </div>
+        </div>
+      )}
+
+
+      {/* Source list */}
       <div className="min-h-0 flex-1 overflow-y-auto">
         {isPending ? (
-          <LoadingState label="Loading sources" />
+          <div className="p-3">
+            <LoadingState label="Loading sources" />
+          </div>
         ) : isError ? (
           <div className="p-3">
             <ErrorState
@@ -263,109 +327,125 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
             />
           </div>
         ) : sources.length === 0 ? (
-          <div className="mx-3 my-4 flex flex-col items-center justify-center rounded-2xl border border-border/40 bg-card/40 px-4 py-10 text-center shadow-xs">
-            <div className="mb-3 flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary ring-4 ring-primary/5">
+          <div className="mx-3.5 my-4 flex flex-col items-center justify-center rounded-2xl border border-border/40 bg-card/40 px-4 py-8 text-center shadow-xs">
+            <div className="mb-2.5 flex size-9 items-center justify-center text-primary">
               <HugeiconsIcon
                 icon={FileUploadIcon}
                 strokeWidth={1.5}
-                className="size-5"
+                className="size-6"
               />
             </div>
             <h3 className="text-sm font-semibold tracking-tight text-foreground">
               No sources yet
             </h3>
-            <p className="mt-1.5 max-w-[200px] text-xs leading-relaxed text-muted-foreground font-inter font-normal">
+            <p className="mt-1 max-w-[200px] text-xs leading-relaxed text-muted-foreground font-inter font-normal">
               Pick a type above to import PDFs, websites, YouTube videos, or notes.
             </p>
           </div>
         ) : (
           <>
-            <div className="flex items-center gap-2 px-4 pt-1 pb-1.5">
-              <span className="bg-border/40 h-px flex-1" aria-hidden />
-              <span className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-                Your sources
-              </span>
-              <span className="bg-border/40 h-px flex-1" aria-hidden />
-            </div>
-            <ul className="flex flex-col gap-1 p-2">
-              {sources.map((source) => {
-                const subtitle = sourceSubtitle(source);
-                const isSelected = previewSource?.id === source.id;
-                return (
-                  <li key={source.id}>
-                    <div
-                      className={cn(
-                        "group flex items-start gap-2.5 rounded-xl border p-2.5 transition-all duration-150",
-                        isSelected
-                          ? "border-primary/40 bg-primary/5 shadow-xs"
-                          : "border-transparent hover:border-border/60 hover:bg-card/60",
-                      )}
-                    >
-                      <div className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted/70">
-                        {source.type === "PDF" ? (
-                          <HugeiconsIcon
-                            icon={FileUploadIcon}
-                            strokeWidth={1.5}
-                            className="size-4 text-blue-500"
-                          />
-                        ) : source.type === "WEBSITE" ? (
-                          <HugeiconsIcon
-                            icon={Link01Icon}
-                            strokeWidth={1.5}
-                            className="size-4 text-emerald-500"
-                          />
-                        ) : source.type === "YOUTUBE" ? (
-                          <HugeiconsIcon
-                            icon={PlayCircle02Icon}
-                            strokeWidth={1.5}
-                            className="size-4 text-red-500"
-                          />
-                        ) : (
-                          <HugeiconsIcon
-                            icon={File01Icon}
-                            strokeWidth={1.5}
-                            className="size-4 text-amber-500"
-                          />
+            {searchQuery ? (
+              <div className="flex items-center gap-2 px-4 pt-1 pb-1.5">
+                <span className="bg-border/40 h-px flex-1" aria-hidden />
+                <span className="text-muted-foreground/60 text-[11px] font-medium tracking-wider uppercase">
+                  Filtered Results
+                </span>
+                <span className="bg-border/40 h-px flex-1" aria-hidden />
+              </div>
+            ) : null}
+
+            {filteredSources.length === 0 ? (
+              <div className="px-4 py-8 text-center">
+                <p className="text-xs text-muted-foreground">
+                  No sources match &ldquo;{searchQuery}&rdquo;
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="mt-2 text-xs font-medium text-primary hover:underline"
+                >
+                  Clear search
+                </button>
+              </div>
+            ) : (
+              <ul className="flex flex-col gap-1 p-2 sm:p-2.5">
+                {filteredSources.map((source) => {
+                  const isSelected = previewSource?.id === source.id;
+                  const isProcessing =
+                    source.status === "PENDING" || source.status === "PROCESSING";
+
+                  return (
+                    <li key={source.id}>
+                      <div
+                        className={cn(
+                          "group flex items-center gap-2.5 rounded-xl border px-3 py-2 transition-all duration-150",
+                          isSelected
+                            ? "border-primary/40 bg-primary/5 shadow-xs"
+                            : "border-transparent hover:border-border/60 hover:bg-card/60",
                         )}
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => setPreviewSource(source)}
-                        className="min-w-0 flex-1 text-left focus-visible:outline-none"
                       >
-                        <span className="text-foreground block truncate text-xs font-medium leading-snug">
-                          {source.title}
-                        </span>
-                        {subtitle ? (
-                          <span className="text-muted-foreground mt-0.5 block truncate text-[11px] font-inter font-normal">
-                            {subtitle}
-                          </span>
-                        ) : null}
-                        <span className="mt-1.5 flex items-center gap-2 text-[11px]">
-                          <StatusIndicator status={source.status} />
-                          <span className="text-muted-foreground/70">
-                            {formatRelativeTime(source.createdAt)}
-                          </span>
-                        </span>
-                      </button>
-
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-muted-foreground/60 hover:text-foreground size-7 shrink-0 rounded-lg hover:bg-muted"
-                            aria-label={`Options for ${source.title}`}
-                          >
+                        <div className="flex size-7 shrink-0 items-center justify-center">
+                          {source.type === "PDF" ? (
                             <HugeiconsIcon
-                              icon={MoreHorizontalIcon}
+                              icon={Pdf01Icon}
                               strokeWidth={1.5}
-                              className="size-4"
-                              aria-hidden
+                              className="size-5 text-red-500"
                             />
-                          </Button>
-                        </DropdownMenuTrigger>
+                          ) : source.type === "WEBSITE" ? (
+                            <HugeiconsIcon
+                              icon={InternetIcon}
+                              strokeWidth={1.5}
+                              className="size-5 text-blue-500"
+                            />
+                          ) : source.type === "YOUTUBE" ? (
+                            <HugeiconsIcon
+                              icon={YoutubeIcon}
+                              strokeWidth={1.5}
+                              className="size-5 text-red-500"
+                            />
+                          ) : (
+                            <HugeiconsIcon
+                              icon={NoteIcon}
+                              strokeWidth={1.5}
+                              className="size-5 text-amber-500"
+                            />
+                          )}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => setPreviewSource(source)}
+                          className="min-w-0 flex-1 flex items-center gap-2 text-left focus-visible:outline-none"
+                        >
+                          <span className="text-foreground block truncate text-sm font-medium leading-normal">
+                            {source.title}
+                          </span>
+                          {isProcessing && (
+                            <HugeiconsIcon
+                              icon={Loading02Icon}
+                              strokeWidth={2}
+                              className="size-3.5 shrink-0 animate-spin text-muted-foreground"
+                              aria-label="Processing"
+                            />
+                          )}
+                        </button>
+
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-muted-foreground/60 hover:text-foreground size-7 shrink-0 rounded-lg hover:bg-muted"
+                              aria-label={`Options for ${source.title}`}
+                            >
+                              <HugeiconsIcon
+                                icon={MoreHorizontalIcon}
+                                strokeWidth={1.5}
+                                className="size-4"
+                                aria-hidden
+                              />
+                            </Button>
+                          </DropdownMenuTrigger>
                         <DropdownMenuContent
                           align="end"
                           className="w-40 rounded-xl"
@@ -393,9 +473,11 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                 );
               })}
             </ul>
+            )}
           </>
         )}
       </div>
+
 
       {/* Dialogs */}
       <ImportTypeDialog

@@ -66,8 +66,7 @@ export class LearningArtifactService {
     const artifact = await LearningArtifactRepository.create({
       workspaceId,
       type: input.type,
-      title:
-        input.title || `${defaultTitle} · ${new Date().toLocaleDateString()}`,
+      title: input.title || defaultTitle,
       sourceIds: context.sourceIds,
       status: "PENDING",
     });

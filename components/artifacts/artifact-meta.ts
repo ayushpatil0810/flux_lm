@@ -35,3 +35,18 @@ export function artifactSubtitle(artifact: LearningArtifact): string | null {
   if (count === 0) return null;
   return `Based on ${count} ${count === 1 ? "source" : "sources"}`;
 }
+
+/**
+ * Strips date suffix (e.g., " · 9/5/2026" or " · Sep 5, 2026") from an artifact title.
+ */
+export function cleanArtifactTitle(title: string): string {
+  if (!title) return "";
+  return title
+    .replace(
+      /\s*·\s*(\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4}|\d{1,2}[-/.]\d{1,2}[-/.]\d{1,4}|[A-Za-z]{3,9}\s+\d{1,2}(?:st|nd|rd|th)?,?\s*\d{4}|\d{1,2}\s+[A-Za-z]{3,9},?\s*\d{4}).*$/,
+      "",
+    )
+    .replace(/\s*·\s*\d{1,4}[-/.]\d{1,2}.*$/, "")
+    .trim();
+}
+

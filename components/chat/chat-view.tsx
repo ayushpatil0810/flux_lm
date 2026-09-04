@@ -46,7 +46,7 @@ interface ChatViewProps {
 export function ChatView({ workspaceId }: ChatViewProps) {
   const queryClient = useQueryClient();
   const { push } = useToast();
-  const { setLeftOpen } = useWorkspacePanel();
+  const { setLeftOpen, setImportDialogOpen } = useWorkspacePanel();
   const { setPreviewSource } = useWorkspacePreview();
 
   const { data: workspace } = useWorkspaceContext();
@@ -218,10 +218,24 @@ export function ChatView({ workspaceId }: ChatViewProps) {
   }
 
   return (
-    <div className="bg-background flex h-full w-full min-h-0 overflow-hidden font-inter font-normal">
+    <div className="bg-card flex h-full w-full min-h-0 flex-col overflow-hidden font-inter font-normal">
+      {/* Unified Card Header */}
+      <div className="flex h-13 shrink-0 items-center justify-between border-b border-border/50 px-4 bg-card">
+        <div className="flex items-center gap-2">
+          <h2 className="text-base font-semibold tracking-tight text-foreground">
+            Chat
+          </h2>
+          {sourcesCount > 0 ? (
+            <span className="text-muted-foreground text-xs font-mono">
+              • {sourcesCount} {sourcesCount === 1 ? "source" : "sources"}
+            </span>
+          ) : null}
+        </div>
+      </div>
+
       <section
         aria-label="Conversation"
-        className="bg-background flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+        className="bg-card flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
       >
         {hasEverStreamedRef.current ||
         activeConversationId ||
@@ -269,7 +283,7 @@ export function ChatView({ workspaceId }: ChatViewProps) {
           </>
         ) : (
           <>
-            <div className="flex min-h-0 flex-1 flex-col items-center p-3 pt-14 pb-2 sm:p-8 sm:pt-8 md:p-12 overflow-y-auto">
+            <div className="flex min-h-0 flex-1 flex-col items-center p-3 sm:p-8 md:p-12 overflow-y-auto">
               <div className="animate-in fade-in my-auto flex w-full max-w-xl flex-col items-center text-center duration-300">
                 <h1 className="text-foreground font-heading text-xl xs:text-2xl sm:text-3xl md:text-4xl font-medium tracking-tight text-balance">
                   Ask {workspace?.title ?? "this workspace"}
@@ -284,10 +298,13 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                 {noSources ? (
                   <button
                     type="button"
-                    onClick={() => setLeftOpen(true)}
-                    className="group border-border/60 hover:border-primary/50 hover:bg-primary/5 mt-4 sm:mt-8 flex items-center gap-3.5 rounded-2xl border border-dashed p-3 sm:p-4 text-left transition-all duration-200 cursor-pointer shadow-xs hover:shadow-sm"
+                    onClick={() => {
+                      setImportDialogOpen(true);
+                      setLeftOpen(true);
+                    }}
+                    className="group border-border/60 hover:border-primary/50 hover:bg-primary/5 mt-5 sm:mt-8 flex items-center gap-3.5 rounded-2xl border border-dashed p-3.5 sm:p-4 text-left transition-all duration-200 cursor-pointer shadow-xs hover:shadow-sm active:scale-[0.99]"
                   >
-                    <div className="bg-primary/10 text-primary flex size-9 sm:size-10 shrink-0 items-center justify-center rounded-xl transition-colors group-hover:bg-primary/15">
+                    <div className="text-primary flex size-8 sm:size-9 shrink-0 items-center justify-center transition-transform group-hover:scale-110">
                       <HugeiconsIcon
                         icon={FileUploadIcon}
                         strokeWidth={1.5}
@@ -304,7 +321,7 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                     </div>
                   </button>
                 ) : (
-                  <div className="mt-4 sm:mt-8 grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
+                  <div className="mt-5 sm:mt-8 grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
                     {[
                       {
                         label: "Summarize key takeaways",
@@ -328,12 +345,12 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                       <button
                         key={item.label}
                         onClick={() => void send(item.prompt)}
-                        className="group border-border/50 bg-card/40 hover:border-primary/40 hover:bg-card/60 focus-visible:ring-ring flex flex-col justify-between rounded-xl border p-2.5 sm:p-4 text-left transition-all duration-300 hover:shadow-sm focus-visible:ring-2 focus-visible:outline-none"
+                        className="group border-border/50 bg-card/50 hover:border-primary/40 hover:bg-card focus-visible:ring-ring flex flex-col justify-between rounded-xl border p-2.5 sm:p-3.5 text-left transition-all duration-200 hover:shadow-xs active:scale-[0.98] focus-visible:ring-2 focus-visible:outline-none"
                       >
                         <span className="text-foreground text-xs sm:text-sm font-medium">
                           {item.label}
                         </span>
-                        <span className="text-muted-foreground mt-0.5 sm:mt-1 line-clamp-1 text-[11px] sm:text-xs">
+                        <span className="text-muted-foreground mt-0.5 sm:mt-1 line-clamp-1 text-[11px] sm:text-xs font-inter">
                           {item.prompt}
                         </span>
                       </button>
@@ -342,6 +359,7 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                 )}
               </div>
             </div>
+
             <Composer
               isStreaming={stream !== null}
               onSend={(text) => void send(text)}

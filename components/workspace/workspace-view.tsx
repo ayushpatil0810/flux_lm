@@ -3,12 +3,15 @@
 import * as React from "react";
 
 import { SidebarSources } from "@/components/sources/sidebar-sources";
+import { SidebarSourcesRail } from "@/components/sources/sidebar-sources-rail";
 import { SourcePreview } from "@/components/sources/source-preview";
 import { SidebarArtifacts } from "@/components/artifacts/sidebar-artifacts";
+import { SidebarArtifactsRail } from "@/components/artifacts/sidebar-artifacts-rail";
 import { ArtifactPreview } from "@/components/artifacts/artifact-preview";
 import { ChatView } from "@/components/chat/chat-view";
 import { EditWorkspaceDialog } from "@/components/shell/edit-workspace-dialog";
 import { MemoriesSheet } from "@/components/memories/memories-sheet";
+import { ImportSourceDialog } from "@/components/sources/import-dialog";
 import { useWorkspaceContext } from "@/components/shell/workspace-context";
 import { useSources } from "@/hooks/use-sources";
 import { useArtifacts } from "@/hooks/use-artifacts";
@@ -16,9 +19,6 @@ import {
   useWorkspacePanel,
   useWorkspacePreview,
 } from "@/components/shell/workspace-panel-context";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { SidebarLeftIcon, SidebarRightIcon } from "@hugeicons/core-free-icons";
-import { Button } from "@/components/ui/button";
 import { WorkspaceTopbar } from "./workspace-topbar";
 import { usePanelResize } from "@/hooks/use-panel-resize";
 import { cn } from "@/lib/utils";
@@ -28,11 +28,11 @@ interface WorkspaceViewProps {
 }
 
 /**
- * Three-column workspace:
- * - Left panel: Sources (resizable on desktop, overlay drawer on mobile)
- * - Center: Chat (flex-1)
- * - Right panel: Artifacts (resizable on desktop, overlay drawer on mobile)
- * Includes mobile overlay states and topbar orchestration.
+ * Modernized Adaptive Workspace:
+ * - Left Rail: Sources & Library (resizable on desktop, slide drawer on mobile)
+ * - Center Stage: Adaptive Work Surface (Chat / Split / Full Studio Canvas)
+ * - Right Rail: Studio & Learning Artifacts (resizable on desktop, slide drawer on mobile)
+ * - Topbar: Unified command & control header with view switcher and shortcuts
  */
 export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
   const {
@@ -44,12 +44,17 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
     setMobileLeftOpen,
     mobileRightOpen,
     setMobileRightOpen,
+    viewMode,
+    importDialogOpen,
+    setImportDialogOpen,
   } = useWorkspacePanel();
+
   const {
     previewSource,
-    setPreviewSource,
     previewArtifactId,
     setPreviewArtifactId,
+    previewExpanded,
+    closePreview,
   } = useWorkspacePreview();
 
   const [settingsOpen, setSettingsOpen] = React.useState(false);
@@ -59,7 +64,7 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
   const { data: sources } = useSources(workspaceId);
   const { data: artifacts } = useArtifacts(workspaceId);
 
-  // Resizing hooks
+  // Resizing hooks with local storage persistence
   const leftResize = usePanelResize({
     id: "sidebar-left",
     initialWidth: 280,
@@ -78,134 +83,29 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
 
   const previewResize = usePanelResize({
     id: "preview-panel",
-    initialWidth: 600,
-    minWidth: 320,
-    maxWidth: 1200,
+    initialWidth: 620,
+    minWidth: 340,
+    maxWidth: 1100,
     side: "left",
   });
 
   const hasPreview = !!previewSource || !!previewArtifactId;
 
-  // Handle Escape key to dismiss preview pane or close open sidebars
-  React.useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        if (previewSource || previewArtifactId) {
-          setPreviewSource(null);
-          setPreviewArtifactId(null);
-        } else if (mobileLeftOpen) {
-          setMobileLeftOpen(false);
-        } else if (mobileRightOpen) {
-          setMobileRightOpen(false);
-        } else if (leftOpen) {
-          setLeftOpen(false);
-        } else if (rightOpen) {
-          setRightOpen(false);
-        }
-      }
-    }
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [
-    previewSource,
-    previewArtifactId,
-    leftOpen,
-    rightOpen,
-    mobileLeftOpen,
-    mobileRightOpen,
-    setPreviewSource,
-    setPreviewArtifactId,
-    setLeftOpen,
-    setRightOpen,
-    setMobileLeftOpen,
-    setMobileRightOpen,
-  ]);
-
   return (
     <div className="bg-background flex h-full flex-col overflow-hidden">
-      {/* Topbar */}
+      {/* 1. Global Workspace Topbar */}
       <WorkspaceTopbar
         workspaceId={workspaceId}
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenMemories={() => setMemoriesOpen(true)}
       />
 
-      {/* Three-column body */}
-      <div className="relative flex min-h-0 flex-1 overflow-hidden">
-        {/* Floating Left Toggle: Open Sources (Visible when desktop left panel or mobile left drawer is closed) */}
-        {(!leftOpen || !mobileLeftOpen) && (
+      {/* 2. Workspace Body (NotebookLM style 3-panel separated surface layout) */}
+      <div className="relative flex min-h-0 flex-1 overflow-hidden px-2 pb-2 md:px-2.5 md:pb-2.5 pt-0 gap-2 md:gap-2.5 bg-background">
+        {/* ── Left Rail (Sources) Desktop ─────────────────────────────────── */}
+        {leftOpen ? (
           <div
-            className={cn(
-              "absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-30 animate-in fade-in zoom-in-95 duration-200",
-              leftOpen ? "flex md:hidden" : "flex",
-              mobileLeftOpen ? "hidden md:flex" : ""
-            )}
-          >
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setLeftOpen(true);
-                setMobileLeftOpen(true);
-              }}
-              aria-label="Open sources panel"
-              className="h-8 gap-1.5 sm:gap-2 rounded-xl border-border/60 bg-background/85 px-2 sm:px-3 text-xs font-medium text-foreground backdrop-blur-md shadow-xs transition-all hover:bg-background hover:border-primary/40 hover:shadow-sm"
-            >
-              <HugeiconsIcon
-                icon={SidebarLeftIcon}
-                strokeWidth={1.5}
-                className="size-3.5 text-muted-foreground"
-              />
-              <span className="hidden sm:inline">Sources</span>
-              {sources && sources.length > 0 && (
-                <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-mono leading-none text-muted-foreground">
-                  {sources.length}
-                </span>
-              )}
-            </Button>
-          </div>
-        )}
-
-        {/* Floating Right Toggle: Open Artifacts (Visible when desktop right panel or mobile right drawer is closed) */}
-        {(!rightOpen || !mobileRightOpen) && (
-          <div
-            className={cn(
-              "absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-30 animate-in fade-in zoom-in-95 duration-200",
-              rightOpen ? "flex md:hidden" : "flex",
-              mobileRightOpen ? "hidden md:flex" : ""
-            )}
-          >
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setRightOpen(true);
-                setMobileRightOpen(true);
-              }}
-              aria-label="Open artifacts panel"
-              className="h-8 gap-1.5 sm:gap-2 rounded-xl border-border/60 bg-background/85 px-2 sm:px-3 text-xs font-medium text-foreground backdrop-blur-md shadow-xs transition-all hover:bg-background hover:border-primary/40 hover:shadow-sm"
-            >
-              <span className="hidden sm:inline">Artifacts</span>
-              {artifacts && artifacts.length > 0 && (
-                <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-mono leading-none text-muted-foreground">
-                  {artifacts.length}
-                </span>
-              )}
-              <HugeiconsIcon
-                icon={SidebarRightIcon}
-                strokeWidth={1.5}
-                className="size-3.5 text-muted-foreground"
-              />
-            </Button>
-          </div>
-        )}
-
-        {/* ── Left Panel (Sources) Desktop ────────────────────────────────── */}
-        {leftOpen && (
-          <div
-            className="border-border/40 animate-in slide-in-from-left-4 relative hidden shrink-0 border-r duration-300 md:flex md:flex-col"
+            className="relative hidden shrink-0 overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs md:flex md:flex-col z-20 animate-in slide-in-from-left-2 duration-200"
             style={{ width: leftResize.width }}
           >
             <SidebarSources
@@ -215,22 +115,30 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
             {/* Drag Handle */}
             <div
               onMouseDown={leftResize.onMouseDown}
-              className="hover:bg-primary/20 active:bg-primary/40 absolute top-0 right-0 z-10 flex h-full w-2 cursor-col-resize items-center justify-center bg-transparent transition-colors"
+              className="hover:bg-primary/20 active:bg-primary/40 group absolute top-0 -right-1 z-10 flex h-full w-2 cursor-col-resize items-center justify-center bg-transparent transition-colors"
+              title="Drag to resize sources rail"
             >
-              <div className="bg-border/80 h-8 w-0.5 rounded-full" />
+              <div className="bg-border/80 group-hover:bg-primary/60 h-8 w-0.5 rounded-full transition-colors" />
             </div>
+          </div>
+        ) : (
+          <div className="hidden md:flex shrink-0">
+            <SidebarSourcesRail
+              workspaceId={workspaceId}
+              onExpand={() => setLeftOpen(true)}
+            />
           </div>
         )}
 
-        {/* Mobile Left Overlay (Closed by default on mobile) */}
+        {/* Mobile Left Overlay */}
         {mobileLeftOpen && (
-          <div className="fixed inset-0 z-40 md:hidden">
+          <div className="fixed inset-0 z-50 md:hidden">
             <div
-              className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+              className="absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
               onClick={() => setMobileLeftOpen(false)}
               aria-hidden
             />
-            <div className="bg-background animate-in slide-in-from-left absolute inset-y-0 left-0 flex w-[85vw] max-w-sm flex-col shadow-2xl duration-300 pb-[env(safe-area-inset-bottom)]">
+            <div className="bg-card animate-in slide-in-from-left absolute inset-y-0 left-0 flex w-[86vw] max-w-sm flex-col shadow-2xl duration-200 pb-[env(safe-area-inset-bottom)]">
               <SidebarSources
                 workspaceId={workspaceId}
                 onClose={() => setMobileLeftOpen(false)}
@@ -239,44 +147,68 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
           </div>
         )}
 
-        {/* ── Center (Chat) ────────────────────────────────────────────────── */}
-        <main className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+        {/* ── Center Stage: Adaptive Work Surface (Chat / Split / Canvas) ── */}
+        <main className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs">
           <div className="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
             {hasPreview ? (
               <>
-                <div
-                  className="border-border/30 relative flex min-h-0 w-full shrink-0 flex-col border-b h-[45vh] md:h-full md:w-[var(--preview-width)] md:border-r md:border-b-0"
-                  style={
-                    {
-                      "--preview-width": `${previewResize.width}px`,
-                    } as React.CSSProperties
-                  }
-                >
-                  {previewSource ? (
-                    <SourcePreview
-                      source={previewSource}
-                      onClose={() => setPreviewSource(null)}
-                    />
-                  ) : previewArtifactId ? (
-                    <ArtifactPreview
-                      workspaceId={workspaceId}
-                      artifactId={previewArtifactId}
-                      onClose={() => setPreviewArtifactId(null)}
-                    />
-                  ) : null}
-                  {/* Drag Handle */}
-                  <div
-                    onMouseDown={previewResize.onMouseDown}
-                    className="hover:bg-primary/20 active:bg-primary/40 absolute top-0 right-0 z-10 hidden h-full w-2 cursor-col-resize items-center justify-center bg-transparent transition-colors md:flex"
-                  >
-                    <div className="bg-border/80 h-8 w-0.5 rounded-full" />
+                {/* Full Studio Canvas Mode: Preview takes 100% of the surface */}
+                {viewMode === "studio" || previewExpanded ? (
+                  <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col animate-in fade-in duration-200">
+                    {previewSource ? (
+                      <SourcePreview
+                        source={previewSource}
+                        onClose={closePreview}
+                      />
+                    ) : previewArtifactId ? (
+                      <ArtifactPreview
+                        workspaceId={workspaceId}
+                        artifactId={previewArtifactId}
+                        onClose={closePreview}
+                      />
+                    ) : null}
                   </div>
-                </div>
-                <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
-                  <ChatView workspaceId={workspaceId} />
-                </div>
+                ) : (
+                  /* Split Mode: Preview + Chat side-by-side */
+                  <>
+                    <div
+                      className="border-border/50 relative flex min-h-0 w-full shrink-0 flex-col border-b h-[45vh] md:h-full md:w-[var(--preview-width)] md:border-r md:border-b-0 animate-in slide-in-from-left-2 duration-200"
+                      style={
+                        {
+                          "--preview-width": `${previewResize.width}px`,
+                        } as React.CSSProperties
+                      }
+                    >
+                      {previewSource ? (
+                        <SourcePreview
+                          source={previewSource}
+                          onClose={closePreview}
+                        />
+                      ) : previewArtifactId ? (
+                        <ArtifactPreview
+                          workspaceId={workspaceId}
+                          artifactId={previewArtifactId}
+                          onClose={closePreview}
+                        />
+                      ) : null}
+                      {/* Drag Handle */}
+                      <div
+                        onMouseDown={previewResize.onMouseDown}
+                        className="hover:bg-primary/20 active:bg-primary/40 group absolute top-0 right-0 z-10 hidden h-full w-2 cursor-col-resize items-center justify-center bg-transparent transition-colors md:flex"
+                        title="Drag to resize split view"
+                      >
+                        <div className="bg-border/80 group-hover:bg-primary/60 h-8 w-0.5 rounded-full transition-colors" />
+                      </div>
+                    </div>
+
+                    <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
+                      <ChatView workspaceId={workspaceId} />
+                    </div>
+                  </>
+                )}
               </>
             ) : (
+              /* Pure Chat Mode */
               <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
                 <ChatView workspaceId={workspaceId} />
               </div>
@@ -284,18 +216,19 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
           </div>
         </main>
 
-        {/* ── Right Panel (Artifacts) Desktop ──────────────────────────────── */}
-        {rightOpen && (
+        {/* ── Right Rail (Studio / Artifacts) Desktop ─────────────────────── */}
+        {rightOpen ? (
           <div
-            className="border-border/40 animate-in slide-in-from-right-4 relative hidden shrink-0 border-l duration-300 md:flex md:flex-col"
+            className="relative hidden shrink-0 overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs md:flex md:flex-col z-20 animate-in slide-in-from-right-2 duration-200"
             style={{ width: rightResize.width }}
           >
             {/* Drag Handle */}
             <div
               onMouseDown={rightResize.onMouseDown}
-              className="hover:bg-primary/20 active:bg-primary/40 absolute top-0 left-0 z-10 flex h-full w-2 -translate-x-1/2 cursor-col-resize items-center justify-center bg-transparent transition-colors"
+              className="hover:bg-primary/20 active:bg-primary/40 group absolute top-0 -left-1 z-10 flex h-full w-2 cursor-col-resize items-center justify-center bg-transparent transition-colors"
+              title="Drag to resize artifacts rail"
             >
-              <div className="bg-border/80 h-8 w-0.5 rounded-full" />
+              <div className="bg-border/80 group-hover:bg-primary/60 h-8 w-0.5 rounded-full transition-colors" />
             </div>
             <SidebarArtifacts
               workspaceId={workspaceId}
@@ -303,27 +236,42 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
               onPreviewArtifact={(id) => setPreviewArtifactId(id)}
             />
           </div>
+        ) : (
+          <div className="hidden md:flex shrink-0">
+            <SidebarArtifactsRail
+              workspaceId={workspaceId}
+              onExpand={() => setRightOpen(true)}
+              onPreviewArtifact={(id) => setPreviewArtifactId(id)}
+            />
+          </div>
         )}
 
-        {/* Mobile Right Overlay (Closed by default on mobile) */}
+        {/* Mobile Right Overlay */}
         {mobileRightOpen && (
-          <div className="fixed inset-0 z-40 md:hidden">
+          <div className="fixed inset-0 z-50 md:hidden">
             <div
-              className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+              className="absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
               onClick={() => setMobileRightOpen(false)}
               aria-hidden
             />
-            <div className="bg-background animate-in slide-in-from-right absolute inset-y-0 right-0 flex w-[85vw] max-w-sm flex-col shadow-2xl duration-300 pb-[env(safe-area-inset-bottom)]">
+            <div className="bg-background animate-in slide-in-from-right absolute inset-y-0 right-0 flex w-[86vw] max-w-sm flex-col shadow-2xl duration-200 pb-[env(safe-area-inset-bottom)]">
               <SidebarArtifacts
                 workspaceId={workspaceId}
                 onClose={() => setMobileRightOpen(false)}
                 onPreviewArtifact={(id) => setPreviewArtifactId(id)}
               />
+
             </div>
           </div>
         )}
       </div>
 
+      {/* 3. Global Dialogs & Sheets */}
+      <ImportSourceDialog
+        workspaceId={workspaceId}
+        open={importDialogOpen}
+        onOpenChange={setImportDialogOpen}
+      />
       <EditWorkspaceDialog
         workspace={workspace ?? null}
         open={settingsOpen}
@@ -333,3 +281,4 @@ export function WorkspaceView({ workspaceId }: WorkspaceViewProps) {
     </div>
   );
 }
+

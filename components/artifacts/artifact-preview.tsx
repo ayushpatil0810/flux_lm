@@ -1,8 +1,7 @@
 "use client";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Loading02Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { formatDate } from "@/lib/utils";
 import { useArtifact, useDeleteArtifact } from "@/hooks/use-artifacts";
 import { useToast } from "@/components/providers/toast-provider";
@@ -10,9 +9,22 @@ import { ErrorState, LoadingState } from "@/components/shell/states";
 import { ConfirmDeleteDialog } from "@/components/sources/confirm-delete-dialog";
 import { StatusIndicator } from "@/components/ui/status-indicator";
 import { Button } from "@/components/ui/button";
-import { ARTIFACT_TYPE_LABELS } from "./artifact-meta";
+import { ARTIFACT_TYPE_LABELS, cleanArtifactTitle } from "./artifact-meta";
 import { ArtifactViewer } from "./artifact-viewers";
 import { getErrorMessage } from "@/lib/api";
+import {
+  ArrowExpand01Icon,
+  ArrowShrink01Icon,
+  Cancel01Icon,
+  Loading02Icon,
+} from "@hugeicons/core-free-icons";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useWorkspacePreview } from "@/components/shell/workspace-panel-context";
+
 
 interface ArtifactPreviewProps {
   workspaceId: string;
@@ -26,6 +38,7 @@ export function ArtifactPreview({
   onClose,
 }: ArtifactPreviewProps) {
   const { push } = useToast();
+  const { previewExpanded, togglePreviewExpanded } = useWorkspacePreview();
   const {
     data: artifact,
     isPending,
@@ -82,12 +95,12 @@ export function ArtifactPreview({
     );
   } else {
     content = (
-      <div className="bg-background flex h-full min-h-0 flex-col">
-        <header className="border-border/40 bg-background flex h-14 shrink-0 items-center justify-between border-b px-4">
+      <div className="bg-card flex h-full min-h-0 flex-col">
+        <header className="border-border/50 bg-card flex h-12 shrink-0 items-center justify-between border-b px-3 sm:px-4">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <h2 className="text-foreground truncate text-sm font-semibold tracking-tight">
-                {artifact.title}
+                {cleanArtifactTitle(artifact.title)}
               </h2>
               <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
                 {ARTIFACT_TYPE_LABELS[artifact.type]}
@@ -99,7 +112,8 @@ export function ArtifactPreview({
               <span>{formatDate(artifact.createdAt)}</span>
             </p>
           </div>
-          <div className="flex items-center gap-1.5 shrink-0 ml-3">
+
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 ml-3">
             <Button
               variant="ghost"
               size="sm"
@@ -108,21 +122,54 @@ export function ArtifactPreview({
             >
               Delete
             </Button>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close preview"
-              className="text-muted-foreground hover:text-foreground flex size-7 items-center justify-center rounded-lg transition-colors hover:bg-muted"
-            >
-              <HugeiconsIcon
-                icon={Cancel01Icon}
-                strokeWidth={1.5}
-                className="size-3.5"
-                aria-hidden
-              />
-            </button>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={togglePreviewExpanded}
+                  aria-label={
+                    previewExpanded ? "Restore (⌘E)" : "Maximize (⌘E)"
+                  }
+                  className="text-muted-foreground hover:text-foreground flex size-7 items-center justify-center rounded-lg transition-colors hover:bg-muted active:scale-95"
+                >
+                  <HugeiconsIcon
+                    icon={
+                      previewExpanded ? ArrowShrink01Icon : ArrowExpand01Icon
+                    }
+                    strokeWidth={1.5}
+                    className="size-3.5"
+                  />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" sideOffset={6}>
+                {previewExpanded ? "Restore (⌘E)" : "Maximize (⌘E)"}
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label="Close preview"
+                  className="text-muted-foreground hover:text-foreground flex size-7 items-center justify-center rounded-lg transition-colors hover:bg-muted active:scale-95"
+                >
+                  <HugeiconsIcon
+                    icon={Cancel01Icon}
+                    strokeWidth={1.5}
+                    className="size-3.5"
+                    aria-hidden
+                  />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" sideOffset={6}>
+                Close preview (<kbd className="font-mono text-[10px]">Esc</kbd>)
+              </TooltipContent>
+            </Tooltip>
           </div>
         </header>
+
 
         <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
           {generating ? (

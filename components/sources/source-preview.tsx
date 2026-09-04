@@ -5,6 +5,12 @@ import {
   LinkSquare01Icon,
   File01Icon,
   Loading02Icon,
+  ArrowExpand01Icon,
+  ArrowShrink01Icon,
+  Pdf01Icon,
+  InternetIcon,
+  YoutubeIcon,
+  NoteIcon,
 } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
@@ -13,6 +19,12 @@ import remarkGfm from "remark-gfm";
 
 import type { Source } from "@/lib/api";
 import { SOURCE_TYPE_LABELS, displayUrl } from "./source-meta";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useWorkspacePreview } from "@/components/shell/workspace-panel-context";
 
 interface SourcePreviewProps {
   source: Source;
@@ -35,6 +47,7 @@ function getYouTubeEmbedUrl(url: string) {
 }
 
 export function SourcePreview({ source, onClose }: SourcePreviewProps) {
+  const { previewExpanded, togglePreviewExpanded } = useWorkspacePreview();
   const [viewMode, setViewMode] = React.useState<"pdf" | "text">("pdf");
   const [isPdfLoading, setIsPdfLoading] = React.useState(true);
   const isPdf = source.type === "PDF";
@@ -47,17 +60,40 @@ export function SourcePreview({ source, onClose }: SourcePreviewProps) {
   }, [source.id, viewMode, isPdf]);
 
   return (
-    <div className="bg-background flex h-full w-full flex-col overflow-hidden">
+    <div className="bg-card flex h-full w-full flex-col overflow-hidden">
       {/* Header */}
-      <header className="border-border/40 bg-background flex h-14 shrink-0 items-center justify-between border-b px-2.5 sm:px-4">
+      <header className="border-border/50 bg-card flex h-12 shrink-0 items-center justify-between border-b px-2.5 sm:px-4">
         <div className="flex min-w-0 items-center gap-2 sm:gap-2.5">
-          <div className="bg-muted text-muted-foreground flex size-7 shrink-0 items-center justify-center rounded-lg">
-            <HugeiconsIcon
-              icon={File01Icon}
-              strokeWidth={1.5}
-              className="size-3.5"
-              aria-hidden
-            />
+          <div className="text-muted-foreground flex size-6 shrink-0 items-center justify-center">
+            {source.type === "PDF" ? (
+              <HugeiconsIcon
+                icon={Pdf01Icon}
+                strokeWidth={1.5}
+                className="size-3.5 text-red-500"
+                aria-hidden
+              />
+            ) : source.type === "WEBSITE" ? (
+              <HugeiconsIcon
+                icon={InternetIcon}
+                strokeWidth={1.5}
+                className="size-3.5 text-blue-500"
+                aria-hidden
+              />
+            ) : source.type === "YOUTUBE" ? (
+              <HugeiconsIcon
+                icon={YoutubeIcon}
+                strokeWidth={1.5}
+                className="size-3.5 text-red-500"
+                aria-hidden
+              />
+            ) : (
+              <HugeiconsIcon
+                icon={NoteIcon}
+                strokeWidth={1.5}
+                className="size-3.5 text-amber-500"
+                aria-hidden
+              />
+            )}
           </div>
           <div className="min-w-0 flex-1">
             <h2 className="text-foreground truncate text-sm leading-tight font-semibold tracking-tight">
@@ -88,7 +124,7 @@ export function SourcePreview({ source, onClose }: SourcePreviewProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {isPdf && source.content ? (
             <div className="flex items-center rounded-lg border border-border/60 bg-muted/40 p-0.5 text-xs">
               <button
@@ -116,21 +152,49 @@ export function SourcePreview({ source, onClose }: SourcePreviewProps) {
             </div>
           ) : null}
 
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close preview"
-            className="text-muted-foreground hover:text-foreground flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-muted"
-          >
-            <HugeiconsIcon
-              icon={Cancel01Icon}
-              strokeWidth={1.5}
-              className="size-3.5"
-              aria-hidden
-            />
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={togglePreviewExpanded}
+                aria-label={previewExpanded ? "Restore (⌘E)" : "Maximize (⌘E)"}
+                className="text-muted-foreground hover:text-foreground flex size-7 items-center justify-center rounded-lg transition-colors hover:bg-muted active:scale-95"
+              >
+                <HugeiconsIcon
+                  icon={previewExpanded ? ArrowShrink01Icon : ArrowExpand01Icon}
+                  strokeWidth={1.5}
+                  className="size-3.5"
+                />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={6}>
+              {previewExpanded ? "Restore (⌘E)" : "Maximize (⌘E)"}
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close preview"
+                className="text-muted-foreground hover:text-foreground flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-muted active:scale-95"
+              >
+                <HugeiconsIcon
+                  icon={Cancel01Icon}
+                  strokeWidth={1.5}
+                  className="size-3.5"
+                  aria-hidden
+                />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={6}>
+              Close preview (<kbd className="font-mono text-[10px]">Esc</kbd>)
+            </TooltipContent>
+          </Tooltip>
         </div>
       </header>
+
 
       {/* Body */}
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">

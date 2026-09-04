@@ -221,6 +221,7 @@ interface ArtifactConfigDialogProps {
   /** The artifact type to generate. null means closed. */
   type: ArtifactType | null;
   onOpenChange: (open: boolean) => void;
+  onCreated?: (id: string) => void;
 }
 
 /**
@@ -231,6 +232,7 @@ export function ArtifactConfigDialog({
   workspaceId,
   type,
   onOpenChange,
+  onCreated,
 }: ArtifactConfigDialogProps) {
   const { push } = useToast();
   const createArtifact = useCreateArtifact(workspaceId);
@@ -273,7 +275,7 @@ export function ArtifactConfigDialog({
     e.preventDefault();
     if (!type) return;
     try {
-      await createArtifact.mutateAsync({
+      const created = await createArtifact.mutateAsync({
         type,
         title: title.trim() || undefined,
         sourceIds: selectedSources.map((s) => s.id),
@@ -283,6 +285,9 @@ export function ArtifactConfigDialog({
         description: "It will appear below when generation finishes.",
       });
       onOpenChange(false);
+      if (created?.id && onCreated) {
+        onCreated(created.id);
+      }
     } catch (err) {
       push({
         variant: "destructive",
