@@ -38,16 +38,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { ImportPdfForm } from "./import-pdf-form";
-import { ImportWebsiteForm, ImportYoutubeForm } from "./import-url-forms";
-import { ImportTextForm } from "./import-text-form";
+import { useWorkspacePanel } from "@/components/shell/workspace-panel-context";
 
 // ── Source-type picker cards ────────────────────────────────────────────────
 
@@ -93,64 +84,6 @@ export const IMPORT_TYPES: {
   },
 ];
 
-// ── Import dialog (single type) ─────────────────────────────────────────────
-
-export interface ImportTypeDialogProps {
-  workspaceId: string;
-  importType: ImportType | null;
-  onClose: () => void;
-  onImported?: () => void;
-}
-
-export function ImportTypeDialog({
-  workspaceId,
-  importType,
-  onClose,
-  onImported,
-}: ImportTypeDialogProps) {
-  const done = React.useCallback(() => {
-    onClose();
-    onImported?.();
-  }, [onClose, onImported]);
-
-  const titleMap: Record<ImportType, string> = {
-    pdf: "Upload PDF",
-    website: "Add website",
-    youtube: "Add YouTube video",
-    text: "Add note",
-  };
-
-  return (
-    <Dialog
-      open={importType !== null}
-      onOpenChange={(open) => !open && onClose()}
-    >
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-heading font-serif">
-            {importType ? titleMap[importType] : ""}
-          </DialogTitle>
-          <DialogDescription>
-            Flux reads it, indexes it, and cites it in answers.
-          </DialogDescription>
-        </DialogHeader>
-        {importType === "pdf" && (
-          <ImportPdfForm workspaceId={workspaceId} onDone={done} />
-        )}
-        {importType === "website" && (
-          <ImportWebsiteForm workspaceId={workspaceId} onDone={done} />
-        )}
-        {importType === "youtube" && (
-          <ImportYoutubeForm workspaceId={workspaceId} onDone={done} />
-        )}
-        {importType === "text" && (
-          <ImportTextForm workspaceId={workspaceId} onDone={done} />
-        )}
-      </DialogContent>
-    </Dialog>
-  );
-}
-
 // ── Main panel ──────────────────────────────────────────────────────────────
 
 interface SidebarSourcesProps {
@@ -173,8 +106,8 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
   const deleteSource = useDeleteSource(workspaceId);
   const { push } = useToast();
   const { previewSource, setPreviewSource } = useWorkspacePreview();
+  const { setImportDialogOpen } = useWorkspacePanel();
 
-  const [importType, setImportType] = React.useState<ImportType | null>(null);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [detailSource, setDetailSource] = React.useState<Source | null>(null);
   const [renameSource, setRenameSource] = React.useState<Source | null>(null);
@@ -223,72 +156,45 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1.5">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setImportType("pdf")}
-            className="h-8 gap-1.5 px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground rounded-lg"
-            title="Import new source"
-          >
-            <HugeiconsIcon
-              icon={Add01Icon}
-              strokeWidth={2}
-              className="size-3.5 text-primary"
-            />
-            <span>Add</span>
-          </Button>
-
-          {onClose ? (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  aria-label="Collapse sources panel"
-                  className="text-muted-foreground hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors hover:bg-muted active:scale-95"
-                >
-                  <HugeiconsIcon
-                    icon={SidebarLeftIcon}
-                    strokeWidth={1.5}
-                    className="size-5"
-                    aria-hidden
-                  />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" sideOffset={6}>
-                Collapse panel (<kbd className="font-mono text-[10px]">⌘B</kbd>)
-              </TooltipContent>
-            </Tooltip>
-          ) : null}
-        </div>
+        {onClose ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Collapse sources panel"
+                className="text-muted-foreground hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors hover:bg-muted active:scale-95"
+              >
+                <HugeiconsIcon
+                  icon={SidebarLeftIcon}
+                  strokeWidth={1.5}
+                  className="size-5"
+                  aria-hidden
+                />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={6}>
+              Collapse panel (<kbd className="font-mono text-[10px]">⌘B</kbd>)
+            </TooltipContent>
+          </Tooltip>
+        ) : null}
       </div>
 
-      {/* Upload type 4-button strip */}
+      {/* Single Add Source Button */}
       <div className="shrink-0 px-3.5 pt-2.5 pb-2">
-        <div className="grid grid-cols-4 gap-1 rounded-xl bg-muted/40 p-1 border border-border/50">
-          {IMPORT_TYPES.map(({ id, label, hint, Icon }) => (
-            <Tooltip key={id}>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  onClick={() => setImportType(id)}
-                  className="group flex flex-col items-center justify-center gap-1 rounded-lg py-1.5 px-1 text-center transition-all hover:bg-background hover:shadow-2xs active:scale-95"
-                >
-                  <div className="flex size-7 items-center justify-center text-primary transition-transform group-hover:scale-110">
-                    <Icon className="size-5" aria-hidden />
-                  </div>
-                  <span className="text-[11px] font-medium tracking-tight text-foreground line-clamp-1">
-                    {label}
-                  </span>
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" sideOffset={6}>
-                {hint}
-              </TooltipContent>
-            </Tooltip>
-          ))}
-        </div>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setImportDialogOpen(true)}
+          className="w-full h-9 justify-center gap-2 rounded-xl border border-dashed border-border/80 bg-muted/20 hover:border-primary/50 hover:bg-muted/40 text-xs font-medium text-foreground transition-all shadow-none active:scale-[0.99]"
+        >
+          <HugeiconsIcon
+            icon={Add01Icon}
+            strokeWidth={2.5}
+            className="size-3.5 text-primary"
+          />
+          <span>Add Source</span>
+        </Button>
       </div>
 
       {/* Filter search bar (visible when more than 2 sources exist) */}
@@ -339,8 +245,18 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
               No sources yet
             </h3>
             <p className="mt-1 max-w-[200px] text-xs leading-relaxed text-muted-foreground font-inter font-normal">
-              Pick a type above to import PDFs, websites, YouTube videos, or notes.
+              Import PDFs, websites, YouTube videos, or notes to get started.
             </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setImportDialogOpen(true)}
+              className="mt-3.5 h-8 gap-1.5 rounded-lg text-xs font-medium"
+            >
+              <HugeiconsIcon icon={Add01Icon} strokeWidth={2} className="size-3.5 text-primary" />
+              <span>Add Source</span>
+            </Button>
           </div>
         ) : (
           <>
@@ -480,11 +396,6 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
 
 
       {/* Dialogs */}
-      <ImportTypeDialog
-        workspaceId={workspaceId}
-        importType={importType}
-        onClose={() => setImportType(null)}
-      />
       <SourceDetailDialog
         source={detailSource}
         onClose={() => setDetailSource(null)}

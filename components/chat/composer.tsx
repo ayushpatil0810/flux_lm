@@ -105,7 +105,7 @@ export function Composer({
   }
 
   return (
-    <div className="shrink-0 px-2.5 pt-1.5 sm:pt-2 sm:px-4 md:px-8 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-6">
+    <div className="shrink-0 px-2.5 sm:px-4 md:px-6 pt-0 pb-1.5 sm:pb-2">
       <form
         className="mx-auto w-full max-w-3xl"
         onSubmit={(event) => {
@@ -113,7 +113,7 @@ export function Composer({
           submit();
         }}
       >
-        <div className="border-border/50 bg-card focus-within:border-primary/50 focus-within:ring-primary/10 relative flex flex-col rounded-2xl border shadow-sm transition-all focus-within:ring-4">
+        <div className="border-border/60 bg-muted/20 hover:border-border/80 focus-within:border-primary/40 focus-within:bg-card focus-within:ring-primary/10 relative flex flex-col rounded-xl border shadow-2xs transition-all focus-within:ring-2">
           <textarea
             ref={textareaRef}
             rows={1}
@@ -128,34 +128,34 @@ export function Composer({
             placeholder="Ask anything about this workspace..."
             aria-label="Message input"
             // We intentionally do NOT disable the textarea while streaming so users can queue up thoughts.
-            className="text-foreground placeholder:text-muted-foreground/50 max-h-[160px] sm:max-h-[300px] min-h-[46px] sm:min-h-[60px] w-full resize-none bg-transparent px-3 py-2.5 sm:px-4 sm:py-3.5 text-base sm:text-sm leading-relaxed focus:outline-none"
+            className="text-foreground placeholder:text-muted-foreground/45 max-h-[140px] sm:max-h-[220px] min-h-[34px] sm:min-h-[38px] w-full resize-none bg-transparent px-3 pt-2 pb-0.5 sm:px-3.5 sm:pt-2 sm:pb-1 text-sm leading-snug focus:outline-none"
           />
 
-          <div className="flex items-center justify-between gap-1.5 sm:gap-2 px-2.5 sm:px-3 pt-1 pb-2.5 sm:pb-3">
+          <div className="flex items-center justify-between gap-1 sm:gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1">
             <div className="flex items-center gap-1 sm:gap-1.5">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
                     aria-label="Choose model"
-                    className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring flex h-8 items-center gap-1 sm:gap-1.5 rounded-lg px-2 sm:px-2.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                    className="text-muted-foreground hover:bg-muted/80 hover:text-foreground focus-visible:ring-ring flex h-6.5 sm:h-7 items-center gap-1 rounded-md px-1.5 sm:px-2 text-[11px] font-medium transition-colors focus-visible:ring-1 focus-visible:outline-none"
                   >
                     <HugeiconsIcon
                       icon={CpuIcon}
                       strokeWidth={1.5}
-                      className="size-4 shrink-0"
+                      className="size-3.5 shrink-0"
                       aria-hidden
                     />
-                    <span className="truncate max-w-[90px] xs:max-w-none">{MODEL_LABELS[model]}</span>
+                    <span className="truncate max-w-[85px] xs:max-w-none">{MODEL_LABELS[model]}</span>
                     <HugeiconsIcon
                       icon={ArrowDown01Icon}
                       strokeWidth={1.5}
-                      className="size-3.5 shrink-0 opacity-60"
+                      className="size-3 shrink-0 opacity-60"
                       aria-hidden
                     />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-48 rounded-xl">
+                <DropdownMenuContent align="start" className="w-44 rounded-xl">
                   <DropdownMenuRadioGroup
                     value={model}
                     onValueChange={(next) => onModelChange(next as ChatModel)}
@@ -164,7 +164,7 @@ export function Composer({
                       <DropdownMenuRadioItem
                         key={option}
                         value={option}
-                        className="cursor-pointer rounded-lg py-2 text-sm"
+                        className="cursor-pointer rounded-lg py-1.5 text-xs"
                       >
                         {MODEL_LABELS[option]}
                       </DropdownMenuRadioItem>
@@ -178,16 +178,16 @@ export function Composer({
                 aria-pressed={webSearch}
                 onClick={() => onWebSearchChange(!webSearch)}
                 className={cn(
-                  "focus-visible:ring-ring flex h-8 items-center gap-1 sm:gap-1.5 rounded-lg px-2 sm:px-2.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none",
+                  "focus-visible:ring-ring flex h-6.5 sm:h-7 items-center gap-1 rounded-md px-1.5 sm:px-2 text-[11px] font-medium transition-colors focus-visible:ring-1 focus-visible:outline-none",
                   webSearch
                     ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    : "text-muted-foreground hover:bg-muted/80 hover:text-foreground",
                 )}
               >
                 <HugeiconsIcon
                   icon={Link01Icon}
                   strokeWidth={1.5}
-                  className="size-4 shrink-0"
+                  className="size-3.5 shrink-0"
                   aria-hidden
                 />
                 <span className="hidden sm:inline">Web Search</span>
@@ -202,12 +202,12 @@ export function Composer({
                   size="icon"
                   onClick={onStop}
                   aria-label="Stop generating"
-                  className="size-8.5 sm:size-9 rounded-xl shadow-none"
+                  className="size-7 sm:size-7.5 rounded-lg shadow-none"
                 >
                   <HugeiconsIcon
                     icon={Layers01Icon}
                     strokeWidth={1.5}
-                    className="size-4 fill-current"
+                    className="size-3.5 fill-current"
                     aria-hidden
                   />
                 </Button>
@@ -218,16 +218,16 @@ export function Composer({
                   disabled={value.trim().length === 0}
                   aria-label="Send message"
                   className={cn(
-                    "size-8.5 sm:size-9 rounded-xl shadow-none transition-all duration-200",
+                    "size-7 sm:size-7.5 rounded-lg shadow-none transition-all duration-150",
                     value.trim().length > 0
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md"
-                      : "bg-muted text-muted-foreground/40",
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-xs active:scale-95"
+                      : "bg-muted/70 text-muted-foreground/35 cursor-not-allowed",
                   )}
                 >
                   <HugeiconsIcon
                     icon={ArrowUp01Icon}
                     strokeWidth={2}
-                    className="size-4"
+                    className="size-3.5"
                     aria-hidden
                   />
                 </Button>

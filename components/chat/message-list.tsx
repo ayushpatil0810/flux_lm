@@ -62,7 +62,7 @@ export function MessageList({
       onScroll={handleScroll}
       className="min-h-0 flex-1 overflow-y-auto"
     >
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-3 pt-14 pb-6 sm:px-6 sm:pt-8 md:px-8 md:py-10">
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 sm:gap-5 px-3 sm:px-6 md:px-8 pt-2 sm:pt-3 pb-2">
         {messages.map((message) => (
           <TranscriptMessage
             key={message.id}

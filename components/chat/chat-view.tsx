@@ -283,7 +283,7 @@ export function ChatView({ workspaceId }: ChatViewProps) {
           </>
         ) : (
           <>
-            <div className="flex min-h-0 flex-1 flex-col items-center p-3 sm:p-8 md:p-12 overflow-y-auto">
+            <div className="flex min-h-0 flex-1 flex-col items-center px-3 sm:px-8 pt-3 sm:pt-4 pb-2 overflow-y-auto">
               <div className="animate-in fade-in my-auto flex w-full max-w-xl flex-col items-center text-center duration-300">
                 <h1 className="text-foreground font-heading text-xl xs:text-2xl sm:text-3xl md:text-4xl font-medium tracking-tight text-balance">
                   Ask {workspace?.title ?? "this workspace"}
