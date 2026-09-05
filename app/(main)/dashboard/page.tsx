@@ -1,8 +1,13 @@
 import { headers } from "next/headers";
+import type { Metadata } from "next";
 import { auth } from "@/server/auth";
 import { WorkspaceService } from "@/server/modules/workspace/workspace.service";
 import { DashboardClient } from "./dashboard-client";
 import type { Workspace } from "@/lib/api";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({ headers: await headers() });

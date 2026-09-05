@@ -671,3 +671,45 @@
   color: var(--foreground);
 }
 
+/* ── Mobile Frontend System Design Tokens & Resets ── */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+html, body {
+  /* Prevent rubber-banding on document root while allowing it on scroll containers */
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Tap responsiveness: eliminate 300ms mobile touch delay */
+button, a, input, textarea, select {
+  touch-action: manipulation;
+}
+
+/* Prevent auto-zooming on iOS when focusing inputs */
+@media screen and (max-width: 768px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* Safe area padding utilities */
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.5rem);
+}
+
+.pt-safe {
+  padding-top: max(env(safe-area-inset-top, 0px), 0.5rem);
+}
+
+.mb-safe {
+  margin-bottom: max(env(safe-area-inset-bottom, 0px), 0.5rem);
+}
+
+

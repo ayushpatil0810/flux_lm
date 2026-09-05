@@ -74,7 +74,7 @@ export function DashboardClient({
       {/* Subtle background texture for the entire dashboard */}
       <div className="bg-grid absolute inset-0 z-0 opacity-[0.03] pointer-events-none" />
 
-      <div className="relative z-10 mx-auto flex max-w-6xl flex-col px-3.5 py-6 sm:px-4 sm:py-8 md:px-8 md:py-12">
+      <div className="relative z-10 mx-auto flex max-w-6xl flex-col px-3.5 py-6 sm:px-4 sm:py-8 md:px-8 md:py-12 pb-safe">
         {/* Hero Section */}
         <section className="relative mb-6 sm:mb-8 md:mb-10 flex flex-col items-start pt-2 sm:pt-4">
           <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
@@ -140,7 +140,7 @@ export function DashboardClient({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="pointer-events-auto relative z-20 size-8 text-white/60 transition-colors hover:bg-white/20 hover:text-white"
+                            className="pointer-events-auto relative z-20 size-9 sm:size-8 rounded-lg text-white/75 transition-colors hover:bg-white/20 hover:text-white active:scale-95 touch-manipulation"
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();

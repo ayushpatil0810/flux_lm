@@ -73,8 +73,8 @@ function SheetContent({
           <SheetPrimitive.Close data-slot="sheet-close" asChild>
             <Button
               variant="ghost"
-              className="absolute top-4 right-4"
-              size="icon-sm"
+              className="absolute top-3.5 right-3.5 size-9 sm:size-8 touch-manipulation"
+              size="icon"
             >
               <HugeiconsIcon icon={XIcon} className="size-4" />
               <span className="sr-only">Close</span>

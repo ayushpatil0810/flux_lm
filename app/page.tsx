@@ -41,8 +41,8 @@ const USE_CASES = [
 
 function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-3 sm:px-6">
+    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md pt-safe">
+      <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-3.5 sm:px-6">
         <Link
           href="/"
           className="flex items-center gap-2 sm:gap-2.5 transition-opacity hover:opacity-85"
@@ -179,7 +179,7 @@ function FinalCta() {
 
 function Footer() {
   return (
-    <footer className="border-t border-border/40 py-8 bg-background">
+    <footer className="border-t border-border/40 py-8 pb-safe bg-background">
       <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-4 px-4 sm:px-6 sm:flex-row text-center sm:text-left">
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
           <FluxLogo className="text-primary size-4.5" />

@@ -72,20 +72,20 @@ export function WorkspaceTopbar({
   }
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 w-full shrink-0 items-center justify-between bg-background px-2.5 sm:px-4 transition-all">
+    <header className="sticky top-0 z-40 flex h-14 w-full shrink-0 items-center justify-between bg-background px-2.5 sm:px-4 pt-safe transition-all">
       {/* 1. Left Zone: Nav + Left Rail Toggle + Editable Title + Status */}
       <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
             <Link
               href="/dashboard"
-              className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95"
+              className="flex size-9 sm:size-8 shrink-0 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95"
               aria-label="Back to dashboard"
             >
               <HugeiconsIcon
                 icon={ArrowLeft02Icon}
                 strokeWidth={1.5}
-                className="size-4"
+                className="size-4.5 sm:size-4"
               />
             </Link>
           </TooltipTrigger>
@@ -139,10 +139,10 @@ export function WorkspaceTopbar({
             <button
               type="button"
               onClick={startEditing}
-              className="text-foreground hover:bg-muted/80 flex min-w-0 items-center gap-1 rounded-md px-1.5 sm:px-2 py-0.5 text-xs sm:text-sm font-medium tracking-tight transition-colors active:scale-[0.99]"
+              className="text-foreground hover:bg-muted/80 flex min-w-0 items-center gap-1 rounded-md px-1.5 sm:px-2 py-1 sm:py-0.5 text-xs sm:text-sm font-medium tracking-tight transition-colors active:scale-[0.99] touch-manipulation"
               title="Click to rename"
             >
-              <span className="truncate max-w-[110px] xs:max-w-[150px] sm:max-w-xs md:max-w-md">
+              <span className="truncate max-w-[120px] xs:max-w-[170px] sm:max-w-xs md:max-w-md">
                 {workspace?.title ?? "Workspace"}
               </span>
             </button>
@@ -161,7 +161,6 @@ export function WorkspaceTopbar({
 
       {/* 2. Right Zone: Actions + Right Rail Toggle + User */}
       <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
-
         {/* Quick Add Source button */}
         <Button
           type="button"
@@ -173,7 +172,7 @@ export function WorkspaceTopbar({
               setLeftOpen(true);
             }
           }}
-          className="h-8 gap-1.5 rounded-lg border-border/80 px-2.5 text-xs font-medium hover:border-border hover:bg-muted/50 text-foreground active:scale-95 shadow-none"
+          className="h-8.5 sm:h-8 gap-1.5 rounded-lg border-border/80 px-2 sm:px-2.5 text-xs font-medium hover:border-border hover:bg-muted/50 text-foreground active:scale-95 shadow-none"
           title="Add source to workspace"
         >
           <HugeiconsIcon
@@ -183,8 +182,6 @@ export function WorkspaceTopbar({
           />
           <span className="hidden sm:inline">Add Source</span>
         </Button>
-
-
 
         <div className="h-4 w-px bg-border/60 mx-0.5" />
 
@@ -197,7 +194,7 @@ export function WorkspaceTopbar({
               size="icon"
               onClick={onOpenSettings}
               aria-label="Workspace settings"
-              className="size-8 text-muted-foreground hover:text-foreground rounded-lg active:scale-95"
+              className="size-8.5 sm:size-8 text-muted-foreground hover:text-foreground rounded-lg active:scale-95"
             >
               <HugeiconsIcon
                 icon={Settings01Icon}
@@ -213,7 +210,7 @@ export function WorkspaceTopbar({
         </Tooltip>
 
         {/* Theme Switch */}
-        <ThemeSwitch className="size-8" />
+        <ThemeSwitch className="size-8.5 sm:size-8" />
 
         {/* User Avatar Menu */}
         <UserMenu variant="avatar" onMemoriesOpen={onOpenMemories} />

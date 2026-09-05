@@ -105,7 +105,7 @@ export function Composer({
   }
 
   return (
-    <div className="shrink-0 px-2.5 sm:px-4 md:px-6 pt-0 pb-1.5 sm:pb-2">
+    <div className="bg-card border-t border-border/40 p-2 sm:p-3 pb-2 md:pb-3">
       <form
         className="mx-auto w-full max-w-3xl"
         onSubmit={(event) => {
@@ -128,17 +128,17 @@ export function Composer({
             placeholder="Ask anything about this workspace..."
             aria-label="Message input"
             // We intentionally do NOT disable the textarea while streaming so users can queue up thoughts.
-            className="text-foreground placeholder:text-muted-foreground/45 max-h-[140px] sm:max-h-[220px] min-h-[34px] sm:min-h-[38px] w-full resize-none bg-transparent px-3 pt-2 pb-0.5 sm:px-3.5 sm:pt-2 sm:pb-1 text-sm leading-snug focus:outline-none"
+            className="text-foreground placeholder:text-muted-foreground/45 max-h-[140px] sm:max-h-[220px] min-h-[38px] sm:min-h-[38px] w-full resize-none bg-transparent px-3 pt-2.5 pb-1 sm:px-3.5 sm:pt-2 sm:pb-1 text-sm leading-snug focus:outline-none"
           />
 
-          <div className="flex items-center justify-between gap-1 sm:gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1">
+          <div className="flex items-center justify-between gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-2.5 sm:py-1">
             <div className="flex items-center gap-1 sm:gap-1.5">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
                     aria-label="Choose model"
-                    className="text-muted-foreground hover:bg-muted/80 hover:text-foreground focus-visible:ring-ring flex h-6.5 sm:h-7 items-center gap-1 rounded-md px-1.5 sm:px-2 text-[11px] font-medium transition-colors focus-visible:ring-1 focus-visible:outline-none"
+                    className="text-muted-foreground hover:bg-muted/80 hover:text-foreground focus-visible:ring-ring flex h-8 sm:h-7.5 items-center gap-1 rounded-lg px-2 text-xs sm:text-[11px] font-medium transition-colors focus-visible:ring-1 focus-visible:outline-none touch-manipulation"
                   >
                     <HugeiconsIcon
                       icon={CpuIcon}
@@ -178,7 +178,7 @@ export function Composer({
                 aria-pressed={webSearch}
                 onClick={() => onWebSearchChange(!webSearch)}
                 className={cn(
-                  "focus-visible:ring-ring flex h-6.5 sm:h-7 items-center gap-1 rounded-md px-1.5 sm:px-2 text-[11px] font-medium transition-colors focus-visible:ring-1 focus-visible:outline-none",
+                  "focus-visible:ring-ring flex h-8 sm:h-7.5 items-center gap-1 rounded-lg px-2 text-xs sm:text-[11px] font-medium transition-colors focus-visible:ring-1 focus-visible:outline-none touch-manipulation",
                   webSearch
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-muted/80 hover:text-foreground",
@@ -202,7 +202,7 @@ export function Composer({
                   size="icon"
                   onClick={onStop}
                   aria-label="Stop generating"
-                  className="size-7 sm:size-7.5 rounded-lg shadow-none"
+                  className="size-9 sm:size-8 rounded-lg shadow-none touch-manipulation"
                 >
                   <HugeiconsIcon
                     icon={Layers01Icon}
@@ -218,7 +218,7 @@ export function Composer({
                   disabled={value.trim().length === 0}
                   aria-label="Send message"
                   className={cn(
-                    "size-7 sm:size-7.5 rounded-lg shadow-none transition-all duration-150",
+                    "size-9 sm:size-8 rounded-lg shadow-none transition-all duration-150 touch-manipulation",
                     value.trim().length > 0
                       ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-xs active:scale-95"
                       : "bg-muted/70 text-muted-foreground/35 cursor-not-allowed",

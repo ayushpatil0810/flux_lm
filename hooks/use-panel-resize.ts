@@ -13,6 +13,7 @@ interface UsePanelResizeOptions {
 
 interface UsePanelResizeResult {
   width: number;
+  isDragging: boolean;
   onMouseDown: (e: React.MouseEvent) => void;
 }
 
@@ -47,12 +48,17 @@ export function usePanelResize({
     }
   }, [id, minWidth, maxWidth]);
 
+  const [isDragging, setIsDragging] = React.useState(false);
+
   const onMouseDown = React.useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
       dragging.current = true;
+      setIsDragging(true);
       startX.current = e.clientX;
       startWidth.current = currentWidth.current;
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
 
       function onMouseMove(ev: MouseEvent) {
         if (!dragging.current) return;
@@ -70,6 +76,9 @@ export function usePanelResize({
 
       function onMouseUp() {
         dragging.current = false;
+        setIsDragging(false);
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
         if (id) {
@@ -86,5 +95,5 @@ export function usePanelResize({
     [id, side, minWidth, maxWidth],
   );
 
-  return { width, onMouseDown };
+  return { width, isDragging, onMouseDown };
 }

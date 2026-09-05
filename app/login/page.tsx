@@ -113,7 +113,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-dvh flex-col justify-between bg-background selection:bg-primary/20 selection:text-primary">
       {/* Top Header */}
-      <header className="flex h-14 items-center justify-between border-b border-border/40 bg-background/80 px-4 backdrop-blur-md sm:px-8">
+      <header className="flex h-14 items-center justify-between border-b border-border/40 bg-background/80 px-4 backdrop-blur-md sm:px-8 pt-safe">
         <Link
           href="/"
           className="group flex items-center gap-2.5 transition-opacity hover:opacity-85"
@@ -128,7 +128,7 @@ export default function LoginPage() {
       </header>
 
       {/* Main Auth Container */}
-      <main className="flex flex-1 items-center justify-center px-4 py-12 sm:px-6">
+      <main className="flex flex-1 items-center justify-center px-4 py-8 sm:py-12 pb-safe sm:px-6">
         <div className="w-full max-w-sm">
           {/* Brand Icon + Title */}
           <div className="flex flex-col items-center text-center">

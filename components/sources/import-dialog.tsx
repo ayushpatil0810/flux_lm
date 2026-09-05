@@ -325,9 +325,9 @@ export function ImportSourceDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[540px] p-0 overflow-hidden border-border/70 bg-card rounded-2xl shadow-2xl duration-0 data-[state=open]:duration-0 data-[state=closed]:duration-0 animate-none data-[state=open]:animate-none data-[state=closed]:animate-none">
+      <DialogContent className="sm:max-w-[540px] p-0 flex flex-col max-h-[90dvh] overflow-hidden border-border/70 bg-card rounded-2xl shadow-2xl duration-0 data-[state=open]:duration-0 data-[state=closed]:duration-0 animate-none data-[state=open]:animate-none data-[state=closed]:animate-none">
         {/* Header with bespoke title */}
-        <div className="border-b border-border/50 px-5 py-4 bg-muted/15">
+        <div className="border-b border-border/50 px-5 py-4 bg-muted/15 shrink-0">
           <DialogHeader className="text-left">
             <DialogTitle className="text-base sm:text-lg font-semibold tracking-tight text-foreground flex items-center gap-2.5">
               <HugeiconsIcon icon={FileUploadIcon} strokeWidth={1.5} className="size-5.5 text-primary shrink-0" />
@@ -339,7 +339,7 @@ export function ImportSourceDialog({
           </DialogHeader>
         </div>
 
-        <div className="p-5 sm:p-6 space-y-4">
+        <div className="p-5 sm:p-6 space-y-4 overflow-y-auto flex-1">
           {/* 1. Drag & Drop Hero Box */}
           <div>
             <div

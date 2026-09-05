@@ -4,6 +4,7 @@ import * as React from "react";
 import type { Source } from "@/lib/api";
 
 export type WorkspaceViewMode = "chat" | "split" | "studio";
+export type MobileTab = "sources" | "chat" | "studio";
 
 interface WorkspacePanelContextType {
   leftOpen: boolean;
@@ -16,6 +17,8 @@ interface WorkspacePanelContextType {
   setMobileLeftOpen: (open: boolean) => void;
   mobileRightOpen: boolean;
   setMobileRightOpen: (open: boolean) => void;
+  mobileTab: MobileTab;
+  setMobileTab: (tab: MobileTab) => void;
   viewMode: WorkspaceViewMode;
   setViewMode: (mode: WorkspaceViewMode) => void;
   importDialogOpen: boolean;
@@ -61,6 +64,9 @@ export function WorkspacePanelProvider({
   const [mobileLeftOpen, setMobileLeftOpenInternal] = React.useState(false);
   const [mobileRightOpen, setMobileRightOpenInternal] = React.useState(false);
 
+  // Mobile active surface tab (sources | chat | studio)
+  const [mobileTab, setMobileTab] = React.useState<MobileTab>("chat");
+
   // Active preview
   const [previewSource, setPreviewSourceInternal] =
     React.useState<Source | null>(null);
@@ -94,7 +100,10 @@ export function WorkspacePanelProvider({
     setLeftOpenInternal(open);
     if (typeof window !== "undefined" && window.innerWidth < 768) {
       setMobileLeftOpenInternal(open);
-      if (open) setMobileRightOpenInternal(false);
+      if (open) {
+        setMobileRightOpenInternal(false);
+        setMobileTab("sources");
+      }
     }
   }, []);
 
@@ -102,6 +111,7 @@ export function WorkspacePanelProvider({
     if (typeof window !== "undefined" && window.innerWidth < 768) {
       setMobileLeftOpenInternal((prev) => !prev);
       setMobileRightOpenInternal(false);
+      setMobileTab((prev) => (prev === "sources" ? "chat" : "sources"));
     } else {
       setLeftOpenInternal((prev) => !prev);
     }
@@ -111,7 +121,10 @@ export function WorkspacePanelProvider({
     setRightOpenInternal(open);
     if (typeof window !== "undefined" && window.innerWidth < 768) {
       setMobileRightOpenInternal(open);
-      if (open) setMobileLeftOpenInternal(false);
+      if (open) {
+        setMobileLeftOpenInternal(false);
+        setMobileTab("studio");
+      }
     }
   }, []);
 
@@ -119,6 +132,7 @@ export function WorkspacePanelProvider({
     if (typeof window !== "undefined" && window.innerWidth < 768) {
       setMobileRightOpenInternal((prev) => !prev);
       setMobileLeftOpenInternal(false);
+      setMobileTab((prev) => (prev === "studio" ? "chat" : "studio"));
     } else {
       setRightOpenInternal((prev) => !prev);
     }
@@ -128,6 +142,7 @@ export function WorkspacePanelProvider({
     setMobileLeftOpenInternal(open);
     if (open) {
       setMobileRightOpenInternal(false);
+      setMobileTab("sources");
     }
   }, []);
 
@@ -135,6 +150,7 @@ export function WorkspacePanelProvider({
     setMobileRightOpenInternal(open);
     if (open) {
       setMobileLeftOpenInternal(false);
+      setMobileTab("studio");
     }
   }, []);
 
@@ -159,6 +175,7 @@ export function WorkspacePanelProvider({
       if (source) {
         setPreviewArtifactIdInternal(null);
         setViewModeInternal((curr) => (curr === "studio" ? "studio" : "split"));
+        setMobileTab("sources");
         // Prevent 4-column squeeze on standard viewports: collapse right rail if open
         if (typeof window !== "undefined" && window.innerWidth < 1440) {
           setRightOpenInternal(false);
@@ -177,6 +194,7 @@ export function WorkspacePanelProvider({
       if (id) {
         setPreviewSourceInternal(null);
         setViewModeInternal((curr) => (curr === "studio" ? "studio" : "split"));
+        setMobileTab("studio");
         // Prevent 4-column squeeze on standard viewports: collapse right rail if open
         if (typeof window !== "undefined" && window.innerWidth < 1440) {
           setRightOpenInternal(false);
@@ -279,6 +297,8 @@ export function WorkspacePanelProvider({
       setMobileLeftOpen,
       mobileRightOpen,
       setMobileRightOpen,
+      mobileTab,
+      setMobileTab,
       viewMode,
       setViewMode,
       importDialogOpen,
@@ -295,6 +315,8 @@ export function WorkspacePanelProvider({
       setMobileLeftOpen,
       mobileRightOpen,
       setMobileRightOpen,
+      mobileTab,
+      setMobileTab,
       viewMode,
       setViewMode,
       importDialogOpen,

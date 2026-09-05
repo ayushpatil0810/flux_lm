@@ -21,6 +21,14 @@ interface WorkspaceShellProps {
 export function WorkspaceShell({ children }: WorkspaceShellProps) {
   const { data: workspace, isPending, error, refetch } = useWorkspaceContext();
 
+  React.useEffect(() => {
+    if (workspace?.title) {
+      document.title = `${workspace.title} | Flux`;
+    } else if (error) {
+      document.title = "Workspace Not Found | Flux";
+    }
+  }, [workspace?.title, error]);
+
   if (isPending) {
     return <WorkspaceViewSkeleton />;
   }

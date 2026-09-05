@@ -17,8 +17,8 @@ interface DashboardTopbarProps {
  */
 export function DashboardTopbar({ onMemoriesOpen }: DashboardTopbarProps) {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 md:px-8">
+    <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/80 backdrop-blur-md pt-safe">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-3.5 sm:px-4 md:px-8">
         {/* Left: logo + wordmark */}
         <Link
           href="/dashboard"

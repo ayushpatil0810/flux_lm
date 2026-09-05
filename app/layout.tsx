@@ -26,7 +26,9 @@ const geistMono = Geist_Mono({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#09090b" },
@@ -40,6 +42,11 @@ export const metadata: Metadata = {
   },
   description:
     "Intelligent knowledge workspace for your PDFs, notes, and web sources.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Flux",
+  },
 };
 
 export default function RootLayout({
