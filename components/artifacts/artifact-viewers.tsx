@@ -210,7 +210,7 @@ function TakeawaysViewer({ content }: { content: LearningArtifactContent }) {
         <li key={index} className="flex gap-4 items-start">
           <span
             aria-hidden
-            className="text-muted-foreground mt-0.5 shrink-0 font-mono text-xs font-semibold"
+            className="text-amber-600/80 dark:text-amber-400/80 mt-0.5 shrink-0 font-mono text-xs font-semibold"
           >
             {String(index + 1).padStart(2, "0")}
           </span>
@@ -271,7 +271,7 @@ function FlashcardsViewer({ content }: { content: LearningArtifactContent }) {
         aria-label={flipped ? "Show prompt" : "Show answer"}
         className="bg-card hover:bg-accent/40 focus-visible:ring-ring/60 flex min-h-[200px] sm:min-h-[240px] w-full flex-col items-center justify-center rounded-xl border px-4 py-8 sm:px-8 sm:py-10 text-center transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
-        <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+        <span className="text-violet-600 dark:text-violet-400 text-xs font-semibold tracking-wider uppercase font-mono">
           {flipped ? "Answer" : "Prompt"}
         </span>
         <span className="text-heading mt-4 font-medium font-heading leading-snug text-base sm:text-lg">

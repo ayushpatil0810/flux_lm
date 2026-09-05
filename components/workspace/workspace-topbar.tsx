@@ -173,13 +173,13 @@ export function WorkspaceTopbar({
               setLeftOpen(true);
             }
           }}
-          className="h-8 gap-1.5 rounded-lg border-border/70 px-2.5 text-xs font-medium hover:border-primary/40 active:scale-95 shadow-none"
+          className="h-8 gap-1.5 rounded-lg border-border/80 px-2.5 text-xs font-medium hover:border-border hover:bg-muted/50 text-foreground active:scale-95 shadow-none"
           title="Add source to workspace"
         >
           <HugeiconsIcon
             icon={Add01Icon}
             strokeWidth={2}
-            className="size-3.5 text-primary"
+            className="size-3.5 text-muted-foreground"
           />
           <span className="hidden sm:inline">Add Source</span>
         </Button>

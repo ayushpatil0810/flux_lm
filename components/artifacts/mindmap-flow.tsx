@@ -66,16 +66,16 @@ function MindmapNode({
           !isDimmed &&
           "ring-primary ring-offset-background ring-2 ring-offset-2",
         isRoot
-          ? "bg-primary text-primary-foreground rounded-2xl px-5 py-2.5 text-sm font-semibold shadow-md"
+          ? "bg-cyan-600 dark:bg-cyan-500 text-white rounded-2xl px-5 py-2.5 text-sm font-semibold shadow-md"
           : isLevel1
-            ? "border-primary/30 border-l-primary/60 bg-card text-foreground hover:border-primary/50 rounded-xl border border-l-2 px-4 py-2 text-xs font-medium"
-            : "border-border/50 bg-card/60 text-muted-foreground hover:border-border/80 rounded-lg border px-3 py-1.5 text-xs",
+            ? "border-cyan-500/30 border-l-cyan-600 dark:border-l-cyan-400 bg-card text-foreground hover:border-cyan-500/50 rounded-xl border border-l-2 px-4 py-2 text-xs font-medium"
+            : "border-border/60 bg-card text-muted-foreground hover:border-border/90 rounded-lg border px-3 py-1.5 text-xs",
       )}
     >
       <Handle
         type="target"
         position={Position.Left}
-        className="!border-background !bg-primary/80 !size-2.5 !border-2 opacity-0 transition-opacity group-hover:opacity-100"
+        className="!border-background !bg-cyan-500/80 !size-2.5 !border-2 opacity-0 transition-opacity group-hover:opacity-100"
       />
       <span className="max-w-[220px] truncate leading-snug">{data.label}</span>
       {data.childCount && data.childCount > 0 ? (
@@ -83,7 +83,7 @@ function MindmapNode({
           className={cn(
             "flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold",
             isRoot
-              ? "bg-primary-foreground/20 text-primary-foreground"
+              ? "bg-white/20 text-white"
               : "bg-muted text-muted-foreground",
           )}
         >
@@ -93,7 +93,7 @@ function MindmapNode({
       <Handle
         type="source"
         position={Position.Right}
-        className="!border-background !bg-primary/80 !size-2.5 !border-2 opacity-0 transition-opacity group-hover:opacity-100"
+        className="!border-background !bg-cyan-500/80 !size-2.5 !border-2 opacity-0 transition-opacity group-hover:opacity-100"
       />
     </div>
   );

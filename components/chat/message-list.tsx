@@ -196,34 +196,34 @@ function CitationList({
           <button
             type="button"
             onClick={() => onOpenSource?.(citation.sourceId)}
-            className="border-border/60 text-muted-foreground hover:border-primary/50 hover:bg-primary/5 hover:text-foreground flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs transition-all duration-150 cursor-pointer text-left focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:outline-none"
+            className="border-border/70 bg-card hover:border-border hover:bg-muted/40 text-muted-foreground hover:text-foreground flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs transition-all duration-150 cursor-pointer text-left shadow-2xs focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:outline-none"
             title="Click to preview source"
           >
             <HugeiconsIcon
               icon={BookOpen01Icon}
               strokeWidth={1.5}
-              className="size-3 text-primary"
+              className="size-3 text-muted-foreground group-hover:text-foreground transition-colors"
               aria-hidden
             />
-            <span className="text-primary font-medium">{i + 1}</span>
+            <span className="font-mono text-primary font-semibold">{i + 1}</span>
             <span className="max-w-[160px] truncate">
               {citation.sourceTitle}
             </span>
           </button>
 
-          <div className="border-border/60 bg-popover text-popover-foreground animate-in fade-in slide-in-from-bottom-1 pointer-events-none absolute bottom-full left-0 z-50 mb-2 hidden w-72 max-w-[calc(100vw-2rem)] rounded-xl border p-3 shadow-xl backdrop-blur-md md:group-hover:block">
+          <div className="border-border bg-popover text-popover-foreground animate-in fade-in slide-in-from-bottom-1 pointer-events-none absolute bottom-full left-0 z-50 mb-2 hidden w-72 max-w-[calc(100vw-2rem)] rounded-xl border p-3 shadow-lg md:group-hover:block">
             <div className="border-border/60 flex items-center gap-2 border-b pb-2">
               <HugeiconsIcon
                 icon={File01Icon}
                 strokeWidth={1.5}
-                className="text-primary size-3.5"
+                className="text-muted-foreground size-3.5"
                 aria-hidden
               />
               <p className="truncate text-xs font-medium">
                 {citation.sourceTitle}
               </p>
               {citation.page ? (
-                <span className="bg-muted text-muted-foreground ml-auto rounded px-1.5 py-0.5 text-[10px]">
+                <span className="bg-muted text-muted-foreground ml-auto rounded px-1.5 py-0.5 text-[10px] font-mono">
                   pg {citation.page}
                 </span>
               ) : null}
@@ -233,7 +233,7 @@ function CitationList({
                 &ldquo;{citation.excerpt}&rdquo;
               </p>
             )}
-            <p className="text-primary/80 mt-2 text-[10px] font-medium">
+            <p className="text-primary mt-2 text-[10px] font-medium">
               Click to view source in preview →
             </p>
           </div>

@@ -2,14 +2,18 @@
 
 import * as React from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { formatDate } from "@/lib/utils";
+import { formatDate, cn } from "@/lib/utils";
 import { useArtifact, useDeleteArtifact } from "@/hooks/use-artifacts";
 import { useToast } from "@/components/providers/toast-provider";
 import { ErrorState, LoadingState } from "@/components/shell/states";
 import { ConfirmDeleteDialog } from "@/components/sources/confirm-delete-dialog";
 import { StatusIndicator } from "@/components/ui/status-indicator";
 import { Button } from "@/components/ui/button";
-import { ARTIFACT_TYPE_LABELS, cleanArtifactTitle } from "./artifact-meta";
+import {
+  ARTIFACT_TYPE_LABELS,
+  ARTIFACT_TYPE_STYLES,
+  cleanArtifactTitle,
+} from "./artifact-meta";
 import { ArtifactViewer } from "./artifact-viewers";
 import { getErrorMessage } from "@/lib/api";
 import {
@@ -102,7 +106,14 @@ export function ArtifactPreview({
               <h2 className="text-foreground truncate text-sm font-semibold tracking-tight">
                 {cleanArtifactTitle(artifact.title)}
               </h2>
-              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+              <span
+                className={cn(
+                  "rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider border",
+                  ARTIFACT_TYPE_STYLES[artifact.type].badgeBg,
+                  ARTIFACT_TYPE_STYLES[artifact.type].badgeText,
+                  ARTIFACT_TYPE_STYLES[artifact.type].badgeBorder,
+                )}
+              >
                 {ARTIFACT_TYPE_LABELS[artifact.type]}
               </span>
             </div>

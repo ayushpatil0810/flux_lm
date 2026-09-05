@@ -27,6 +27,79 @@ export const ARTIFACT_TYPE_ORDER: ArtifactType[] = [
   "REPORT",
 ];
 
+export interface ArtifactTypeStyle {
+  iconBg: string;
+  iconColor: string;
+  iconBorder: string;
+  hoverBorder: string;
+  badgeBg: string;
+  badgeText: string;
+  badgeBorder: string;
+}
+
+export const ARTIFACT_TYPE_STYLES: Record<ArtifactType, ArtifactTypeStyle> = {
+  SUMMARY: {
+    // Blue: analytical, primary overview
+    iconBg: "bg-blue-500/10",
+    iconColor: "text-blue-600 dark:text-blue-400",
+    iconBorder: "border-blue-500/20",
+    hoverBorder: "hover:border-blue-500/40",
+    badgeBg: "bg-blue-500/10",
+    badgeText: "text-blue-700 dark:text-blue-300",
+    badgeBorder: "border-blue-500/20",
+  },
+  TAKEAWAYS: {
+    // Amber: key insights & highlights
+    iconBg: "bg-amber-500/10",
+    iconColor: "text-amber-600 dark:text-amber-400",
+    iconBorder: "border-amber-500/20",
+    hoverBorder: "hover:border-amber-500/40",
+    badgeBg: "bg-amber-500/10",
+    badgeText: "text-amber-700 dark:text-amber-300",
+    badgeBorder: "border-amber-500/20",
+  },
+  FLASHCARDS: {
+    // Violet: study tools & memory prompts
+    iconBg: "bg-violet-500/10",
+    iconColor: "text-violet-600 dark:text-violet-400",
+    iconBorder: "border-violet-500/20",
+    hoverBorder: "hover:border-violet-500/40",
+    badgeBg: "bg-violet-500/10",
+    badgeText: "text-violet-700 dark:text-violet-300",
+    badgeBorder: "border-violet-500/20",
+  },
+  QUIZ: {
+    // Green/Teal: assessment, testing, mastery
+    iconBg: "bg-emerald-500/10",
+    iconColor: "text-emerald-600 dark:text-emerald-400",
+    iconBorder: "border-emerald-500/20",
+    hoverBorder: "hover:border-emerald-500/40",
+    badgeBg: "bg-emerald-500/10",
+    badgeText: "text-emerald-700 dark:text-emerald-300",
+    badgeBorder: "border-emerald-500/20",
+  },
+  MINDMAP: {
+    // Cyan/Teal: connections, hierarchy, concept mapping
+    iconBg: "bg-cyan-500/10",
+    iconColor: "text-cyan-600 dark:text-cyan-400",
+    iconBorder: "border-cyan-500/20",
+    hoverBorder: "hover:border-cyan-500/40",
+    badgeBg: "bg-cyan-500/10",
+    badgeText: "text-cyan-700 dark:text-cyan-300",
+    badgeBorder: "border-cyan-500/20",
+  },
+  REPORT: {
+    // Violet: AI synthesis, comprehensive deep-dive
+    iconBg: "bg-violet-500/10",
+    iconColor: "text-violet-600 dark:text-violet-400",
+    iconBorder: "border-violet-500/20",
+    hoverBorder: "hover:border-violet-500/40",
+    badgeBg: "bg-violet-500/10",
+    badgeText: "text-violet-700 dark:text-violet-300",
+    badgeBorder: "border-violet-500/20",
+  },
+};
+
 /** Secondary line under an artifact title: its topic, or source count. */
 export function artifactSubtitle(artifact: LearningArtifact): string | null {
   const topic = artifact.metadata?.topic;

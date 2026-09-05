@@ -53,9 +53,30 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
 
-  /* The single accent color, used for primary actions, focus, and selection */
+  /* The primary accent color, used for primary actions, focus, and selection */
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+
+  /* Semantic Workspace & System Tokens */
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-subtle: var(--brand-subtle);
+  --color-brand-muted: var(--brand-muted);
+
+  --color-ai: var(--ai);
+  --color-ai-foreground: var(--ai-foreground);
+  --color-ai-subtle: var(--ai-subtle);
+  --color-ai-border: var(--ai-border);
+
+  --color-insight: var(--insight);
+  --color-insight-foreground: var(--insight-foreground);
+  --color-insight-subtle: var(--insight-subtle);
+  --color-insight-border: var(--insight-border);
+
+  --color-cyan: var(--cyan);
+  --color-cyan-foreground: var(--cyan-foreground);
+  --color-cyan-subtle: var(--cyan-subtle);
+  --color-cyan-border: var(--cyan-border);
 
   /* Feedback */
   --color-destructive: var(--destructive);
@@ -96,124 +117,164 @@
 }
 
 :root {
-  /* Clean, modern light theme with clear surface separation */
-  --background: #f3f4f7;
-  --foreground: #09090b;
+  /* Clean, editorial slate light theme with calm surface separation */
+  --background: #f8fafc;
+  --foreground: #0f172a;
 
   --card: #ffffff;
-  --card-foreground: #09090b;
+  --card-foreground: #0f172a;
   --popover: #ffffff;
-  --popover-foreground: #09090b;
+  --popover-foreground: #0f172a;
 
-  /* Accent: Royal Blue */
-  --primary: #2667ff;
+  /* Accent: Primary Royal Blue */
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
+  --brand: #2563eb;
+  --brand-foreground: #ffffff;
+  --brand-subtle: #eff6ff;
+  --brand-muted: #dbeafe;
 
-  --secondary: #eaecef;
-  --secondary-foreground: #18181b;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #1e293b;
 
-  --muted: #eaecef;
+  --muted: #f1f5f9;
   --muted-foreground: #64748b;
 
-  --accent: #eaecef;
-  --accent-foreground: #18181b;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
 
-  --destructive: #ef4444;
-  --destructive-foreground: #fafafa;
-  --success: #10b981;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --success: #059669;
   --success-foreground: #ffffff;
-  --warning: #f59e0b;
+  --warning: #d97706;
   --warning-foreground: #ffffff;
 
-  --border: #e2e5eb;
-  --input: #e2e5eb;
-  --ring: #2667ff;
+  /* Semantic Workspace Intelligence & Study Tokens */
+  --ai: #7c3aed;
+  --ai-foreground: #ffffff;
+  --ai-subtle: #f5f3ff;
+  --ai-border: #ddd6fe;
+
+  --insight: #d97706;
+  --insight-foreground: #ffffff;
+  --insight-subtle: #fffbeb;
+  --insight-border: #fde68a;
+
+  --cyan: #0891b2;
+  --cyan-foreground: #ffffff;
+  --cyan-subtle: #ecfeff;
+  --cyan-border: #a5f3fc;
+
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #2563eb;
 
   --radius: 0.5rem;
 
-  --chart-1: #2667ff;
+  --chart-1: #2563eb;
   --chart-2: oklch(0.6 0.02 72);
   --chart-3: oklch(0.5 0.018 72);
   --chart-4: oklch(0.4 0.015 72);
   --chart-5: oklch(0.31 0.012 72);
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #09090b;
-  --sidebar-primary: #2667ff;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #2563eb;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eaecef;
-  --sidebar-accent-foreground: #18181b;
-  --sidebar-border: #e2e5eb;
-  --sidebar-ring: #2667ff;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #1e293b;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #2563eb;
 
   --status-processing: #2563eb;
-  --status-completed: #16a34a;
-  --status-exception: #e11d48;
+  --status-completed: #059669;
+  --status-exception: #dc2626;
   --source-oracle: #7c3aed;
   --source-sharepoint: #0284c7;
   --source-concur: #059669;
   --source-email: #d97706;
-  --live: #10b981;
-  --trend: #10b981;
+  --live: #059669;
+  --trend: #059669;
 }
 
 .dark {
-  /* High contrast dark theme with distinct elevated card surfaces (NotebookLM style) */
-  --background: #0d0f12;
-  --foreground: #f4f4f5;
+  /* Vercel-style True Black Dark Mode */
+  --background: #000000;
+  --foreground: #ededed;
 
-  --card: #18191e;
-  --card-foreground: #f4f4f5;
-  --popover: #18191e;
-  --popover-foreground: #f4f4f5;
+  --card: #0a0a0a;
+  --card-foreground: #ededed;
+  --popover: #0a0a0a;
+  --popover-foreground: #ededed;
 
-  --primary: #2667ff;
+  --primary: #0070f3;
   --primary-foreground: #ffffff;
+  --brand: #0070f3;
+  --brand-foreground: #ffffff;
+  --brand-subtle: rgba(0, 112, 243, 0.12);
+  --brand-muted: rgba(0, 112, 243, 0.2);
 
-  --secondary: #23252c;
-  --secondary-foreground: #f4f4f5;
+  --secondary: #141414;
+  --secondary-foreground: #ededed;
 
-  --muted: #23252c;
-  --muted-foreground: #94a3b8;
+  --muted: #141414;
+  --muted-foreground: #888888;
 
-  --accent: #23252c;
-  --accent-foreground: #f4f4f5;
+  --accent: #141414;
+  --accent-foreground: #ededed;
 
-  --destructive: #ef4444;
-  --destructive-foreground: #fafafa;
-  --success: #10b981;
+  --destructive: #f31260;
+  --destructive-foreground: #ffffff;
+  --success: #17c964;
   --success-foreground: #ffffff;
-  --warning: #f59e0b;
+  --warning: #f5a524;
   --warning-foreground: #ffffff;
 
-  --border: #282a32;
-  --input: #282a32;
-  --ring: #2667ff;
+  /* Semantic Workspace Intelligence & Study Tokens in Dark Mode */
+  --ai: #a78bfa;
+  --ai-foreground: #ffffff;
+  --ai-subtle: rgba(167, 139, 250, 0.12);
+  --ai-border: rgba(167, 139, 250, 0.25);
 
-  --chart-1: #2667ff;
+  --insight: #fbbf24;
+  --insight-foreground: #ffffff;
+  --insight-subtle: rgba(251, 191, 36, 0.12);
+  --insight-border: rgba(251, 191, 36, 0.25);
+
+  --cyan: #22d3ee;
+  --cyan-foreground: #ffffff;
+  --cyan-subtle: rgba(34, 211, 238, 0.12);
+  --cyan-border: rgba(34, 211, 238, 0.25);
+
+  --border: #222222;
+  --input: #222222;
+  --ring: #0070f3;
+
+  --chart-1: #0070f3;
   --chart-2: oklch(0.6 0.02 72);
   --chart-3: oklch(0.5 0.018 72);
   --chart-4: oklch(0.4 0.015 72);
   --chart-5: oklch(0.31 0.012 72);
 
-  --sidebar: #18191e;
-  --sidebar-foreground: #f4f4f5;
-  --sidebar-primary: #2667ff;
+  --sidebar: #000000;
+  --sidebar-foreground: #ededed;
+  --sidebar-primary: #0070f3;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #23252c;
-  --sidebar-accent-foreground: #f4f4f5;
-  --sidebar-border: #282a32;
-  --sidebar-ring: #2667ff;
+  --sidebar-accent: #141414;
+  --sidebar-accent-foreground: #ededed;
+  --sidebar-border: #222222;
+  --sidebar-ring: #0070f3;
 
-  --status-processing: #3b82f6;
-  --status-completed: #10b981;
-  --status-exception: #f43f5e;
-  --source-oracle: #8b5cf6;
+  --status-processing: #0070f3;
+  --status-completed: #17c964;
+  --status-exception: #f31260;
+  --source-oracle: #a78bfa;
   --source-sharepoint: #38bdf8;
   --source-concur: #34d399;
   --source-email: #fbbf24;
-  --live: #10b981;
-  --trend: #10b981;
+  --live: #17c964;
+  --trend: #17c964;
 }
 
 @layer base {

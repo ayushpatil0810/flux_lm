@@ -143,7 +143,7 @@ export function Composer({
                     <HugeiconsIcon
                       icon={CpuIcon}
                       strokeWidth={1.5}
-                      className="size-3.5 shrink-0"
+                      className="size-3.5 shrink-0 text-violet-600 dark:text-violet-400"
                       aria-hidden
                     />
                     <span className="truncate max-w-[85px] xs:max-w-none">{MODEL_LABELS[model]}</span>

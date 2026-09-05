@@ -302,9 +302,9 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                       setImportDialogOpen(true);
                       setLeftOpen(true);
                     }}
-                    className="group border-border/60 hover:border-primary/50 hover:bg-primary/5 mt-5 sm:mt-8 flex items-center gap-3.5 rounded-2xl border border-dashed p-3.5 sm:p-4 text-left transition-all duration-200 cursor-pointer shadow-xs hover:shadow-sm active:scale-[0.99]"
+                    className="group border-border/80 hover:border-border hover:bg-muted/30 mt-5 sm:mt-8 flex items-center gap-3.5 rounded-2xl border border-dashed p-3.5 sm:p-4 text-left transition-all duration-200 cursor-pointer shadow-2xs active:scale-[0.99]"
                   >
-                    <div className="text-primary flex size-8 sm:size-9 shrink-0 items-center justify-center transition-transform group-hover:scale-110">
+                    <div className="text-muted-foreground flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-xl bg-muted border border-border/50 transition-transform group-hover:scale-105">
                       <HugeiconsIcon
                         icon={FileUploadIcon}
                         strokeWidth={1.5}
@@ -312,7 +312,7 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                       />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs sm:text-sm font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                      <p className="text-xs sm:text-sm font-semibold tracking-tight text-foreground">
                         Add your first source →
                       </p>
                       <p className="text-muted-foreground mt-0.5 text-[11px] sm:text-xs font-inter font-normal">
@@ -345,7 +345,7 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                       <button
                         key={item.label}
                         onClick={() => void send(item.prompt)}
-                        className="group border-border/50 bg-card/50 hover:border-primary/40 hover:bg-card focus-visible:ring-ring flex flex-col justify-between rounded-xl border p-2.5 sm:p-3.5 text-left transition-all duration-200 hover:shadow-xs active:scale-[0.98] focus-visible:ring-2 focus-visible:outline-none"
+                        className="group border-border/60 bg-card hover:border-border hover:bg-muted/30 focus-visible:ring-ring flex flex-col justify-between rounded-xl border p-2.5 sm:p-3.5 text-left transition-all duration-200 shadow-2xs hover:shadow-xs active:scale-[0.98] focus-visible:ring-2 focus-visible:outline-none"
                       >
                         <span className="text-foreground text-xs sm:text-sm font-medium">
                           {item.label}

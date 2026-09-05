@@ -14,6 +14,7 @@ import {
   ARTIFACT_TYPE_ORDER,
   ARTIFACT_TYPE_LABELS,
   ARTIFACT_TYPE_DESCRIPTIONS,
+  ARTIFACT_TYPE_STYLES,
 } from "./artifact-meta";
 import { ARTIFACT_TYPE_ICONS } from "./sidebar-artifacts";
 import { ArtifactConfigDialog } from "./artifact-config-dialog";
@@ -22,6 +23,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 interface SidebarArtifactsRailProps {
   workspaceId: string;
@@ -88,7 +90,12 @@ export function SidebarArtifactsRail({
                     aria-label={`Create ${ARTIFACT_TYPE_LABELS[type]}`}
                     className="relative flex size-9.5 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden"
                   >
-                    <Icon className="size-5" />
+                    <Icon
+                      className={cn(
+                        "size-5",
+                        ARTIFACT_TYPE_STYLES[type].iconColor,
+                      )}
+                    />
 
                     {/* Plus badge safely anchored at bottom-right inside button bounds */}
                     <span className="absolute bottom-0.5 right-0.5 flex size-3.5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xs ring-1.5 ring-card">
