@@ -10,7 +10,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -80,19 +79,26 @@ export function MemoryFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle className="text-heading font-serif">
-              {isEdit ? "Edit memory" : "Add a memory"}
-            </DialogTitle>
-            <DialogDescription>
-              {isEdit
-                ? "Change what Flux remembers."
-                : "Something Flux should remember about you or your work, written plainly."}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-1.5 py-4">
+      <DialogContent className="flex w-[calc(100%-2rem)] max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:w-full sm:max-w-md">
+        {/* Header — pinned */}
+        <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4 text-left">
+          <DialogTitle className="text-heading font-serif">
+            {isEdit ? "Edit memory" : "Add a memory"}
+          </DialogTitle>
+          <DialogDescription>
+            {isEdit
+              ? "Change what Flux remembers."
+              : "Something Flux should remember about you or your work, written plainly."}
+          </DialogDescription>
+        </DialogHeader>
+
+        {/* Body — scrollable */}
+        <form
+          id="memory-form"
+          onSubmit={handleSubmit}
+          className="no-scrollbar flex-1 overflow-y-auto px-5 py-4 space-y-4"
+        >
+          <div className="space-y-1.5">
             <Label htmlFor="memory-text">Memory</Label>
             <Textarea
               id="memory-text"
@@ -104,6 +110,7 @@ export function MemoryFormDialog({
               placeholder="e.g. I prefer concise answers with examples in TypeScript."
               aria-invalid={Boolean(fieldError)}
               aria-describedby={fieldError ? "memory-text-error" : undefined}
+              className="resize-none"
             />
             <div className="flex items-start justify-between gap-3">
               {fieldError ? (
@@ -118,22 +125,27 @@ export function MemoryFormDialog({
               </span>
             </div>
           </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => onOpenChange(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={isPending || text.trim().length === 0}
-            >
-              {isPending ? "Saving…" : isEdit ? "Save" : "Add memory"}
-            </Button>
-          </DialogFooter>
         </form>
+
+        {/* Footer — pinned */}
+        <div className="border-border/30 flex shrink-0 items-center justify-end gap-2 border-t px-5 py-3">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => onOpenChange(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            size="sm"
+            form="memory-form"
+            disabled={isPending || text.trim().length === 0}
+          >
+            {isPending ? "Saving…" : isEdit ? "Save" : "Add memory"}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

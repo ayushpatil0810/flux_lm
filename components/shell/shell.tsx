@@ -11,6 +11,8 @@ import { WorkspacePanelProvider } from "@/components/shell/workspace-panel-conte
 import { WorkspaceContext } from "@/components/shell/workspace-context";
 import { MemoriesSheet } from "@/components/memories/memories-sheet";
 
+import { DashboardSearchProvider } from "@/components/shell/dashboard-search-context";
+
 interface ShellProps {
   children: React.ReactNode;
 }
@@ -47,7 +49,7 @@ export function Shell({ children }: ShellProps) {
 
   // ── Dashboard route — topbar only, no sidebar ────────────────────────────────
   return (
-    <>
+    <DashboardSearchProvider>
       <a
         href="#main-content"
         className="focus:bg-primary focus:text-primary-foreground sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:px-3 focus:py-2 focus:text-sm focus:font-medium"
@@ -55,9 +57,12 @@ export function Shell({ children }: ShellProps) {
         Skip to content
       </a>
 
-      <div className="bg-background flex h-dvh w-full flex-col overflow-hidden">
-        <DashboardTopbar onMemoriesOpen={() => setMemoriesOpen(true)} />
-        <main id="main-content" className="no-scrollbar flex-1 overflow-y-auto">
+      <div className="bg-background relative flex h-dvh w-full flex-col overflow-hidden">
+        <main
+          id="main-content"
+          className="no-scrollbar relative flex-1 overflow-y-auto"
+        >
+          <DashboardTopbar onMemoriesOpen={() => setMemoriesOpen(true)} />
           {children}
         </main>
       </div>
@@ -65,6 +70,6 @@ export function Shell({ children }: ShellProps) {
       <MemoriesSheet open={memoriesOpen} onOpenChange={setMemoriesOpen} />
 
       <CreateWorkspaceDialog open={createOpen} onOpenChange={setCreateOpen} />
-    </>
+    </DashboardSearchProvider>
   );
 }

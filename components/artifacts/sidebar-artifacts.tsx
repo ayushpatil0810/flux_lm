@@ -56,6 +56,31 @@ interface SidebarArtifactsProps {
   onPreviewArtifact?: (id: string) => void;
 }
 
+function CollapseRailButton({ onClick }: { onClick: () => void }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          onClick={onClick}
+          aria-label="Collapse to rail"
+          className="text-muted-foreground hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors hover:bg-muted"
+        >
+          <HugeiconsIcon
+            icon={SidebarRightIcon}
+            strokeWidth={1.5}
+            className="size-5"
+            aria-hidden
+          />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" sideOffset={6}>
+        Collapse to rail (<kbd className="font-mono text-[10px]">⌘J</kbd>)
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
 /**
  * Artifacts panel:
  * - Per-type generation cards (click → focused config dialog)
@@ -223,28 +248,7 @@ export function SidebarArtifacts({
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {onClose ? (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      onClick={onClose}
-                      aria-label="Collapse to rail"
-                      className="text-muted-foreground hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors hover:bg-muted"
-                    >
-                      <HugeiconsIcon
-                        icon={SidebarRightIcon}
-                        strokeWidth={1.5}
-                        className="size-5"
-                        aria-hidden
-                      />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" sideOffset={6}>
-                    Collapse to rail (<kbd className="font-mono text-[10px]">⌘J</kbd>)
-                  </TooltipContent>
-                </Tooltip>
-              ) : null}
+              {onClose ? <CollapseRailButton onClick={onClose} /> : null}
             </div>
           </div>
 
@@ -324,28 +328,7 @@ export function SidebarArtifacts({
                 </span>
               )}
             </div>
-            {onClose ? (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    aria-label="Collapse to rail"
-                    className="text-muted-foreground hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors hover:bg-muted"
-                  >
-                    <HugeiconsIcon
-                      icon={SidebarRightIcon}
-                      strokeWidth={1.5}
-                      className="size-5"
-                      aria-hidden
-                    />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" sideOffset={6}>
-                  Collapse to rail (<kbd className="font-mono text-[10px]">⌘J</kbd>)
-                </TooltipContent>
-              </Tooltip>
-            ) : null}
+            {onClose ? <CollapseRailButton onClick={onClose} /> : null}
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto">

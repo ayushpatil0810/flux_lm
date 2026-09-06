@@ -7,11 +7,12 @@ import {
   PlusSignIcon,
   MoreHorizontalIcon,
   Search01Icon,
-  Cancel01Icon,
 } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
 import Link from "next/link";
+
+import { useDashboardSearch } from "@/components/shell/dashboard-search-context";
 
 import type { Workspace } from "@/lib/api";
 import { getErrorMessage } from "@/lib/api";
@@ -42,45 +43,10 @@ export function DashboardClient({
     null,
   );
   const [editTarget, setEditTarget] = React.useState<Workspace | null>(null);
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [modifierKey, setModifierKey] = React.useState("⌘K");
-  const searchInputRef = React.useRef<HTMLInputElement>(null);
+  const { searchQuery, setSearchQuery, searchInputRef } = useDashboardSearch();
 
   const { data: session } = authClient.useSession();
   const firstName = session?.user?.name ? session.user.name.split(" ")[0] : "";
-
-  React.useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      !/(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent)
-    ) {
-      setModifierKey("Ctrl+K");
-    }
-  }, []);
-
-  React.useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-      } else if (
-        e.key === "/" &&
-        document.activeElement?.tagName !== "INPUT" &&
-        document.activeElement?.tagName !== "TEXTAREA"
-      ) {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-      } else if (
-        e.key === "Escape" &&
-        document.activeElement === searchInputRef.current
-      ) {
-        setSearchQuery("");
-        searchInputRef.current?.blur();
-      }
-    }
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
 
   const greetingPrefix = React.useMemo(() => {
     const hour = new Date().getHours();
@@ -126,63 +92,22 @@ export function DashboardClient({
       <div className="bg-grid absolute inset-0 z-0 opacity-[0.03] pointer-events-none" />
 
       <div className="relative z-10 mx-auto flex max-w-6xl flex-col px-3.5 py-6 sm:px-4 sm:py-8 md:px-8 md:py-12 pb-safe">
-        {/* Header & Search Controls */}
-        <section className="relative mb-6 sm:mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between pt-2 sm:pt-4">
-          <div>
-            <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
-              {greetingPrefix}
-              {firstName ? (
-                <>
-                  , <span className="text-primary">{firstName}</span>
-                </>
-              ) : null}
-            </h1>
-            {workspaces && workspaces.length > 0 ? (
-              <p className="font-inter text-muted-foreground mt-1 text-xs sm:text-sm">
-                {searchQuery.trim()
-                  ? `Showing ${filteredWorkspaces.length} of ${workspaces.length} workspace${workspaces.length === 1 ? "" : "s"}`
-                  : `${workspaces.length} workspace${workspaces.length === 1 ? "" : "s"}`}
-              </p>
+        {/* Header Section */}
+        <section className="relative mb-6 sm:mb-8 flex flex-col gap-1 pt-2 sm:pt-4">
+          <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
+            {greetingPrefix}
+            {firstName ? (
+              <>
+                , <span className="text-primary">{firstName}</span>
+              </>
             ) : null}
-          </div>
-
+          </h1>
           {workspaces && workspaces.length > 0 ? (
-            <div className="group relative flex w-full sm:w-auto items-center">
-              <HugeiconsIcon
-                icon={Search01Icon}
-                strokeWidth={1.8}
-                className="pointer-events-none absolute left-3 size-4 text-muted-foreground transition-colors group-focus-within:text-primary"
-              />
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search workspaces..."
-                className="h-9 w-full rounded-xl border border-border bg-card/80 pl-9 pr-9 text-sm text-foreground placeholder:text-muted-foreground/70 shadow-2xs transition-all focus:border-primary focus:bg-card focus:outline-none focus:ring-2 focus:ring-primary/20 sm:w-64 md:w-72"
-              />
-              {searchQuery ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery("");
-                    searchInputRef.current?.focus();
-                  }}
-                  className="absolute right-2.5 flex size-4 items-center justify-center rounded-full text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                  aria-label="Clear search"
-                >
-                  <HugeiconsIcon
-                    icon={Cancel01Icon}
-                    strokeWidth={2}
-                    className="size-3.5"
-                  />
-                </button>
-              ) : (
-                <kbd className="pointer-events-none absolute right-2.5 hidden select-none items-center rounded border border-border/80 bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] font-medium text-muted-foreground sm:inline-flex">
-                  {modifierKey}
-                </kbd>
-              )}
-            </div>
+            <p className="font-inter text-muted-foreground mt-1 text-xs sm:text-sm">
+              {searchQuery.trim()
+                ? `Showing ${filteredWorkspaces.length} of ${workspaces.length} workspace${workspaces.length === 1 ? "" : "s"}`
+                : `${workspaces.length} workspace${workspaces.length === 1 ? "" : "s"}`}
+            </p>
           ) : null}
         </section>
 

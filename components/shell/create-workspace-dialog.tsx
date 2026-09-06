@@ -11,7 +11,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -93,89 +92,100 @@ export function CreateWorkspaceDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle className="text-heading font-serif">
-              New workspace
-            </DialogTitle>
-            <DialogDescription>
-              A workspace groups sources, conversations, and study material
-              around one topic.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-1.5">
-              <Label htmlFor="workspace-title">Title</Label>
-              <Input
-                id="workspace-title"
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-                maxLength={100}
-                autoFocus
-                autoComplete="off"
-                placeholder="Distributed systems reading"
-                aria-invalid={Boolean(fieldErrors.title)}
-                aria-describedby={
-                  fieldErrors.title ? "workspace-title-error" : undefined
-                }
-              />
-              {fieldErrors.title ? (
-                <p
-                  id="workspace-title-error"
-                  className="text-destructive text-sm"
-                >
-                  {fieldErrors.title}
-                </p>
-              ) : null}
-            </div>
-            <div className="grid gap-1.5">
-              <Label htmlFor="workspace-description">
-                Description{" "}
-                <span className="text-muted-foreground font-normal">
-                  (optional)
-                </span>
-              </Label>
-              <Textarea
-                id="workspace-description"
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-                maxLength={500}
-                rows={3}
-                placeholder="What this collection is for"
-                aria-invalid={Boolean(fieldErrors.description)}
-                aria-describedby={
-                  fieldErrors.description
-                    ? "workspace-description-error"
-                    : undefined
-                }
-              />
-              {fieldErrors.description ? (
-                <p
-                  id="workspace-description-error"
-                  className="text-destructive text-sm"
-                >
-                  {fieldErrors.description}
-                </p>
-              ) : null}
-            </div>
+      <DialogContent className="flex w-[calc(100%-2rem)] max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:w-full sm:max-w-md">
+        {/* Header — pinned */}
+        <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4 text-left">
+          <DialogTitle className="text-heading font-serif">
+            New workspace
+          </DialogTitle>
+          <DialogDescription>
+            A workspace groups sources, conversations, and study material
+            around one topic.
+          </DialogDescription>
+        </DialogHeader>
+
+        {/* Body — scrollable */}
+        <form
+          id="create-workspace-form"
+          onSubmit={handleSubmit}
+          className="no-scrollbar flex-1 overflow-y-auto px-5 py-4 space-y-4"
+        >
+          <div className="space-y-1.5">
+            <Label htmlFor="workspace-title">Title</Label>
+            <Input
+              id="workspace-title"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              maxLength={100}
+              autoFocus
+              autoComplete="off"
+              placeholder="Distributed systems reading"
+              aria-invalid={Boolean(fieldErrors.title)}
+              aria-describedby={
+                fieldErrors.title ? "workspace-title-error" : undefined
+              }
+            />
+            {fieldErrors.title ? (
+              <p
+                id="workspace-title-error"
+                className="text-destructive text-sm"
+              >
+                {fieldErrors.title}
+              </p>
+            ) : null}
           </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => onOpenChange(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={createWorkspace.isPending || title.trim().length === 0}
-            >
-              {createWorkspace.isPending ? "Creating…" : "Create workspace"}
-            </Button>
-          </DialogFooter>
+          <div className="space-y-1.5">
+            <Label htmlFor="workspace-description">
+              Description{" "}
+              <span className="text-muted-foreground font-normal">
+                (optional)
+              </span>
+            </Label>
+            <Textarea
+              id="workspace-description"
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              maxLength={500}
+              rows={3}
+              placeholder="What this collection is for"
+              className="resize-none"
+              aria-invalid={Boolean(fieldErrors.description)}
+              aria-describedby={
+                fieldErrors.description
+                  ? "workspace-description-error"
+                  : undefined
+              }
+            />
+            {fieldErrors.description ? (
+              <p
+                id="workspace-description-error"
+                className="text-destructive text-sm"
+              >
+                {fieldErrors.description}
+              </p>
+            ) : null}
+          </div>
         </form>
+
+        {/* Footer — pinned */}
+        <div className="border-border/30 flex shrink-0 items-center justify-end gap-2 border-t px-5 py-3">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => onOpenChange(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            size="sm"
+            form="create-workspace-form"
+            disabled={createWorkspace.isPending || title.trim().length === 0}
+          >
+            {createWorkspace.isPending ? "Creating…" : "Create workspace"}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

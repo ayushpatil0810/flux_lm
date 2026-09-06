@@ -66,52 +66,48 @@ export function WorkspaceTopbar({
   }
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 w-full shrink-0 items-center justify-between bg-background px-2.5 sm:px-4 pt-safe transition-all">
-      {/* 1. Left Zone: Nav + Left Rail Toggle + Editable Title + Status */}
-      <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              href="/dashboard"
-              className="flex size-9 sm:size-8 shrink-0 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95"
-              aria-label="Back to dashboard"
-            >
-              <HugeiconsIcon
-                icon={ArrowLeft02Icon}
-                strokeWidth={1.5}
-                className="size-4.5 sm:size-4"
-              />
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" sideOffset={6}>
-            Back to workspaces (<kbd className="font-mono text-[10px]">Esc</kbd>)
-          </TooltipContent>
-        </Tooltip>
+    <header className="pointer-events-none sticky top-0 z-40 flex w-full shrink-0 items-center justify-between gap-2 pt-2.5 pb-2 transition-all sm:pt-3">
+      {/* ── Left Pill: Back to Dashboard & Flux Brand (stuck to left edge, curved toward center) ── */}
+      <div className="pointer-events-auto shrink-0">
+        <div className="flex h-11 items-center gap-1.5 rounded-r-full border border-l-0 border-border/80 bg-background/85 py-1.5 pl-2.5 pr-4 shadow-xs backdrop-blur-md sm:h-12 sm:gap-2 sm:pl-3 sm:pr-5 dark:border-border/60 dark:bg-card/85 dark:shadow-md">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/dashboard"
+                className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground active:scale-95"
+                aria-label="Back to dashboard"
+              >
+                <HugeiconsIcon
+                  icon={ArrowLeft02Icon}
+                  strokeWidth={1.5}
+                  className="size-4"
+                />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={6}>
+              Back to workspaces (<kbd className="font-mono text-[10px]">Esc</kbd>)
+            </TooltipContent>
+          </Tooltip>
 
-        <div className="hidden sm:flex items-center gap-1.5">
           <Link
             href="/dashboard"
-            className="flex items-center gap-1.5 text-foreground hover:opacity-85 transition-opacity"
+            className="flex items-center gap-2 pl-0.5 text-foreground transition-opacity hover:opacity-85"
           >
-            <FluxLogo className="text-primary size-5 shrink-0" />
+            <FluxLogo className="text-primary size-4.5 shrink-0 sm:size-5" />
             <span className="font-mono text-sm font-semibold tracking-tight">
               Flux
             </span>
           </Link>
-          <span
-            aria-hidden
-            className="text-muted-foreground/40 font-mono text-xs select-none"
-          >
-            /
-          </span>
         </div>
+      </div>
 
-        {/* Editable Workspace Title */}
-        <div className="flex min-w-0 items-center gap-1 sm:gap-1.5">
+      {/* ── Center Pill: Workspace Title & Switcher (floating rounded pill) ── */}
+      <div className="pointer-events-auto flex flex-1 items-center justify-center px-1 sm:px-2">
+        <div className="flex h-10 max-w-[200px] items-center gap-1.5 rounded-full border border-border/80 bg-background/85 px-3 py-1 shadow-xs backdrop-blur-md transition-all xs:max-w-[260px] sm:h-11 sm:max-w-sm sm:gap-2 sm:px-3.5 md:max-w-md dark:border-border/60 dark:bg-card/85 dark:shadow-md">
           <HugeiconsIcon
             icon={Folder01Icon}
             strokeWidth={1.5}
-            className="size-4 shrink-0 text-muted-foreground hidden xs:block"
+            className="text-muted-foreground hidden size-4 shrink-0 xs:block"
           />
 
           {editing ? (
@@ -125,19 +121,19 @@ export function WorkspaceTopbar({
                 if (e.key === "Enter") inputRef.current?.blur();
                 if (e.key === "Escape") cancelEdit();
               }}
-              className="text-foreground ring-primary/40 focus:ring-primary/70 min-w-0 max-w-[120px] xs:max-w-[160px] sm:max-w-xs md:max-w-md rounded-md bg-transparent px-1.5 sm:px-2 py-0.5 text-xs sm:text-sm font-semibold tracking-tight ring-1 outline-none"
+              className="text-foreground ring-primary/40 focus:ring-primary/70 min-w-0 max-w-[120px] rounded-md bg-transparent px-1.5 py-0.5 text-xs font-semibold tracking-tight ring-1 outline-none xs:max-w-[170px] sm:max-w-xs sm:text-sm"
               maxLength={100}
               autoFocus
             />
           ) : (
-            <div className="flex items-center gap-0.5 min-w-0">
+            <div className="flex min-w-0 items-center gap-0.5">
               <button
                 type="button"
                 onClick={startEditing}
-                className="text-foreground hover:bg-muted/80 flex min-w-0 items-center gap-1 rounded-md px-1.5 sm:px-2 py-1 sm:py-0.5 text-xs sm:text-sm font-medium tracking-tight transition-colors active:scale-[0.99] touch-manipulation"
+                className="text-foreground hover:bg-muted/80 flex min-w-0 cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium tracking-tight transition-colors active:scale-[0.99] sm:text-sm"
                 title="Click to rename"
               >
-                <span className="truncate max-w-[120px] xs:max-w-[170px] sm:max-w-xs md:max-w-md">
+                <span className="truncate max-w-[110px] xs:max-w-[150px] sm:max-w-[200px] md:max-w-[280px]">
                   {workspace?.title ?? "Workspace"}
                 </span>
               </button>
@@ -156,37 +152,49 @@ export function WorkspaceTopbar({
         </div>
       </div>
 
-      {/* 2. Right Zone: Actions + Right Rail Toggle + User */}
-      <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
-        {/* Settings Button */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={onOpenSettings}
-              aria-label="Workspace settings"
-              className="size-8.5 sm:size-8 text-muted-foreground hover:text-foreground rounded-lg active:scale-95"
-            >
-              <HugeiconsIcon
-                icon={Settings01Icon}
-                strokeWidth={1.5}
-                className="size-4"
-                aria-hidden
-              />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" sideOffset={6}>
-            Workspace settings
-          </TooltipContent>
-        </Tooltip>
+      {/* ── Right Pill: Settings, Theme & User (stuck to right edge, curved toward center) ── */}
+      <div className="pointer-events-auto shrink-0">
+        <div className="flex h-11 items-center gap-1.5 rounded-l-full border border-r-0 border-border/80 bg-background/85 py-1.5 pl-3.5 pr-3 shadow-xs backdrop-blur-md sm:h-12 sm:gap-2 sm:pl-4 sm:pr-4 dark:border-border/60 dark:bg-card/85 dark:shadow-md">
+          {/* Settings Button */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={onOpenSettings}
+                aria-label="Workspace settings"
+                className="size-8 cursor-pointer rounded-full text-muted-foreground hover:text-foreground active:scale-95"
+              >
+                <HugeiconsIcon
+                  icon={Settings01Icon}
+                  strokeWidth={1.5}
+                  className="size-4"
+                  aria-hidden
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={6}>
+              Workspace settings
+            </TooltipContent>
+          </Tooltip>
 
-        {/* Theme Switch */}
-        <ThemeSwitch className="size-8.5 sm:size-8" />
+          <div
+            aria-hidden="true"
+            className="h-3.5 w-px bg-border/60 dark:bg-border/40"
+          />
 
-        {/* User Avatar Menu */}
-        <UserMenu variant="avatar" onMemoriesOpen={onOpenMemories} />
+          {/* Theme Switch */}
+          <ThemeSwitch className="size-7.5 rounded-full" />
+
+          <div
+            aria-hidden="true"
+            className="h-3.5 w-px bg-border/60 dark:bg-border/40"
+          />
+
+          {/* User Avatar Menu */}
+          <UserMenu variant="avatar" onMemoriesOpen={onOpenMemories} />
+        </div>
       </div>
     </header>
   );

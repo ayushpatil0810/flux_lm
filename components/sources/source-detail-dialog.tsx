@@ -9,7 +9,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -47,10 +46,11 @@ export function SourceDetailDialog({
         if (!open) onClose();
       }}
     >
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="flex w-[calc(100%-2rem)] max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:w-full sm:max-w-lg">
         {source ? (
           <>
-            <DialogHeader>
+            {/* Header — pinned */}
+            <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4 text-left">
               <DialogTitle className="text-heading pr-6 font-serif">
                 {source.title}
               </DialogTitle>
@@ -60,80 +60,84 @@ export function SourceDetailDialog({
               </DialogDescription>
             </DialogHeader>
 
-            <dl className="grid gap-3 text-sm">
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-muted-foreground">Status</dt>
-                <dd>
-                  <StatusIndicator status={source.status} />
-                </dd>
-              </div>
-              {source.url ? (
-                <div className="flex items-start justify-between gap-4">
-                  <dt className="text-muted-foreground shrink-0">Link</dt>
-                  <dd className="min-w-0 text-right">
-                    <a
-                      href={source.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="hover:text-foreground break-all underline underline-offset-4 transition-colors"
-                    >
-                      {displayUrl(source.url)}
-                    </a>
+            {/* Body — scrollable */}
+            <div className="no-scrollbar flex-1 overflow-y-auto px-5 py-4 space-y-4">
+              <dl className="grid gap-3 text-sm">
+                <div className="flex items-center justify-between gap-4">
+                  <dt className="text-muted-foreground">Status</dt>
+                  <dd>
+                    <StatusIndicator status={source.status} />
                   </dd>
                 </div>
-              ) : null}
-              {chunkCount !== null ? (
-                <div className="flex items-center justify-between gap-4">
-                  <dt className="text-muted-foreground">Indexed chunks</dt>
-                  <dd>{chunkCount}</dd>
-                </div>
-              ) : null}
-              {totalPages !== null ? (
-                <div className="flex items-center justify-between gap-4">
-                  <dt className="text-muted-foreground">Pages</dt>
-                  <dd>{totalPages}</dd>
-                </div>
-              ) : null}
-            </dl>
+                {source.url ? (
+                  <div className="flex items-start justify-between gap-4">
+                    <dt className="text-muted-foreground shrink-0">Link</dt>
+                    <dd className="min-w-0 text-right">
+                      <a
+                        href={source.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="hover:text-foreground break-all underline underline-offset-4 transition-colors"
+                      >
+                        {displayUrl(source.url)}
+                      </a>
+                    </dd>
+                  </div>
+                ) : null}
+                {chunkCount !== null ? (
+                  <div className="flex items-center justify-between gap-4">
+                    <dt className="text-muted-foreground">Indexed chunks</dt>
+                    <dd>{chunkCount}</dd>
+                  </div>
+                ) : null}
+                {totalPages !== null ? (
+                  <div className="flex items-center justify-between gap-4">
+                    <dt className="text-muted-foreground">Pages</dt>
+                    <dd>{totalPages}</dd>
+                  </div>
+                ) : null}
+              </dl>
 
-            {source.status === "FAILED" ? (
-              <div
-                role="alert"
-                className="border-destructive/40 bg-destructive/5 rounded-md border px-4 py-3 text-sm"
-              >
-                <p className="text-destructive font-medium">
-                  Processing failed
-                </p>
-                <p className="text-muted-foreground mt-1">
-                  {processingError ??
-                    "The source could not be processed. Delete it and try importing again."}
-                </p>
-              </div>
-            ) : null}
-
-            {source.content ? (
-              <div>
-                <p className="text-muted-foreground mb-1.5 text-xs font-medium tracking-wide uppercase">
-                  Extracted text
-                </p>
-                <div className="bg-muted/40 max-h-56 overflow-y-auto rounded-md border p-3">
-                  <p className="text-foreground/90 text-xs leading-relaxed whitespace-pre-wrap">
-                    {source.content.length > 4000
-                      ? `${source.content.slice(0, 4000)}…`
-                      : source.content}
+              {source.status === "FAILED" ? (
+                <div
+                  role="alert"
+                  className="border-destructive/40 bg-destructive/5 rounded-md border px-4 py-3 text-sm"
+                >
+                  <p className="text-destructive font-medium">
+                    Processing failed
+                  </p>
+                  <p className="text-muted-foreground mt-1">
+                    {processingError ??
+                      "The source could not be processed. Delete it and try importing again."}
                   </p>
                 </div>
-              </div>
-            ) : null}
+              ) : null}
 
-            <DialogFooter>
-              <Button variant="outline" onClick={() => onRename(source)}>
+              {source.content ? (
+                <div>
+                  <p className="text-muted-foreground mb-1.5 text-xs font-medium tracking-wide uppercase">
+                    Extracted text
+                  </p>
+                  <div className="bg-muted/40 max-h-56 overflow-y-auto rounded-md border p-3">
+                    <p className="text-foreground/90 text-xs leading-relaxed whitespace-pre-wrap">
+                      {source.content.length > 4000
+                        ? `${source.content.slice(0, 4000)}…`
+                        : source.content}
+                    </p>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            {/* Footer — pinned */}
+            <div className="border-border/30 flex shrink-0 items-center justify-end gap-2 border-t px-5 py-3">
+              <Button variant="outline" size="sm" onClick={() => onRename(source)}>
                 Rename
               </Button>
-              <Button variant="ghost" onClick={onClose}>
+              <Button variant="ghost" size="sm" onClick={onClose}>
                 Close
               </Button>
-            </DialogFooter>
+            </div>
           </>
         ) : null}
       </DialogContent>

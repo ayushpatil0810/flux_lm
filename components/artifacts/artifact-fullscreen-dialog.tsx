@@ -114,31 +114,8 @@ export function ArtifactFullscreenDialog({
           >
             {/* Header */}
             <header className="flex h-14 shrink-0 items-center justify-between border-b border-border/50 px-4 sm:px-6 bg-card/90 backdrop-blur-md gap-3 z-10 rounded-t-[inherit]">
-              {/* Left: Exit Fullscreen / Restore + Title */}
+              {/* Left: Artifact Icon + Title */}
               <div className="flex min-w-0 flex-1 items-center gap-2.5">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      onClick={() => onOpenChange(false)}
-                      className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 rounded-lg py-1 px-2 -ml-1 text-xs font-medium transition-colors hover:bg-muted active:scale-95"
-                      aria-label="Exit full screen (Esc)"
-                    >
-                      <HugeiconsIcon
-                        icon={ArrowShrink01Icon}
-                        strokeWidth={1.5}
-                        className="size-4 shrink-0"
-                      />
-                      <span className="hidden sm:inline">Exit Fullscreen</span>
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" sideOffset={6}>
-                    Exit full screen (<kbd className="font-mono text-[10px]">Esc</kbd>)
-                  </TooltipContent>
-                </Tooltip>
-
-                <div className="h-4 w-px bg-border/60 shrink-0" aria-hidden />
-
                 {artifact && (
                   <div className="flex items-center gap-2.5 min-w-0 truncate">
                     <div

@@ -226,8 +226,6 @@ export function MindmapFlow({
   edges: rawEdges,
   className,
 }: MindmapFlowProps) {
-  const [viewMode, setViewMode] = React.useState<"flow" | "tree">("flow");
-
   const layout = React.useMemo(
     () => getLayoutedElements(rawNodes, rawEdges),
     [rawNodes, rawEdges],
@@ -247,12 +245,23 @@ export function MindmapFlow({
   }, [layout, setNodes, setEdges]);
 
   // Subtree highlighting logic
+  const resetDimming = React.useCallback(() => {
+    setNodes((nds) =>
+      nds.map((n) => ({ ...n, data: { ...n.data, isDimmed: false } })),
+    );
+    setEdges((eds) =>
+      eds.map((e) => ({
+        ...e,
+        style: { ...e.style, opacity: e.markerEnd ? 0.5 : 0.7 },
+      })),
+    );
+  }, [setNodes, setEdges]);
+
   const handleNodeClick = React.useCallback(
-    (_: React.MouseEvent, clickedNode: Node) => {
-      // Find all descendants of clicked node
-      const descendants = new Set<string>();
-      const queue = [clickedNode.id];
-      descendants.add(clickedNode.id);
+    (_: React.MouseEvent, node: Node) => {
+      // Find all descendant nodes via BFS traversal
+      const descendants = new Set<string>([node.id]);
+      const queue = [node.id];
 
       while (queue.length > 0) {
         const curr = queue.shift()!;
@@ -269,15 +278,7 @@ export function MindmapFlow({
 
       // If node has no children, reset dimming
       if (descendants.size === 1) {
-        setNodes((nds) =>
-          nds.map((n) => ({ ...n, data: { ...n.data, isDimmed: false } })),
-        );
-        setEdges((eds) =>
-          eds.map((e) => ({
-            ...e,
-            style: { ...e.style, opacity: e.source === "0" ? 0.5 : 0.7 },
-          })),
-        );
+        resetDimming();
         return;
       }
 
@@ -298,20 +299,12 @@ export function MindmapFlow({
         }),
       );
     },
-    [edges, setNodes, setEdges],
+    [edges, setNodes, setEdges, resetDimming],
   );
 
   const handlePaneClick = React.useCallback(() => {
-    setNodes((nds) =>
-      nds.map((n) => ({ ...n, data: { ...n.data, isDimmed: false } })),
-    );
-    setEdges((eds) =>
-      eds.map((e) => ({
-        ...e,
-        style: { ...e.style, opacity: e.markerEnd ? 0.5 : 0.7 },
-      })),
-    );
-  }, [setNodes, setEdges]);
+    resetDimming();
+  }, [resetDimming]);
 
   return (
     <div
@@ -320,67 +313,31 @@ export function MindmapFlow({
         className,
       )}
     >
-      {viewMode === "tree" ? (
-        <div className="flex h-full w-full flex-col items-center justify-center">
-          <p className="text-muted-foreground text-sm">
-            Outline view not implemented yet.
-          </p>
-        </div>
-      ) : (
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onNodeClick={handleNodeClick}
-          onPaneClick={handlePaneClick}
-          fitView
-          fitViewOptions={{ padding: 0.2 }}
-          minZoom={0.2}
-          maxZoom={2}
-          proOptions={{ hideAttribution: true }}
-        >
-          <Background
-            variant={BackgroundVariant.Lines}
-            gap={32}
-            size={0.5}
-            className="opacity-20"
-          />
-          <Controls
-            showInteractive={false}
-            className="!border-border/30 !bg-card !rounded-xl !shadow-sm"
-          />
-        </ReactFlow>
-      )}
-
-      {/* Floating Panel for view toggle */}
-      <div className="absolute top-2 right-2 z-10 p-2">
-        <div className="border-border/40 bg-card/80 flex overflow-hidden rounded-lg border shadow-sm backdrop-blur-md">
-          <button
-            onClick={() => setViewMode("flow")}
-            className={cn(
-              "px-3 py-1.5 text-xs font-medium transition-colors",
-              viewMode === "flow"
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:bg-accent",
-            )}
-          >
-            Map
-          </button>
-          <button
-            onClick={() => setViewMode("tree")}
-            className={cn(
-              "border-border/40 border-l px-3 py-1.5 text-xs font-medium transition-colors",
-              viewMode === "tree"
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:bg-accent",
-            )}
-          >
-            Outline
-          </button>
-        </div>
-      </div>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onNodeClick={handleNodeClick}
+        onPaneClick={handlePaneClick}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        minZoom={0.2}
+        maxZoom={2}
+        proOptions={{ hideAttribution: true }}
+      >
+        <Background
+          variant={BackgroundVariant.Lines}
+          gap={32}
+          size={0.5}
+          className="opacity-20"
+        />
+        <Controls
+          showInteractive={false}
+          className="!border-border/30 !bg-card !rounded-xl !shadow-sm"
+        />
+      </ReactFlow>
     </div>
   );
 }

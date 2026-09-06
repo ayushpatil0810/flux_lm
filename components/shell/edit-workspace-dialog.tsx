@@ -12,10 +12,12 @@ import { ConfirmDeleteDialog } from "@/components/sources/confirm-delete-dialog"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
@@ -38,7 +40,7 @@ interface EditWorkspaceDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-/** Edits an existing workspace with inline zod field errors and toast fallback. */
+/** Edits an existing workspace using standard shadcn dialog primitives. */
 export function EditWorkspaceDialog({
   workspace,
   open,
@@ -123,26 +125,28 @@ export function EditWorkspaceDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100%-2rem)] gap-0 overflow-hidden p-0 sm:w-full sm:max-w-sm">
-        <form onSubmit={handleSubmit}>
-          {/* Header */}
-          <DialogHeader className="border-border/30 border-b px-4 sm:px-5 pt-5 pb-4">
-            <DialogTitle className="text-sm font-medium">
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="flex w-[calc(100%-2rem)] max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:w-full sm:max-w-md">
+          {/* Header — pinned */}
+          <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4 text-left">
+            <DialogTitle className="text-heading font-serif">
               Workspace settings
             </DialogTitle>
+            <DialogDescription>
+              Manage your workspace details, default AI model, and deletion.
+            </DialogDescription>
           </DialogHeader>
 
-          {/* Body */}
-          <div className="space-y-4 px-4 sm:px-5 py-4">
+          {/* Body — scrollable */}
+          <form
+            id="edit-workspace-form"
+            onSubmit={handleSubmit}
+            className="no-scrollbar flex-1 overflow-y-auto px-5 py-4 space-y-4"
+          >
             {/* Title */}
             <div className="space-y-1.5">
-              <label
-                htmlFor="edit-workspace-title"
-                className="text-muted-foreground block text-xs font-medium tracking-wider uppercase"
-              >
-                Name
-              </label>
+              <Label htmlFor="edit-workspace-title">Name</Label>
               <Input
                 id="edit-workspace-title"
                 value={title}
@@ -151,7 +155,6 @@ export function EditWorkspaceDialog({
                 autoFocus
                 autoComplete="off"
                 placeholder="e.g. Distributed systems"
-                className="h-9 text-sm"
                 aria-invalid={Boolean(fieldErrors.title)}
               />
               {fieldErrors.title ? (
@@ -161,21 +164,20 @@ export function EditWorkspaceDialog({
 
             {/* Description */}
             <div className="space-y-1.5">
-              <label
-                htmlFor="edit-workspace-description"
-                className="text-muted-foreground block text-xs font-medium tracking-wider uppercase"
-              >
+              <Label htmlFor="edit-workspace-description">
                 Description{" "}
-                <span className="font-normal normal-case">(optional)</span>
-              </label>
+                <span className="text-muted-foreground font-normal">
+                  (optional)
+                </span>
+              </Label>
               <Textarea
                 id="edit-workspace-description"
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
                 maxLength={500}
-                rows={2}
+                rows={3}
                 placeholder="What this collection is for"
-                className="resize-none text-sm"
+                className="resize-none"
                 aria-invalid={Boolean(fieldErrors.description)}
               />
               {fieldErrors.description ? (
@@ -192,41 +194,42 @@ export function EditWorkspaceDialog({
               </p>
               <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
                 {MODEL_OPTIONS.map((option) => (
-                  <label
+                  <button
                     key={option.value}
+                    type="button"
+                    onClick={() => setModel(option.value)}
                     className={cn(
-                      "relative flex cursor-pointer flex-col rounded-lg border px-3 py-2.5 transition-colors",
+                      "relative flex cursor-pointer flex-col text-left rounded-xl border p-3 transition-colors",
                       model === option.value
-                        ? "border-primary/60 bg-primary/5"
-                        : "border-border/40 hover:border-border/70 hover:bg-white/3",
+                        ? "border-primary/50 bg-primary/10 text-foreground"
+                        : "border-border/40 text-muted-foreground hover:border-border/70 hover:text-foreground hover:bg-muted/40",
                     )}
                   >
-                    <input
-                      type="radio"
-                      name="workspace-model"
-                      value={option.value}
-                      checked={model === option.value}
-                      onChange={() => setModel(option.value)}
-                      className="sr-only"
-                    />
-                    <span className="text-xs leading-none font-medium">
-                      {option.label}
-                    </span>
-                    <span className="text-muted-foreground/70 mt-1 text-[11px] leading-snug">
+                    <div className="flex items-center justify-between w-full">
+                      <span className="text-xs font-medium leading-none text-foreground">
+                        {option.label}
+                      </span>
+                      {model === option.value && (
+                        <span className="size-1.5 rounded-full bg-primary" />
+                      )}
+                    </div>
+                    <span className="text-muted-foreground/80 mt-1.5 text-[11px] leading-snug">
                       {option.description}
                     </span>
-                  </label>
+                  </button>
                 ))}
               </div>
             </div>
-          </div>
+          </form>
 
-          {/* Footer */}
-          <div className="border-border/30 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 border-t px-4 sm:px-5 py-3">
-            <button
+          {/* Footer — pinned */}
+          <div className="border-border/30 flex shrink-0 items-center justify-between border-t px-5 py-3">
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setDeleteOpen(true)}
-              className="text-muted-foreground/60 hover:text-destructive flex items-center justify-center sm:justify-start gap-1.5 text-xs py-1 transition-colors"
+              className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 px-2.5 text-xs transition-colors gap-1.5 cursor-pointer"
             >
               <HugeiconsIcon
                 icon={Delete01Icon}
@@ -235,14 +238,13 @@ export function EditWorkspaceDialog({
                 aria-hidden
               />
               Delete workspace
-            </button>
+            </Button>
 
-            <div className="flex items-center justify-end gap-2">
+            <div className="flex items-center gap-2">
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="flex-1 sm:flex-none"
                 onClick={() => onOpenChange(false)}
               >
                 Cancel
@@ -250,39 +252,39 @@ export function EditWorkspaceDialog({
               <Button
                 type="submit"
                 size="sm"
-                className="flex-1 sm:flex-none"
+                form="edit-workspace-form"
                 disabled={
                   updateWorkspace.isPending ||
                   title.trim().length === 0 ||
                   unchanged
                 }
               >
-                {updateWorkspace.isPending ? "Saving…" : "Save"}
+                {updateWorkspace.isPending ? "Saving…" : "Save changes"}
               </Button>
             </div>
           </div>
-        </form>
+        </DialogContent>
+      </Dialog>
 
-        <ConfirmDeleteDialog
-          open={deleteOpen}
-          onOpenChange={setDeleteOpen}
-          title="Delete workspace"
-          description={
-            <>
-              This permanently deletes{" "}
-              <span className="text-foreground font-medium">
-                {workspace?.title}
-              </span>
-              , including its sources, artifacts, and conversations. This cannot
-              be undone.
-            </>
-          }
-          confirmLabel="Delete workspace"
-          pendingLabel="Deleting…"
-          isPending={deleteWorkspace.isPending}
-          onConfirm={handleDelete}
-        />
-      </DialogContent>
-    </Dialog>
+      <ConfirmDeleteDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title="Delete workspace"
+        description={
+          <>
+            This permanently deletes{" "}
+            <span className="text-foreground font-medium">
+              {workspace?.title}
+            </span>
+            , including its sources, artifacts, and conversations. This cannot
+            be undone.
+          </>
+        }
+        confirmLabel="Delete workspace"
+        pendingLabel="Deleting…"
+        isPending={deleteWorkspace.isPending}
+        onConfirm={handleDelete}
+      />
+    </>
   );
 }

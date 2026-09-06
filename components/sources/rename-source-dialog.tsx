@@ -10,7 +10,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -36,7 +35,7 @@ export function RenameSourceDialog({
         if (!open) onClose();
       }}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="flex w-[calc(100%-2rem)] max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:w-full sm:max-w-md">
         {source ? (
           <RenameForm
             key={source.id}
@@ -86,8 +85,9 @@ function RenameForm({
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <DialogHeader>
+    <>
+      {/* Header — pinned */}
+      <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4 text-left">
         <DialogTitle className="text-heading font-serif">
           Rename source
         </DialogTitle>
@@ -95,35 +95,47 @@ function RenameForm({
           The title is only for your library. It does not change the content.
         </DialogDescription>
       </DialogHeader>
-      <div className="grid gap-1.5 py-4">
-        <Label htmlFor="rename-source-title">Title</Label>
-        <Input
-          id="rename-source-title"
-          required
-          autoFocus
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          maxLength={200}
-          aria-invalid={Boolean(fieldError)}
-          aria-describedby={fieldError ? "rename-source-error" : undefined}
-        />
-        {fieldError ? (
-          <p id="rename-source-error" className="text-destructive text-sm">
-            {fieldError}
-          </p>
-        ) : null}
-      </div>
-      <DialogFooter>
-        <Button type="button" variant="ghost" onClick={onClose}>
+
+      {/* Body — scrollable */}
+      <form
+        id="rename-source-form"
+        onSubmit={handleSubmit}
+        className="no-scrollbar flex-1 overflow-y-auto px-5 py-4 space-y-4"
+      >
+        <div className="space-y-1.5">
+          <Label htmlFor="rename-source-title">Title</Label>
+          <Input
+            id="rename-source-title"
+            required
+            autoFocus
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            maxLength={200}
+            aria-invalid={Boolean(fieldError)}
+            aria-describedby={fieldError ? "rename-source-error" : undefined}
+          />
+          {fieldError ? (
+            <p id="rename-source-error" className="text-destructive text-sm">
+              {fieldError}
+            </p>
+          ) : null}
+        </div>
+      </form>
+
+      {/* Footer — pinned */}
+      <div className="border-border/30 flex shrink-0 items-center justify-end gap-2 border-t px-5 py-3">
+        <Button type="button" variant="ghost" size="sm" onClick={onClose}>
           Cancel
         </Button>
         <Button
           type="submit"
+          size="sm"
+          form="rename-source-form"
           disabled={rename.isPending || title.trim().length === 0}
         >
           {rename.isPending ? "Saving…" : "Save"}
         </Button>
-      </DialogFooter>
-    </form>
+      </div>
+    </>
   );
 }
