@@ -266,7 +266,7 @@ export function DashboardClient({
                   type="button"
                     className="group relative flex min-h-[11rem] sm:min-h-[12rem] cursor-pointer flex-col justify-between rounded-2xl border-2 border-dashed border-foreground/30 bg-card/80 p-4 sm:p-5 text-left shadow-sm transition-colors duration-200 hover:border-foreground/45 hover:bg-card/95"
                   >
-                    <div className="flex size-10 sm:size-11 items-center justify-center rounded-xl border border-foreground/30 bg-background text-black dark:text-white shadow-xs transition-colors duration-200 group-hover:border-foreground/50">
+                    <div className="flex size-10 sm:size-11 items-center justify-center rounded-xl border border-foreground/30 bg-background text-heading shadow-xs transition-colors duration-200 group-hover:border-foreground/50">
                       <HugeiconsIcon
                         icon={PlusSignIcon}
                         strokeWidth={2.2}
@@ -275,7 +275,7 @@ export function DashboardClient({
                     </div>
 
                     <div>
-                      <h3 className="text-base sm:text-lg font-semibold tracking-tight text-black dark:text-white">
+                      <h3 className="text-base sm:text-lg font-semibold tracking-tight text-heading">
                         New Workspace
                       </h3>
                       <p className="font-inter text-muted-foreground mt-1 line-clamp-2 text-xs sm:text-[13px] leading-relaxed font-normal">

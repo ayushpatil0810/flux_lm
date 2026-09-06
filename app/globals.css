@@ -42,6 +42,7 @@
   /* Surfaces and ink */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-heading: var(--heading);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -132,12 +133,13 @@
 :root {
   /* Warm editorial alabaster / stone light theme (avoids sterile pure white and cold blue tints) */
   --background: #f8f7f5;
-  --foreground: #18181b;
+  --foreground: #404040;
+  --heading: #0a0a0a;
 
   --card: #ffffff;
-  --card-foreground: #18181b;
+  --card-foreground: #404040;
   --popover: #ffffff;
-  --popover-foreground: #18181b;
+  --popover-foreground: #404040;
 
   /* Accent: Strictly #2667ff */
   --primary: #2667ff;
@@ -148,13 +150,13 @@
   --brand-muted: rgba(38, 103, 255, 0.16);
 
   --secondary: #f0eee9;
-  --secondary-foreground: #18181b;
+  --secondary-foreground: #404040;
 
   --muted: #f2f0ec;
-  --muted-foreground: #716f6b;
+  --muted-foreground: #737373;
 
   --accent: #f0eee9;
-  --accent-foreground: #18181b;
+  --accent-foreground: #0a0a0a;
 
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
@@ -192,11 +194,11 @@
   --chart-5: oklch(0.31 0.012 72);
 
   --sidebar: #fbfaf8;
-  --sidebar-foreground: #18181b;
+  --sidebar-foreground: #404040;
   --sidebar-primary: #2667ff;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #f0eee9;
-  --sidebar-accent-foreground: #18181b;
+  --sidebar-accent-foreground: #0a0a0a;
   --sidebar-border: #e5e2dc;
   --sidebar-ring: #2667ff;
 
@@ -214,12 +216,13 @@
 .dark {
   /* Rich Charcoal & Warm Obsidian Dark Theme (No pitch black #000000, no generic blue/purple tints) */
   --background: #131315;
-  --foreground: #f0f0f2;
+  --foreground: #e4e4e7;
+  --heading: #fafafa;
 
   --card: #1a1a1d;
-  --card-foreground: #f0f0f2;
+  --card-foreground: #e4e4e7;
   --popover: #1e1e22;
-  --popover-foreground: #f0f0f2;
+  --popover-foreground: #e4e4e7;
 
   /* Accent: Strictly #2667ff */
   --primary: #2667ff;
@@ -230,13 +233,13 @@
   --brand-muted: rgba(38, 103, 255, 0.2);
 
   --secondary: #242428;
-  --secondary-foreground: #f0f0f2;
+  --secondary-foreground: #e4e4e7;
 
   --muted: #242428;
   --muted-foreground: #92929b;
 
   --accent: #242428;
-  --accent-foreground: #f0f0f2;
+  --accent-foreground: #fafafa;
 
   --destructive: #f43f5e;
   --destructive-foreground: #ffffff;
@@ -272,11 +275,11 @@
   --chart-5: oklch(0.31 0.012 72);
 
   --sidebar: #161619;
-  --sidebar-foreground: #f0f0f2;
+  --sidebar-foreground: #e4e4e7;
   --sidebar-primary: #2667ff;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #242428;
-  --sidebar-accent-foreground: #f0f0f2;
+  --sidebar-accent-foreground: #fafafa;
   --sidebar-border: #2a2a30;
   --sidebar-ring: #2667ff;
 
@@ -300,6 +303,22 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--heading);
+  }
+  h1.text-foreground,
+  h2.text-foreground,
+  h3.text-foreground,
+  h4.text-foreground,
+  h5.text-foreground,
+  h6.text-foreground {
+    color: var(--heading);
   }
   ::selection {
     background-color: color-mix(in oklch, var(--primary) 26%, transparent);
@@ -534,7 +553,7 @@
 .prose h2,
 .prose h3,
 .prose h4 {
-  color: var(--foreground);
+  color: var(--heading);
   font-family: var(--font-schibsted), sans-serif;
   font-weight: 600;
   letter-spacing: -0.015em;
@@ -598,7 +617,7 @@
 .prose strong,
 .prose b {
   font-weight: 600;
-  color: var(--foreground);
+  color: var(--heading);
 }
 
 .prose em,

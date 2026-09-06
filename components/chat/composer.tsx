@@ -220,7 +220,7 @@ export function Composer({
                   className={cn(
                     "size-9 sm:size-8 rounded-lg shadow-none transition-all duration-150 touch-manipulation",
                     value.trim().length > 0
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-xs active:scale-95"
+                      ? "border border-[#2868F5] bg-gradient-to-b from-[#2875FF] to-[#3378F4] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25)] hover:from-[#347FFF] hover:to-[#4382F5] hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.35)] active:scale-95"
                       : "bg-muted/70 text-muted-foreground/35 cursor-not-allowed",
                   )}
                 >

@@ -503,12 +503,12 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
               <Button
                 type="button"
                 onClick={() => setImportDialogOpen(true)}
-                className="w-full h-9.5 justify-center gap-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold tracking-wide transition-all shadow-sm active:scale-[0.99]"
+                className="w-full h-9.5 justify-center gap-2 rounded-xl text-xs font-semibold tracking-wide"
               >
                 <HugeiconsIcon
                   icon={Add01Icon}
                   strokeWidth={2.5}
-                  className="size-4 text-primary-foreground"
+                  className="size-4"
                 />
                 <span>Add Source</span>
               </Button>
@@ -574,9 +574,9 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                     type="button"
                     size="sm"
                     onClick={() => setImportDialogOpen(true)}
-                    className="mt-3.5 h-8 gap-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-medium shadow-xs"
+                    className="mt-3.5 h-8 gap-1.5 rounded-lg text-xs font-medium"
                   >
-                    <HugeiconsIcon icon={Add01Icon} strokeWidth={2} className="size-3.5 text-primary-foreground" />
+                    <HugeiconsIcon icon={Add01Icon} strokeWidth={2} className="size-3.5" />
                     <span>Add Source</span>
                   </Button>
                 </div>

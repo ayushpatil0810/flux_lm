@@ -581,7 +581,7 @@ export function ImportSourceDialog({
                     urlClassification?.type === "youtube"
                       ? "bg-red-600 hover:bg-red-700 text-white"
                       : urlClassification?.type === "website"
-                        ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                        ? "border border-[#2868F5] bg-gradient-to-b from-[#2875FF] to-[#3378F4] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25)] hover:from-[#347FFF] hover:to-[#4382F5]"
                         : "bg-muted text-muted-foreground/50 cursor-not-allowed",
                   )}
                 >
