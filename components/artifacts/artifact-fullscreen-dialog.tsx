@@ -29,9 +29,9 @@ import {
 import {
   ARTIFACT_TYPE_LABELS,
   ARTIFACT_TYPE_STYLES,
+  ARTIFACT_TYPE_ICONS,
   cleanArtifactTitle,
 } from "./artifact-meta";
-import { ARTIFACT_TYPE_ICONS } from "./sidebar-artifacts";
 import { ArtifactViewer } from "./artifact-viewers";
 import { cn } from "@/lib/utils";
 import { getErrorMessage } from "@/lib/api";

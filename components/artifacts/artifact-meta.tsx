@@ -1,4 +1,38 @@
-import type { ArtifactType, LearningArtifact } from "@/lib/api";
+import * as React from "react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  File01Icon,
+  CheckmarkBadge01Icon,
+  Cards01Icon,
+  Quiz02Icon,
+  NetworkIcon,
+  ShieldCheckIcon,
+} from "@hugeicons/core-free-icons";
+import type { ArtifactType } from "@/lib/api";
+
+export const ARTIFACT_TYPE_ICONS: Record<
+  ArtifactType,
+  React.FC<{ className?: string }>
+> = {
+  SUMMARY: (props) => (
+    <HugeiconsIcon icon={File01Icon} strokeWidth={1.5} {...props} />
+  ),
+  TAKEAWAYS: (props) => (
+    <HugeiconsIcon icon={CheckmarkBadge01Icon} strokeWidth={1.5} {...props} />
+  ),
+  FLASHCARDS: (props) => (
+    <HugeiconsIcon icon={Cards01Icon} strokeWidth={1.5} {...props} />
+  ),
+  QUIZ: (props) => (
+    <HugeiconsIcon icon={Quiz02Icon} strokeWidth={1.5} {...props} />
+  ),
+  MINDMAP: (props) => (
+    <HugeiconsIcon icon={NetworkIcon} strokeWidth={1.5} {...props} />
+  ),
+  REPORT: (props) => (
+    <HugeiconsIcon icon={ShieldCheckIcon} strokeWidth={1.5} {...props} />
+  ),
+};
 
 export const ARTIFACT_TYPE_LABELS: Record<ArtifactType, string> = {
   SUMMARY: "Summary",
@@ -99,15 +133,6 @@ export const ARTIFACT_TYPE_STYLES: Record<ArtifactType, ArtifactTypeStyle> = {
     badgeBorder: "border-violet-500/20",
   },
 };
-
-/** Secondary line under an artifact title: its topic, or source count. */
-export function artifactSubtitle(artifact: LearningArtifact): string | null {
-  const topic = artifact.metadata?.topic;
-  if (typeof topic === "string" && topic.length > 0) return topic;
-  const count = artifact.sourceIds?.length ?? 0;
-  if (count === 0) return null;
-  return `Based on ${count} ${count === 1 ? "source" : "sources"}`;
-}
 
 /**
  * Strips date suffix (e.g., " · 9/5/2026" or " · Sep 5, 2026") from an artifact title.

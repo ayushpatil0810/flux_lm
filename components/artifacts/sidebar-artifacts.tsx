@@ -3,12 +3,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Cancel01Icon,
   MoreHorizontalIcon,
-  File01Icon,
-  CheckmarkBadge01Icon,
   Cards01Icon,
-  Quiz02Icon,
-  NetworkIcon,
-  ShieldCheckIcon,
   SidebarRightIcon,
   Loading02Icon,
   ArrowLeft02Icon,
@@ -44,6 +39,7 @@ import {
   ARTIFACT_TYPE_DESCRIPTIONS,
   ARTIFACT_TYPE_ORDER,
   ARTIFACT_TYPE_STYLES,
+  ARTIFACT_TYPE_ICONS,
   cleanArtifactTitle,
 } from "./artifact-meta";
 import {
@@ -51,32 +47,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-// ── Type-to-icon mapping ────────────────────────────────────────────────────
-
-export const ARTIFACT_TYPE_ICONS: Record<
-  ArtifactType,
-  React.FC<{ className?: string }>
-> = {
-  SUMMARY: (props) => (
-    <HugeiconsIcon icon={File01Icon} strokeWidth={1.5} {...props} />
-  ),
-  TAKEAWAYS: (props) => (
-    <HugeiconsIcon icon={CheckmarkBadge01Icon} strokeWidth={1.5} {...props} />
-  ),
-  FLASHCARDS: (props) => (
-    <HugeiconsIcon icon={Cards01Icon} strokeWidth={1.5} {...props} />
-  ),
-  QUIZ: (props) => (
-    <HugeiconsIcon icon={Quiz02Icon} strokeWidth={1.5} {...props} />
-  ),
-  MINDMAP: (props) => (
-    <HugeiconsIcon icon={NetworkIcon} strokeWidth={1.5} {...props} />
-  ),
-  REPORT: (props) => (
-    <HugeiconsIcon icon={ShieldCheckIcon} strokeWidth={1.5} {...props} />
-  ),
-};
 
 // ── Panel ───────────────────────────────────────────────────────────────────
 

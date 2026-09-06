@@ -8,7 +8,7 @@ const log = logger.child({ module: "Pinecone" });
 /**
  * Singleton Pinecone Client instance initialized with env.PINECONE_API_KEY.
  */
-export const pinecone = new Pinecone({
+const pinecone = new Pinecone({
   apiKey: env.PINECONE_API_KEY ?? "",
 });
 
@@ -17,7 +17,7 @@ export const pinecone = new Pinecone({
  *
  * @returns Pinecone Index object.
  */
-export function getPineconeIndex() {
+function getPineconeIndex() {
   const indexName = env.PINECONE_INDEX || "flux";
   return pinecone.index(indexName);
 }

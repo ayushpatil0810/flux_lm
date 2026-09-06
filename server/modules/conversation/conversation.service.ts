@@ -4,7 +4,7 @@ import {
   CreateConversationInput,
   AddMessageInput,
   StreamChatInput,
-} from "./conversation.validator";
+} from "./conversation.types";
 import { WorkspaceService } from "../workspace/workspace.service";
 import {
   streamText,
@@ -25,7 +25,6 @@ import {
   retrieveWorkspaceContext,
   getLastUserMessageText,
   buildConversationTitle,
-  getTextFromUIMessage,
 } from "./conversation.utils";
 import { webSearchTool } from "./conversation.tools";
 import { searchUserMemories, addMemoriesFromMessages } from "@/lib/mem0";

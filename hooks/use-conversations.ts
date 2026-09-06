@@ -32,20 +32,3 @@ export function useMessages(conversationId: string | undefined) {
   });
 }
 
-export function useDeleteConversation(workspaceId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (conversationId: string) =>
-      apiFetch<null>(endpoints.conversations.detail(conversationId), {
-        method: "DELETE",
-      }),
-    onSuccess: (_data, conversationId) => {
-      queryClient.removeQueries({
-        queryKey: queryKeys.conversations.messages(conversationId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.conversations.all(workspaceId),
-      });
-    },
-  });
-}

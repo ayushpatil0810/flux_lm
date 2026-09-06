@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const sourceTypeSchema = z.enum([
+const sourceTypeSchema = z.enum([
   "PDF",
   "WEBSITE",
   "YOUTUBE",
@@ -8,14 +8,14 @@ export const sourceTypeSchema = z.enum([
   "MARKDOWN",
 ]);
 
-export const sourceStatusSchema = z.enum([
+const sourceStatusSchema = z.enum([
   "PENDING",
   "PROCESSING",
   "READY",
   "FAILED",
 ]);
 
-export const sourceSharedFields = {
+const sourceSharedFields = {
   content: z.string().optional(),
   url: z.string().url("Invalid URL format").optional().or(z.literal("")),
   status: sourceStatusSchema.optional(),
@@ -53,15 +53,6 @@ export const createSourceSchema = z.object({
 export const importWebsiteSourceSchema = z.object({
   workspaceId: z.string().min(1, "Workspace ID is required"),
   url: z.string().url("Invalid URL format"),
-  title: z
-    .string()
-    .max(200, "Title cannot exceed 200 characters")
-    .trim()
-    .optional(),
-});
-
-export const importPdfSourceSchema = z.object({
-  workspaceId: z.string().min(1, "Workspace ID is required"),
   title: z
     .string()
     .max(200, "Title cannot exceed 200 characters")

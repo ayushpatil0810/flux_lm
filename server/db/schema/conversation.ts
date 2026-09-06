@@ -1,5 +1,4 @@
 import { createId } from "@paralleldrive/cuid2";
-import { relations } from "drizzle-orm";
 import {
   index,
   integer,
@@ -9,7 +8,7 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { getWorkspaceEntityBase, workspace } from "./workspace";
+import { getWorkspaceEntityBase } from "./workspace";
 import { timestamps } from "./utils";
 import { CitationMetadata } from "./types";
 
@@ -55,21 +54,3 @@ export const message = pgTable(
     ),
   ],
 );
-
-export const conversationRelations = relations(
-  conversation,
-  ({ one, many }) => ({
-    workspace: one(workspace, {
-      fields: [conversation.workspaceId],
-      references: [workspace.id],
-    }),
-    messages: many(message),
-  }),
-);
-
-export const messageRelations = relations(message, ({ one }) => ({
-  conversation: one(conversation, {
-    fields: [message.conversationId],
-    references: [conversation.id],
-  }),
-}));

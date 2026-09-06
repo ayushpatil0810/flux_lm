@@ -43,10 +43,7 @@ export const listMessagesQuerySchema = z.object({
   limit: z.coerce.number().positive().max(100).optional(),
 });
 
-/**
- * Zod validation schema for UI messages in streaming chat requests.
- */
-export const uiMessageSchema = z
+const uiMessageSchema = z
   .object({
     id: z.string().optional(),
     role: z.enum(["system", "user", "assistant"]),
@@ -70,5 +67,3 @@ export const streamChatSchema = z.object({
   model: z.enum(CHAT_MODELS).optional(),
   webSearch: z.boolean().optional(),
 });
-
-export * from "./conversation.types";

@@ -3,8 +3,8 @@
 import * as React from "react";
 import type { Source } from "@/lib/api";
 
-export type WorkspaceViewMode = "chat" | "split" | "studio";
-export type MobileTab = "sources" | "chat" | "studio";
+type WorkspaceViewMode = "chat" | "split" | "studio";
+type MobileTab = "sources" | "chat" | "studio";
 
 interface WorkspacePanelContextType {
   leftOpen: boolean;

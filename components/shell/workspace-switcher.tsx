@@ -9,6 +9,7 @@ import {
 
 import type { Workspace } from "@/lib/api";
 import { useWorkspaces } from "@/hooks/use-workspaces";
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,12 +19,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+interface WorkspaceSwitcherProps {
+  workspace: Workspace;
+  className?: string;
+}
+
 /**
  * Workspace switcher. Only switching lives in this menu: creation is a
  * section action in the rail and settings sit beside the switcher, so
  * the menu has a single, obvious purpose.
  */
-export function WorkspaceSwitcher({ workspace }: { workspace: Workspace }) {
+export function WorkspaceSwitcher({
+  workspace,
+  className,
+}: WorkspaceSwitcherProps) {
   const router = useRouter();
   const { data: workspaces } = useWorkspaces();
 
@@ -31,22 +40,14 @@ export function WorkspaceSwitcher({ workspace }: { workspace: Workspace }) {
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={`Current workspace: ${workspace.title}. Open workspace switcher.`}
-        className="border-border bg-card hover:bg-accent focus-visible:ring-ring/60 flex w-full items-center justify-between gap-2 rounded-md border px-2.5 py-2 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none"
+        className={cn(
+          "hover:bg-muted/80 focus-visible:ring-ring/60 text-muted-foreground hover:text-foreground flex items-center justify-center rounded-md p-1 transition-colors focus-visible:ring-2 focus-visible:outline-none cursor-pointer",
+          className,
+        )}
       >
-        <span className="flex min-w-0 items-center gap-2.5">
-          <span
-            aria-hidden
-            className="bg-secondary text-secondary-foreground flex size-6 shrink-0 items-center justify-center rounded-sm text-xs font-medium"
-          >
-            {workspace.title.trim().slice(0, 1).toUpperCase() || "W"}
-          </span>
-          <span className="truncate text-sm font-medium">
-            {workspace.title}
-          </span>
-        </span>
         <HugeiconsIcon
           icon={ChevronsUpDown}
-          className="text-muted-foreground size-4 shrink-0"
+          className="size-3.5 shrink-0"
           aria-hidden
         />
       </DropdownMenuTrigger>

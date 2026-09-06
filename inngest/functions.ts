@@ -12,7 +12,7 @@ const log = logger.child({ module: "Inngest" });
  * Step-by-step durable function for source ingestion: content extraction, chunking,
  * OpenAI vector embeddings generation, and Pinecone index storage.
  */
-export const processSourceFunction = inngest.createFunction(
+const processSourceFunction = inngest.createFunction(
   {
     id: "process-source",
     retries: 3,
@@ -67,7 +67,7 @@ export const processSourceFunction = inngest.createFunction(
 /**
  * Inngest function for asynchronous learning artifact generation (summaries, flashcards, mindmaps).
  */
-export const generateArtifactFunction = inngest.createFunction(
+const generateArtifactFunction = inngest.createFunction(
   {
     id: "generate-artifact",
     retries: 2,
@@ -91,7 +91,7 @@ export const generateArtifactFunction = inngest.createFunction(
 /**
  * Inngest function for rolling conversation memory summarization.
  */
-export const summarizeConversationFunction = inngest.createFunction(
+const summarizeConversationFunction = inngest.createFunction(
   {
     id: "summarize-conversation",
     retries: 2,

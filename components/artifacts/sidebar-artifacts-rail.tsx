@@ -15,8 +15,8 @@ import {
   ARTIFACT_TYPE_LABELS,
   ARTIFACT_TYPE_DESCRIPTIONS,
   ARTIFACT_TYPE_STYLES,
+  ARTIFACT_TYPE_ICONS,
 } from "./artifact-meta";
-import { ARTIFACT_TYPE_ICONS } from "./sidebar-artifacts";
 import { ArtifactConfigDialog } from "./artifact-config-dialog";
 import {
   Tooltip,

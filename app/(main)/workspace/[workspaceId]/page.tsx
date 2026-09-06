@@ -6,8 +6,6 @@ import { WorkspaceService } from "@/server/modules/workspace/workspace.service";
 import { WorkspaceView } from "@/components/workspace/workspace-view";
 import { WorkspaceViewSkeleton } from "@/components/workspace/workspace-view-skeleton";
 
-export const instant = false;
-
 export async function generateMetadata({
   params,
 }: {

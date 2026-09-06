@@ -3,4 +3,6 @@ export * from "./workspace";
 export * from "./source";
 export * from "./conversation";
 export * from "./learning-artifact";
+export * from "./relations";
 export * from "./types";
+

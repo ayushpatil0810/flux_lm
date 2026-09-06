@@ -16,6 +16,7 @@ import { FluxLogo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitch } from "@/components/ui/theme-switch";
 import { UserMenu } from "@/components/shell/user-menu";
+import { WorkspaceSwitcher } from "@/components/shell/workspace-switcher";
 import {
   Tooltip,
   TooltipContent,
@@ -129,16 +130,19 @@ export function WorkspaceTopbar({
               autoFocus
             />
           ) : (
-            <button
-              type="button"
-              onClick={startEditing}
-              className="text-foreground hover:bg-muted/80 flex min-w-0 items-center gap-1 rounded-md px-1.5 sm:px-2 py-1 sm:py-0.5 text-xs sm:text-sm font-medium tracking-tight transition-colors active:scale-[0.99] touch-manipulation"
-              title="Click to rename"
-            >
-              <span className="truncate max-w-[120px] xs:max-w-[170px] sm:max-w-xs md:max-w-md">
-                {workspace?.title ?? "Workspace"}
-              </span>
-            </button>
+            <div className="flex items-center gap-0.5 min-w-0">
+              <button
+                type="button"
+                onClick={startEditing}
+                className="text-foreground hover:bg-muted/80 flex min-w-0 items-center gap-1 rounded-md px-1.5 sm:px-2 py-1 sm:py-0.5 text-xs sm:text-sm font-medium tracking-tight transition-colors active:scale-[0.99] touch-manipulation"
+                title="Click to rename"
+              >
+                <span className="truncate max-w-[120px] xs:max-w-[170px] sm:max-w-xs md:max-w-md">
+                  {workspace?.title ?? "Workspace"}
+                </span>
+              </button>
+              {workspace ? <WorkspaceSwitcher workspace={workspace} /> : null}
+            </div>
           )}
 
           {updateWorkspace.isPending && (

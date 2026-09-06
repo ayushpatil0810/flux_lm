@@ -1,5 +1,4 @@
 import { createId } from "@paralleldrive/cuid2";
-import { relations } from "drizzle-orm";
 import {
   index,
   integer,
@@ -10,7 +9,7 @@ import {
   timestamp,
   unique,
 } from "drizzle-orm/pg-core";
-import { getWorkspaceEntityBase, workspace } from "./workspace";
+import { getWorkspaceEntityBase } from "./workspace";
 import { timestamps } from "./utils";
 import { SourceChunkMetadata, SourceMetadata } from "./types";
 
@@ -70,18 +69,3 @@ export const sourceChunk = pgTable(
     index("source_chunk_sourceId_idx").on(table.sourceId),
   ],
 );
-
-export const sourceRelations = relations(source, ({ one, many }) => ({
-  workspace: one(workspace, {
-    fields: [source.workspaceId],
-    references: [workspace.id],
-  }),
-  chunks: many(sourceChunk),
-}));
-
-export const sourceChunkRelations = relations(sourceChunk, ({ one }) => ({
-  source: one(source, {
-    fields: [sourceChunk.sourceId],
-    references: [source.id],
-  }),
-}));

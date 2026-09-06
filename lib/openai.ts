@@ -1,5 +1,4 @@
 import {
-  CHAT_MODEL,
   EMBEDDING_MODEL,
   EMBEDDING_DIMENSIONS,
 } from "@/lib/constants";
@@ -13,7 +12,7 @@ const log = logger.child({ module: "OpenAI" });
  * Singleton OpenAI client instance initialized with env.OPENAI_API_KEY.
  * The SDK will raise an AuthenticationError on the first API call when the key is absent.
  */
-export const openai = new OpenAI({
+const openai = new OpenAI({
   apiKey: env.OPENAI_API_KEY ?? "",
 });
 
@@ -59,53 +58,6 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
   });
 
   return response.data.map((item) => item.embedding);
-}
-
-/**
- * Generates a response using OpenAI Chat Completions API.
- *
- * @param messages - OpenAI ChatCompletionMessageParam array.
- * @param options - Optional model override, temperature, and maxTokens.
- * @returns Generated assistant response text content.
- */
-export async function generateChatCompletion(
-  messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-  options: {
-    model?: string;
-    temperature?: number;
-    maxTokens?: number;
-  } = {},
-): Promise<string> {
-  const response = await openai.chat.completions.create({
-    model: options.model || CHAT_MODEL,
-    messages,
-    temperature: options.temperature ?? 0.3,
-    max_tokens: options.maxTokens,
-  });
-
-  return response.choices[0]?.message?.content || "";
-}
-
-/**
- * Creates a streaming chat completion response using OpenAI Chat Completions API.
- *
- * @param messages - OpenAI ChatCompletionMessageParam array.
- * @param options - Optional model override and temperature.
- * @returns AsyncIterable stream choices.
- */
-export async function streamChatCompletion(
-  messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-  options: {
-    model?: string;
-    temperature?: number;
-  } = {},
-) {
-  return await openai.chat.completions.create({
-    model: options.model || CHAT_MODEL,
-    messages,
-    temperature: options.temperature ?? 0.3,
-    stream: true,
-  });
 }
 
 if (!env.OPENAI_API_KEY) {

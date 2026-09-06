@@ -1,7 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
-import { relations } from "drizzle-orm";
 import { index, jsonb, pgEnum, pgTable, text } from "drizzle-orm/pg-core";
-import { getWorkspaceEntityBase, workspace } from "./workspace";
+import { getWorkspaceEntityBase } from "./workspace";
 import { timestamps } from "./utils";
 import { LearningArtifactContent, LearningArtifactMetadata } from "./types";
 
@@ -43,14 +42,4 @@ export const learningArtifact = pgTable(
       table.status,
     ),
   ],
-);
-
-export const learningArtifactRelations = relations(
-  learningArtifact,
-  ({ one }) => ({
-    workspace: one(workspace, {
-      fields: [learningArtifact.workspaceId],
-      references: [workspace.id],
-    }),
-  }),
 );

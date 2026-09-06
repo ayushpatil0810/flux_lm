@@ -21,4 +21,3 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 }
 
-export { QueryProvider, ThemeProvider, ToastProvider };

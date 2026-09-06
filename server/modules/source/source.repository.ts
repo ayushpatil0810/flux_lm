@@ -101,23 +101,6 @@ export class SourceRepository {
   }
 
   /**
-   * Queries a source record matching both ID and workspace ID.
-   *
-   * @param id - Source unique identifier.
-   * @param workspaceId - Workspace unique identifier.
-   * @returns Source record or null if not matching.
-   */
-  static async findByIdAndWorkspace(id: string, workspaceId: string) {
-    const [result] = await db
-      .select()
-      .from(source)
-      .where(and(eq(source.id, id), eq(source.workspaceId, workspaceId)))
-      .limit(1);
-
-    return result || null;
-  }
-
-  /**
    * Inserts a new source record into the database.
    *
    * @param input - Creation payload containing workspaceId, type, title, etc.

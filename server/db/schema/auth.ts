@@ -1,7 +1,5 @@
-import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
 import { timestamps } from "./utils";
-import { workspace } from "./workspace";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -69,22 +67,4 @@ export const jwks = pgTable("jwks", {
   expiresAt: timestamp("expires_at"),
 });
 
-export const userRelations = relations(user, ({ many }) => ({
-  sessions: many(session),
-  accounts: many(account),
-  workspaces: many(workspace),
-}));
 
-export const sessionRelations = relations(session, ({ one }) => ({
-  user: one(user, {
-    fields: [session.userId],
-    references: [user.id],
-  }),
-}));
-
-export const accountRelations = relations(account, ({ one }) => ({
-  user: one(user, {
-    fields: [account.userId],
-    references: [user.id],
-  }),
-}));

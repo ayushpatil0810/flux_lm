@@ -1,7 +1,7 @@
 import { retrieveWorkspaceContextAdvanced } from "@/lib/rag";
 import type { UIMessage } from "ai";
 
-export function getTextFromUIMessage(message: UIMessage) {
+function getTextFromUIMessage(message: UIMessage) {
   return message.parts
     .filter((part) => part.type === "text")
     .map((part) => part.text)

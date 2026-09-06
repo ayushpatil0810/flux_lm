@@ -24,22 +24,6 @@ export class WorkspaceRepository {
   }
 
   /**
-   * Queries a workspace by its unique ID.
-   *
-   * @param id - Unique workspace identifier.
-   * @returns Workspace record or null if not found.
-   */
-  static async findById(id: string) {
-    const [result] = await db
-      .select()
-      .from(workspace)
-      .where(eq(workspace.id, id))
-      .limit(1);
-
-    return result || null;
-  }
-
-  /**
    * Queries a workspace matching both ID and owning user ID.
    *
    * @param id - Unique workspace identifier.

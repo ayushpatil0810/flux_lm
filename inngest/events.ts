@@ -7,5 +7,3 @@ export const INNGEST_EVENTS = {
   ARTIFACT_GENERATE: "artifact/generate",
 } as const;
 
-export type InngestEventName =
-  (typeof INNGEST_EVENTS)[keyof typeof INNGEST_EVENTS];

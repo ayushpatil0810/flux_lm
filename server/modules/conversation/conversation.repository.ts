@@ -41,25 +41,6 @@ export class ConversationRepository {
   }
 
   /**
-   * Queries a conversation record matching both ID and workspace ID.
-   *
-   * @param id - Conversation unique identifier.
-   * @param workspaceId - Workspace unique identifier.
-   * @returns Conversation record or null.
-   */
-  static async findByIdAndWorkspace(id: string, workspaceId: string) {
-    const [result] = await db
-      .select()
-      .from(conversation)
-      .where(
-        and(eq(conversation.id, id), eq(conversation.workspaceId, workspaceId)),
-      )
-      .limit(1);
-
-    return result || null;
-  }
-
-  /**
    * Creates a new conversation record.
    *
    * @param input - Creation payload containing workspaceId and optional title.

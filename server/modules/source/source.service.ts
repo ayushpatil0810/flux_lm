@@ -9,7 +9,7 @@ import {
   deleteVectorsBySourceIds,
   upsertVectors,
 } from "@/lib/pinecone";
-import { uploadToStorage } from "@/lib/storage";
+import { uploadToStorage, deleteFromStorage } from "@/lib/storage";
 import { getYoutubeTranscript } from "@/lib/youtube";
 import { inngest } from "@/inngest/client";
 import { INNGEST_EVENTS } from "@/inngest/events";
@@ -563,16 +563,6 @@ export class SourceService {
   }
 
   /**
-   * Returns all chunks for a source plus total count.
-   *
-   * @param sourceId - Source unique identifier.
-   */
-  static async listChunksForSource(sourceId: string) {
-    const chunks = await SourceChunkRepository.findBySourceId(sourceId);
-    return { chunks, count: chunks.length };
-  }
-
-  /**
    * Updates a source record after verifying user ownership.
    *
    * @param id - Source unique identifier.
@@ -604,6 +594,14 @@ export class SourceService {
 
     await SourceService.removeSourceFromIndex(existingSource.workspaceId, id);
 
+    if (existingSource.type === "PDF" && existingSource.metadata?.storageKey) {
+      try {
+        await deleteFromStorage(existingSource.metadata.storageKey);
+      } catch (err) {
+        log.warn({ err, sourceId: id }, "Failed to delete PDF from storage");
+      }
+    }
+
     return await SourceRepository.delete(id);
   }
 
@@ -627,6 +625,19 @@ export class SourceService {
       input.workspaceId,
       input.ids,
     );
+
+    for (const item of deleted) {
+      if (item.type === "PDF" && item.metadata?.storageKey) {
+        try {
+          await deleteFromStorage(item.metadata.storageKey);
+        } catch (err) {
+          log.warn(
+            { err, sourceId: item.id },
+            "Failed to delete PDF from storage in bulk delete",
+          );
+        }
+      }
+    }
 
     return {
       deletedCount: deleted.length,

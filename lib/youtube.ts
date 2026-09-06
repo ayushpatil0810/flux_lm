@@ -18,7 +18,7 @@ export interface YoutubeTranscriptResult {
  * @param urlOrId - YouTube URL or 11-character Video ID.
  * @returns Extracted 11-character YouTube Video ID.
  */
-export function extractYoutubeVideoId(urlOrId: string): string {
+function extractYoutubeVideoId(urlOrId: string): string {
   const trimmed = urlOrId.trim();
 
   // If it's already an 11-character string without slashes or query params
@@ -43,7 +43,7 @@ export function extractYoutubeVideoId(urlOrId: string): string {
  *
  * @param offsetInSeconds - Offset time in seconds.
  */
-export function formatTimestamp(offsetInSeconds: number): string {
+function formatTimestamp(offsetInSeconds: number): string {
   const totalSeconds = Math.floor(offsetInSeconds);
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -62,7 +62,7 @@ export function formatTimestamp(offsetInSeconds: number): string {
  *
  * @param videoId - 11-character YouTube Video ID.
  */
-export async function fetchYoutubeMetadata(videoId: string) {
+async function fetchYoutubeMetadata(videoId: string) {
   const targetUrl = `https://www.youtube.com/watch?v=${videoId}`;
   const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(targetUrl)}&format=json`;
 

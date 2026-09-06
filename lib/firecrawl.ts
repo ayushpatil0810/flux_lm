@@ -7,7 +7,7 @@ const log = logger.child({ module: "Firecrawl" });
 /**
  * Singleton Firecrawl API client initialized with env.FIRECRAWL_API_KEY.
  */
-export const firecrawl = new Firecrawl({
+const firecrawl = new Firecrawl({
   apiKey: env.FIRECRAWL_API_KEY ?? "",
 });
 
@@ -49,28 +49,6 @@ export async function searchWeb(query: string, limit = 5) {
   });
 
   return results;
-}
-
-/**
- * Parses a local or uploaded document file (PDF, DOCX, XLSX, etc.) into clean Markdown.
- *
- * @param file - Object containing data buffer, filename, and optional content type.
- * @returns Parsed markdown, summary, and metadata.
- */
-export async function parseDocument(file: {
-  data: Buffer | Blob | Uint8Array | ArrayBuffer;
-  filename: string;
-  contentType?: string;
-}) {
-  const result = await firecrawl.parse(file, {
-    formats: ["markdown"],
-  });
-
-  return {
-    markdown: result.markdown || "",
-    summary: result.summary || "",
-    metadata: result.metadata || {},
-  };
 }
 
 if (!env.FIRECRAWL_API_KEY) {

@@ -22,10 +22,7 @@ export class ApiClientError extends Error {
     Object.setPrototypeOf(this, ApiClientError.prototype);
   }
 
-  get isUnauthorized() {
-    return this.status === 401;
-  }
-
+  // fallow-ignore-next-line unused-class-member
   get isNotFound() {
     return this.status === 404;
   }
