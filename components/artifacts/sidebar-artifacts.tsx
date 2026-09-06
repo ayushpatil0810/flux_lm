@@ -12,6 +12,7 @@ import {
   SidebarRightIcon,
   Loading02Icon,
   ArrowLeft02Icon,
+  ArrowExpand01Icon,
 } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
@@ -29,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { useWorkspacePreview } from "@/components/shell/workspace-panel-context";
 import { ConfirmDeleteDialog } from "@/components/sources/confirm-delete-dialog";
 import { ArtifactConfigDialog } from "./artifact-config-dialog";
+import { ArtifactFullscreenDialog } from "./artifact-fullscreen-dialog";
 import { getErrorMessage } from "@/lib/api";
 import { ArtifactViewer } from "./artifact-viewers";
 import {
@@ -105,7 +107,12 @@ export function SidebarArtifacts({
   const deleteArtifact = useDeleteArtifact(workspaceId);
   const { push } = useToast();
 
-  const { previewArtifactId, setPreviewArtifactId } = useWorkspacePreview();
+  const {
+    previewArtifactId,
+    setPreviewArtifactId,
+    previewExpanded,
+    setPreviewExpanded,
+  } = useWorkspacePreview();
   const [activeType, setActiveType] = React.useState<ArtifactType | null>(null);
   const [deleteTarget, setDeleteTarget] =
     React.useState<LearningArtifact | null>(null);
@@ -189,6 +196,28 @@ export function SidebarArtifacts({
             </div>
 
             <div className="flex items-center gap-1 shrink-0">
+              {/* Fullscreen Expand Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setPreviewExpanded(true)}
+                    className="text-muted-foreground hover:text-foreground size-9 shrink-0 rounded-lg hover:bg-muted"
+                    aria-label="View full screen (⌘E)"
+                  >
+                    <HugeiconsIcon
+                      icon={ArrowExpand01Icon}
+                      strokeWidth={1.5}
+                      className="size-5"
+                    />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" sideOffset={6}>
+                  View full screen (<kbd className="font-mono text-[10px]">⌘E</kbd>)
+                </TooltipContent>
+              </Tooltip>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -204,7 +233,17 @@ export function SidebarArtifacts({
                     />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-40 rounded-xl">
+                <DropdownMenuContent align="end" className="w-44 rounded-xl">
+                  <DropdownMenuItem
+                    onSelect={() => setPreviewExpanded(true)}
+                  >
+                    <HugeiconsIcon
+                      icon={ArrowExpand01Icon}
+                      strokeWidth={1.5}
+                      className="size-4 mr-1.5"
+                    />
+                    View full screen
+                  </DropdownMenuItem>
                   <DropdownMenuItem
                     variant="destructive"
                     onSelect={() => setDeleteTarget(activeArtifact)}
@@ -532,6 +571,14 @@ export function SidebarArtifacts({
         pendingLabel="Deleting…"
         isPending={deleteArtifact.isPending}
         onConfirm={confirmDelete}
+      />
+
+      {/* Fullscreen Theater Dialog */}
+      <ArtifactFullscreenDialog
+        workspaceId={workspaceId}
+        artifactId={previewArtifactId}
+        open={previewExpanded && !!previewArtifactId}
+        onOpenChange={setPreviewExpanded}
       />
     </div>
   );

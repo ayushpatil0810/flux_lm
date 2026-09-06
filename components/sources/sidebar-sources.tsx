@@ -497,21 +497,23 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
             ) : null}
           </div>
 
-          {/* Single Add Source Button */}
-          <div className="shrink-0 px-3.5 pt-2.5 pb-2">
-            <Button
-              type="button"
-              onClick={() => setImportDialogOpen(true)}
-              className="w-full h-9.5 justify-center gap-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold tracking-wide transition-all shadow-sm active:scale-[0.99]"
-            >
-              <HugeiconsIcon
-                icon={Add01Icon}
-                strokeWidth={2.5}
-                className="size-4 text-primary-foreground"
-              />
-              <span>Add Source</span>
-            </Button>
-          </div>
+          {/* Single Add Source Button (only when sources exist; empty state has its own button) */}
+          {sources && sources.length > 0 && (
+            <div className="shrink-0 px-3.5 pt-2.5 pb-2">
+              <Button
+                type="button"
+                onClick={() => setImportDialogOpen(true)}
+                className="w-full h-9.5 justify-center gap-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold tracking-wide transition-all shadow-sm active:scale-[0.99]"
+              >
+                <HugeiconsIcon
+                  icon={Add01Icon}
+                  strokeWidth={2.5}
+                  className="size-4 text-primary-foreground"
+                />
+                <span>Add Source</span>
+              </Button>
+            </div>
+          )}
 
           {/* Filter search bar (visible when more than 2 sources exist) */}
           {sources && sources.length > 2 && (

@@ -35,6 +35,7 @@ interface RawEdge {
 interface MindmapFlowProps {
   nodes: RawNode[];
   edges: RawEdge[];
+  className?: string;
 }
 
 /**
@@ -223,6 +224,7 @@ function getLayoutedElements(rawNodes: RawNode[], rawEdges: RawEdge[]) {
 export function MindmapFlow({
   nodes: rawNodes,
   edges: rawEdges,
+  className,
 }: MindmapFlowProps) {
   const [viewMode, setViewMode] = React.useState<"flow" | "tree">("flow");
 
@@ -312,7 +314,12 @@ export function MindmapFlow({
   }, [setNodes, setEdges]);
 
   return (
-    <div className="border-border/80 bg-card/40 relative h-[340px] sm:h-[440px] md:h-[500px] w-full overflow-hidden rounded-xl border shadow-xs backdrop-blur-xs">
+    <div
+      className={cn(
+        "border-border/80 bg-card/40 relative h-[340px] sm:h-[440px] md:h-[500px] w-full overflow-hidden rounded-xl border shadow-xs backdrop-blur-xs",
+        className,
+      )}
+    >
       {viewMode === "tree" ? (
         <div className="flex h-full w-full flex-col items-center justify-center">
           <p className="text-muted-foreground text-sm">

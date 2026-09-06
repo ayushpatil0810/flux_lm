@@ -7,10 +7,13 @@ export default function DashboardLoading() {
       <div className="bg-grid absolute inset-0 z-0 opacity-[0.03] pointer-events-none" />
 
       <div className="relative z-10 mx-auto flex max-w-6xl flex-col px-4 py-8 md:px-8 md:py-12">
-        {/* Hero Section Skeleton */}
-        <section className="relative mb-8 md:mb-10 flex flex-col items-start pt-4">
-          <div className="glow-primary absolute -right-20 -top-20 -z-10 h-[400px] w-[600px] opacity-30 blur-[120px] pointer-events-none" />
-          <Skeleton className="h-10 w-72 md:h-12 md:w-96 rounded-xl" />
+        {/* Header Section Skeleton */}
+        <section className="relative mb-6 sm:mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between pt-2 sm:pt-4">
+          <div className="space-y-2">
+            <Skeleton className="h-9 w-56 sm:h-10 sm:w-72 rounded-xl" />
+            <Skeleton className="h-4 w-28 rounded-md" />
+          </div>
+          <Skeleton className="h-9 w-full sm:w-64 md:w-72 rounded-xl" />
         </section>
 
         {/* Workspace Grid Skeleton */}

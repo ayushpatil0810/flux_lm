@@ -66,8 +66,8 @@ import { cn } from "@/lib/utils";
 const MAX_PDF_BYTES = 20 * 1024 * 1024; // 20 MB
 
 type UrlClassification =
-  | { type: "youtube"; url: string; label: string; hint: string }
-  | { type: "website"; url: string; label: string; hint: string }
+  | { type: "youtube"; url: string }
+  | { type: "website"; url: string }
   | null;
 
 function detectUrlType(rawUrl: string): UrlClassification {
@@ -88,8 +88,6 @@ function detectUrlType(rawUrl: string): UrlClassification {
     return {
       type: "youtube",
       url: normalized,
-      label: "YouTube Video",
-      hint: "Captions & transcript will be imported and indexed",
     };
   }
 
@@ -109,8 +107,6 @@ function detectUrlType(rawUrl: string): UrlClassification {
     return {
       type: "website",
       url: normalized,
-      label: "Web Page",
-      hint: "Article content will be crawled, cleaned, and indexed",
     };
   }
 
@@ -603,25 +599,6 @@ export function ImportSourceDialog({
                   />
                 </Button>
               </div>
-
-              {/* Dynamic Status Pill */}
-              {urlClassification && (
-                <div className="flex items-center gap-2 pt-1 px-1 text-[11px]">
-                  <span
-                    className={cn(
-                      "font-semibold px-1.5 py-0.5 rounded-md text-[10px] tracking-tight",
-                      urlClassification.type === "youtube"
-                        ? "bg-red-500/15 text-red-700 dark:text-red-300"
-                        : "bg-primary/15 text-primary",
-                    )}
-                  >
-                    {urlClassification.label}
-                  </span>
-                  <span className="text-muted-foreground/80 truncate">
-                    {urlClassification.hint}
-                  </span>
-                </div>
-              )}
             </div>
 
             {/* Optional Title for Link */}

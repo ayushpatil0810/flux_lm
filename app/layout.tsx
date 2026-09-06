@@ -30,8 +30,8 @@ export const viewport: Viewport = {
   userScalable: false,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+    { media: "(prefers-color-scheme: light)", color: "#f8f7f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#131315" },
   ],
 };
 
@@ -42,6 +42,13 @@ export const metadata: Metadata = {
   },
   description:
     "Intelligent knowledge workspace for your PDFs, notes, and web sources.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: "/apple-icon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

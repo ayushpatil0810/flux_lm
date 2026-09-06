@@ -106,6 +106,19 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  /* Force Tailwind blue scale to strictly resolve to #2667ff */
+  --color-blue-50: rgba(38, 103, 255, 0.06);
+  --color-blue-100: rgba(38, 103, 255, 0.12);
+  --color-blue-200: rgba(38, 103, 255, 0.2);
+  --color-blue-300: rgba(38, 103, 255, 0.35);
+  --color-blue-400: #2667ff;
+  --color-blue-500: #2667ff;
+  --color-blue-600: #2667ff;
+  --color-blue-700: #2667ff;
+  --color-blue-800: #2667ff;
+  --color-blue-900: #2667ff;
+  --color-blue-950: #2667ff;
+
   /* Restrained corner scale; most surfaces stay nearly square */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -117,31 +130,31 @@
 }
 
 :root {
-  /* Clean, editorial slate light theme with calm surface separation */
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  /* Warm editorial alabaster / stone light theme (avoids sterile pure white and cold blue tints) */
+  --background: #f8f7f5;
+  --foreground: #18181b;
 
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #18181b;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  --popover-foreground: #18181b;
 
-  /* Accent: Primary Royal Blue */
-  --primary: #2563eb;
+  /* Accent: Strictly #2667ff */
+  --primary: #2667ff;
   --primary-foreground: #ffffff;
-  --brand: #2563eb;
+  --brand: #2667ff;
   --brand-foreground: #ffffff;
-  --brand-subtle: #eff6ff;
-  --brand-muted: #dbeafe;
+  --brand-subtle: rgba(38, 103, 255, 0.08);
+  --brand-muted: rgba(38, 103, 255, 0.16);
 
-  --secondary: #f1f5f9;
-  --secondary-foreground: #1e293b;
+  --secondary: #f0eee9;
+  --secondary-foreground: #18181b;
 
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
+  --muted: #f2f0ec;
+  --muted-foreground: #716f6b;
 
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
+  --accent: #f0eee9;
+  --accent-foreground: #18181b;
 
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
@@ -166,32 +179,32 @@
   --cyan-subtle: #ecfeff;
   --cyan-border: #a5f3fc;
 
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #2563eb;
+  --border: #e5e2dc;
+  --input: #e5e2dc;
+  --ring: #2667ff;
 
   --radius: 0.5rem;
 
-  --chart-1: #2563eb;
+  --chart-1: #2667ff;
   --chart-2: oklch(0.6 0.02 72);
   --chart-3: oklch(0.5 0.018 72);
   --chart-4: oklch(0.4 0.015 72);
   --chart-5: oklch(0.31 0.012 72);
 
-  --sidebar: #ffffff;
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #2563eb;
+  --sidebar: #fbfaf8;
+  --sidebar-foreground: #18181b;
+  --sidebar-primary: #2667ff;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f1f5f9;
-  --sidebar-accent-foreground: #1e293b;
-  --sidebar-border: #e2e8f0;
-  --sidebar-ring: #2563eb;
+  --sidebar-accent: #f0eee9;
+  --sidebar-accent-foreground: #18181b;
+  --sidebar-border: #e5e2dc;
+  --sidebar-ring: #2667ff;
 
-  --status-processing: #2563eb;
+  --status-processing: #2667ff;
   --status-completed: #059669;
   --status-exception: #dc2626;
   --source-oracle: #7c3aed;
-  --source-sharepoint: #0284c7;
+  --source-sharepoint: #2667ff;
   --source-concur: #059669;
   --source-email: #d97706;
   --live: #059669;
@@ -199,36 +212,37 @@
 }
 
 .dark {
-  /* Vercel-style True Black Dark Mode */
-  --background: #000000;
-  --foreground: #ededed;
+  /* Rich Charcoal & Warm Obsidian Dark Theme (No pitch black #000000, no generic blue/purple tints) */
+  --background: #131315;
+  --foreground: #f0f0f2;
 
-  --card: #0a0a0a;
-  --card-foreground: #ededed;
-  --popover: #0a0a0a;
-  --popover-foreground: #ededed;
+  --card: #1a1a1d;
+  --card-foreground: #f0f0f2;
+  --popover: #1e1e22;
+  --popover-foreground: #f0f0f2;
 
-  --primary: #0070f3;
+  /* Accent: Strictly #2667ff */
+  --primary: #2667ff;
   --primary-foreground: #ffffff;
-  --brand: #0070f3;
+  --brand: #2667ff;
   --brand-foreground: #ffffff;
-  --brand-subtle: rgba(0, 112, 243, 0.12);
-  --brand-muted: rgba(0, 112, 243, 0.2);
+  --brand-subtle: rgba(38, 103, 255, 0.12);
+  --brand-muted: rgba(38, 103, 255, 0.2);
 
-  --secondary: #141414;
-  --secondary-foreground: #ededed;
+  --secondary: #242428;
+  --secondary-foreground: #f0f0f2;
 
-  --muted: #141414;
-  --muted-foreground: #888888;
+  --muted: #242428;
+  --muted-foreground: #92929b;
 
-  --accent: #141414;
-  --accent-foreground: #ededed;
+  --accent: #242428;
+  --accent-foreground: #f0f0f2;
 
-  --destructive: #f31260;
+  --destructive: #f43f5e;
   --destructive-foreground: #ffffff;
-  --success: #17c964;
+  --success: #10b981;
   --success-foreground: #ffffff;
-  --warning: #f5a524;
+  --warning: #f59e0b;
   --warning-foreground: #ffffff;
 
   /* Semantic Workspace Intelligence & Study Tokens in Dark Mode */
@@ -247,34 +261,34 @@
   --cyan-subtle: rgba(34, 211, 238, 0.12);
   --cyan-border: rgba(34, 211, 238, 0.25);
 
-  --border: #222222;
-  --input: #222222;
-  --ring: #0070f3;
+  --border: #2a2a30;
+  --input: #2a2a30;
+  --ring: #2667ff;
 
-  --chart-1: #0070f3;
+  --chart-1: #2667ff;
   --chart-2: oklch(0.6 0.02 72);
   --chart-3: oklch(0.5 0.018 72);
   --chart-4: oklch(0.4 0.015 72);
   --chart-5: oklch(0.31 0.012 72);
 
-  --sidebar: #000000;
-  --sidebar-foreground: #ededed;
-  --sidebar-primary: #0070f3;
+  --sidebar: #161619;
+  --sidebar-foreground: #f0f0f2;
+  --sidebar-primary: #2667ff;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #141414;
-  --sidebar-accent-foreground: #ededed;
-  --sidebar-border: #222222;
-  --sidebar-ring: #0070f3;
+  --sidebar-accent: #242428;
+  --sidebar-accent-foreground: #f0f0f2;
+  --sidebar-border: #2a2a30;
+  --sidebar-ring: #2667ff;
 
-  --status-processing: #0070f3;
-  --status-completed: #17c964;
-  --status-exception: #f31260;
+  --status-processing: #2667ff;
+  --status-completed: #10b981;
+  --status-exception: #f43f5e;
   --source-oracle: #a78bfa;
-  --source-sharepoint: #38bdf8;
+  --source-sharepoint: #2667ff;
   --source-concur: #34d399;
   --source-email: #fbbf24;
-  --live: #17c964;
-  --trend: #17c964;
+  --live: #10b981;
+  --trend: #10b981;
 }
 
 @layer base {
@@ -415,7 +429,7 @@
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    background: linear-gradient(180deg, #3d79ff 0%, #2667ff 45%, #1852db 100%);
+    background: #2667ff;
     border: 1px solid rgba(255, 255, 255, 0.18);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.12),

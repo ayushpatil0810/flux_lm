@@ -8,12 +8,10 @@ import {
   Loading02Icon,
   Settings01Icon,
   ArrowLeft02Icon,
-  Add01Icon,
 } from "@hugeicons/core-free-icons";
 
 import { useUpdateWorkspace } from "@/hooks/use-workspaces";
 import { useWorkspaceContext } from "@/components/shell/workspace-context";
-import { useWorkspacePanel } from "@/components/shell/workspace-panel-context";
 import { FluxLogo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitch } from "@/components/ui/theme-switch";
@@ -38,11 +36,6 @@ export function WorkspaceTopbar({
   const workspaceCtx = useWorkspaceContext();
   const workspace = workspaceCtx.data;
   const updateWorkspace = useUpdateWorkspace();
-
-  const {
-    setLeftOpen,
-    setImportDialogOpen,
-  } = useWorkspacePanel();
 
   const [editing, setEditing] = React.useState(false);
   const [draftTitle, setDraftTitle] = React.useState("");
@@ -161,30 +154,6 @@ export function WorkspaceTopbar({
 
       {/* 2. Right Zone: Actions + Right Rail Toggle + User */}
       <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
-        {/* Quick Add Source button */}
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            setImportDialogOpen(true);
-            if (typeof window !== "undefined" && window.innerWidth >= 768) {
-              setLeftOpen(true);
-            }
-          }}
-          className="h-8.5 sm:h-8 gap-1.5 rounded-lg border-border/80 px-2 sm:px-2.5 text-xs font-medium hover:border-border hover:bg-muted/50 text-foreground active:scale-95 shadow-none"
-          title="Add source to workspace"
-        >
-          <HugeiconsIcon
-            icon={Add01Icon}
-            strokeWidth={2}
-            className="size-3.5 text-muted-foreground"
-          />
-          <span className="hidden sm:inline">Add Source</span>
-        </Button>
-
-        <div className="h-4 w-px bg-border/60 mx-0.5" />
-
         {/* Settings Button */}
         <Tooltip>
           <TooltipTrigger asChild>

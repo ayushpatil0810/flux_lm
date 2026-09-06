@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 interface CreateWorkspaceDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialValues?: { title?: string; description?: string };
   /** Overrides the default behavior of navigating into the new workspace. */
   onCreated?: (workspace: Workspace) => void;
 }
@@ -30,17 +31,28 @@ interface CreateWorkspaceDialogProps {
 export function CreateWorkspaceDialog({
   open,
   onOpenChange,
+  initialValues,
   onCreated,
 }: CreateWorkspaceDialogProps) {
   const router = useRouter();
   const { push } = useToast();
   const createWorkspace = useCreateWorkspace();
 
-  const [title, setTitle] = React.useState("");
-  const [description, setDescription] = React.useState("");
+  const [title, setTitle] = React.useState(initialValues?.title ?? "");
+  const [description, setDescription] = React.useState(
+    initialValues?.description ?? "",
+  );
   const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>(
     {},
   );
+
+  React.useEffect(() => {
+    if (open) {
+      setTitle(initialValues?.title ?? "");
+      setDescription(initialValues?.description ?? "");
+      setFieldErrors({});
+    }
+  }, [open, initialValues]);
 
   function reset() {
     setTitle("");
