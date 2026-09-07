@@ -111,48 +111,79 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col justify-between bg-background selection:bg-primary/20 selection:text-primary">
+    <div className="relative flex min-h-dvh flex-col justify-between overflow-x-hidden bg-background selection:bg-primary/20 selection:text-primary">
+      {/* Ambient background glow */}
+      <div
+        className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center overflow-hidden"
+        aria-hidden="true"
+      >
+        <div className="h-[420px] w-[560px] rounded-full bg-primary/6 blur-[140px] dark:bg-primary/8" />
+      </div>
+
       {/* Top Header */}
-      <header className="flex h-14 items-center justify-between border-b border-border/40 bg-background/80 px-4 backdrop-blur-md sm:px-8 pt-safe">
-        <Link
-          href="/"
-          className="group flex items-center gap-2.5 transition-opacity hover:opacity-85"
-          aria-label="Back to home"
-        >
-          <FluxLogo className="text-primary size-5.5 shrink-0" />
-          <span className="font-mono text-base font-normal tracking-tight text-foreground">
-            Flux
-          </span>
-        </Link>
-        <ThemeSwitch className="size-8" />
+      <header className="pointer-events-none sticky top-0 z-40 flex w-full items-center justify-between gap-2 pt-3 pb-2 sm:gap-4 sm:pt-4">
+        {/* ── Left Pill: Logo stuck flush to left screen edge ── */}
+        <div className="pointer-events-auto shrink-0">
+          <Link
+            href="/"
+            className="group flex h-11 items-center gap-2.5 rounded-r-full border border-l-0 border-border/80 bg-background/85 py-1.5 pl-4 pr-4 shadow-xs backdrop-blur-md transition-all hover:border-border hover:bg-background/95 sm:h-12 sm:pl-5 sm:pr-5 dark:border-border/60 dark:bg-card/85 dark:shadow-md dark:hover:bg-card/95"
+            aria-label="Back to home"
+          >
+            <FluxLogo className="text-primary size-4.5 shrink-0 transition-transform duration-200 group-hover:scale-105 sm:size-5" />
+            <span className="font-mono text-sm font-semibold tracking-tight text-foreground sm:text-[15px]">
+              Flux
+            </span>
+          </Link>
+        </div>
+
+        {/* ── Right Pill: Theme switch & Mode toggle stuck flush to right screen edge ── */}
+        <div className="pointer-events-auto shrink-0">
+          <div className="flex h-11 items-center gap-1.5 rounded-l-full border border-r-0 border-border/80 bg-background/85 py-1.5 pl-3.5 pr-4 shadow-xs backdrop-blur-md sm:h-12 sm:gap-2 sm:pl-4 sm:pr-5 dark:border-border/60 dark:bg-card/85 dark:shadow-md">
+            <ThemeSwitch className="size-8 shrink-0 rounded-full" />
+            <div
+              aria-hidden="true"
+              className="h-3.5 w-px shrink-0 bg-border/60 dark:bg-border/40"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                setMode(isSignUp ? "sign-in" : "sign-up");
+                setError(null);
+              }}
+              className="cursor-pointer rounded-full px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground sm:px-3 sm:text-sm"
+            >
+              {isSignUp ? "Sign in" : "Sign up"}
+            </button>
+          </div>
+        </div>
       </header>
 
       {/* Main Auth Container */}
-      <main className="flex flex-1 items-center justify-center px-4 py-8 sm:py-12 pb-safe sm:px-6">
-        <div className="w-full max-w-sm">
+      <main className="relative z-10 flex flex-1 items-center justify-center px-4 py-8 sm:py-12 sm:px-6">
+        <div className="w-full max-w-[420px] rounded-3xl border border-border/80 bg-card/75 p-6 shadow-xl backdrop-blur-xl sm:p-8 dark:border-border/60 dark:bg-card/60 dark:shadow-2xl">
           {/* Brand Icon + Title */}
           <div className="flex flex-col items-center text-center">
-            <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary ring-4 ring-primary/5">
-              <FluxLogo className="size-5.5" />
+            <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/25 shadow-xs">
+              <FluxLogo className="size-6 shrink-0" />
             </div>
-            <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-[26px]">
               {isSignUp ? "Create your account" : "Welcome back"}
             </h1>
-            <p className="font-inter text-muted-foreground mt-1.5 text-xs font-normal sm:text-sm">
+            <p className="font-inter text-muted-foreground mt-1.5 text-xs font-normal sm:text-sm text-balance">
               {isSignUp
                 ? "Start building your grounded knowledge workspace."
                 : "Sign in to continue to your workspaces."}
             </p>
           </div>
 
-          {/* Social Logins */}
-          <div className="mt-8 grid gap-2.5">
+          {/* Social Logins — Single Line (2 cols) */}
+          <div className="mt-7 grid grid-cols-2 gap-2.5">
             <Button
               type="button"
               variant="outline"
               disabled={isBusy}
               onClick={() => handleSocial("google")}
-              className="border-border/60 bg-card/60 hover:bg-card hover:border-primary/40 h-10 w-full gap-2.5 rounded-xl text-xs font-medium shadow-xs transition-all duration-150"
+              className="border-border/70 bg-background/60 hover:bg-muted/80 hover:border-border h-10 w-full gap-2 rounded-xl text-xs font-medium shadow-xs transition-all active:scale-[0.99]"
             >
               {socialPending === "google" ? (
                 <HugeiconsIcon
@@ -162,9 +193,9 @@ export default function LoginPage() {
                   aria-hidden
                 />
               ) : (
-                <GoogleIcon className="size-4" />
+                <GoogleIcon className="size-4 shrink-0" />
               )}
-              <span>Continue with Google</span>
+              <span>Google</span>
             </Button>
 
             <Button
@@ -172,7 +203,7 @@ export default function LoginPage() {
               variant="outline"
               disabled={isBusy}
               onClick={() => handleSocial("github")}
-              className="border-border/60 bg-card/60 hover:bg-card hover:border-primary/40 h-10 w-full gap-2.5 rounded-xl text-xs font-medium shadow-xs transition-all duration-150"
+              className="border-border/70 bg-background/60 hover:bg-muted/80 hover:border-border h-10 w-full gap-2 rounded-xl text-xs font-medium shadow-xs transition-all active:scale-[0.99]"
             >
               {socialPending === "github" ? (
                 <HugeiconsIcon
@@ -182,17 +213,20 @@ export default function LoginPage() {
                   aria-hidden
                 />
               ) : (
-                <GithubIcon className="size-4 text-foreground" />
+                <GithubIcon className="size-4 shrink-0 text-foreground" />
               )}
-              <span>Continue with GitHub</span>
+              <span>GitHub</span>
             </Button>
           </div>
 
           {/* Divider */}
-          <div className="font-inter text-muted-foreground/60 my-6 flex items-center gap-3 text-xs font-normal">
-            <span className="bg-border/60 h-px flex-1" aria-hidden />
-            <span>or continue with email</span>
-            <span className="bg-border/60 h-px flex-1" aria-hidden />
+          <div className="relative my-6 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border/60" />
+            </div>
+            <span className="relative bg-card/90 px-3 font-inter text-[11px] font-medium text-muted-foreground/70">
+              or continue with email
+            </span>
           </div>
 
           {/* Form */}
@@ -201,7 +235,7 @@ export default function LoginPage() {
               <div className="space-y-1.5">
                 <Label
                   htmlFor="name"
-                  className="text-xs font-medium text-foreground"
+                  className="text-xs font-medium text-foreground/90"
                 >
                   Name
                 </Label>
@@ -213,7 +247,7 @@ export default function LoginPage() {
                   onChange={(event) => setName(event.target.value)}
                   autoComplete="name"
                   disabled={isBusy}
-                  className="border-border/60 bg-card/40 focus-visible:ring-primary/40 h-9.5 rounded-xl px-3 text-base sm:text-xs shadow-xs"
+                  className="border-border/70 bg-background/70 focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/20 h-10 rounded-xl px-3 text-sm sm:text-xs shadow-xs transition-all"
                 />
               </div>
             )}
@@ -221,7 +255,7 @@ export default function LoginPage() {
             <div className="space-y-1.5">
               <Label
                 htmlFor="email"
-                className="text-xs font-medium text-foreground"
+                className="text-xs font-medium text-foreground/90"
               >
                 Email address
               </Label>
@@ -234,14 +268,14 @@ export default function LoginPage() {
                 onChange={(event) => setEmail(event.target.value)}
                 autoComplete="email"
                 disabled={isBusy}
-                className="border-border/60 bg-card/40 focus-visible:ring-primary/40 h-9.5 rounded-xl px-3 text-base sm:text-xs shadow-xs"
+                className="border-border/70 bg-background/70 focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/20 h-10 rounded-xl px-3 text-sm sm:text-xs shadow-xs transition-all"
               />
             </div>
 
             <div className="space-y-1.5">
               <Label
                 htmlFor="password"
-                className="text-xs font-medium text-foreground"
+                className="text-xs font-medium text-foreground/90"
               >
                 Password
               </Label>
@@ -255,10 +289,10 @@ export default function LoginPage() {
                 onChange={(event) => setPassword(event.target.value)}
                 autoComplete={isSignUp ? "new-password" : "current-password"}
                 disabled={isBusy}
-                className="border-border/60 bg-card/40 focus-visible:ring-primary/40 h-9.5 rounded-xl px-3 text-base sm:text-xs shadow-xs"
+                className="border-border/70 bg-background/70 focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/20 h-10 rounded-xl px-3 text-sm sm:text-xs shadow-xs transition-all"
               />
               {isSignUp && (
-                <p className="font-inter text-muted-foreground text-[11px]">
+                <p className="font-inter text-muted-foreground/80 text-[11px]">
                   Must be at least 8 characters.
                 </p>
               )}
@@ -276,7 +310,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={isBusy}
-              className="h-10 w-full rounded-xl text-xs font-medium shadow-sm transition-all"
+              className="h-10.5 w-full cursor-pointer rounded-xl text-xs font-medium shadow-md shadow-primary/20 transition-all hover:shadow-lg hover:shadow-primary/25 active:scale-[0.99]"
             >
               {isSubmitting ? (
                 <span className="flex items-center gap-2">
@@ -312,9 +346,9 @@ export default function LoginPage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-border/40 text-muted-foreground/60 border-t py-5 text-center text-[11px]">
-        Flux knowledge workspace · Turn your sources into answers
+      {/* Minimal Bottom Footer */}
+      <footer className="text-muted-foreground/60 py-6 text-center font-inter text-[11px] pb-safe">
+        © 2026 Flux. Your AI-Powered Research Partner.
       </footer>
     </div>
   );
