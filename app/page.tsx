@@ -8,9 +8,9 @@ import {
   SparkleIcon,
 } from "@hugeicons/core-free-icons";
 
-import { ThemeSwitch } from "@/components/ui/theme-switch";
 import { Button } from "@/components/ui/button";
-import { FluxLogo } from "@/components/ui/logo";
+import { LandingTopbar } from "@/components/shell/landing-topbar";
+import { LandingFooter } from "@/components/shell/landing-footer";
 
 export const metadata: Metadata = {
   title: { absolute: "Flux — Understand Anything" },
@@ -38,35 +38,6 @@ const USE_CASES = [
     outcome: "Unlock your creative potential.",
   },
 ] as const;
-
-function Header() {
-  return (
-    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md pt-safe">
-      <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-3.5 sm:px-6">
-        <Link
-          href="/"
-          className="flex items-center gap-2 sm:gap-2.5 transition-opacity hover:opacity-85"
-          aria-label="Flux home"
-        >
-          <FluxLogo className="text-primary size-5 sm:size-5.5 shrink-0" />
-          <span className="font-mono text-base font-normal tracking-tight text-foreground">
-            Flux
-          </span>
-        </Link>
-
-        <div className="flex items-center gap-1.5 sm:gap-2.5">
-          <ThemeSwitch className="size-8" />
-          <Button asChild variant="ghost" size="sm" className="text-xs px-2.5 sm:px-3">
-            <Link href="/login">Log in</Link>
-          </Button>
-          <Button asChild size="sm" className="h-8 rounded-lg text-xs px-3 sm:px-3.5">
-            <Link href="/dashboard">Try Flux</Link>
-          </Button>
-        </div>
-      </div>
-    </header>
-  );
-}
 
 function Hero() {
   return (
@@ -105,7 +76,7 @@ function Hero() {
 
 function UseCases() {
   return (
-    <section className="py-16 sm:py-24 border-t border-border/40">
+    <section id="use-cases" className="scroll-mt-16 py-16 sm:py-24 border-t border-border/40">
       <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
         <div className="max-w-xl">
           <p className="font-mono text-xs font-medium uppercase tracking-wider text-primary">
@@ -177,43 +148,16 @@ function FinalCta() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="border-t border-border/40 py-8 pb-safe bg-background">
-      <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-4 px-4 sm:px-6 sm:flex-row text-center sm:text-left">
-        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-          <FluxLogo className="text-primary size-4.5" />
-          <span className="font-mono text-sm font-normal text-foreground">
-            Flux
-          </span>
-          <span className="text-xs text-muted-foreground/60 ml-1 sm:ml-2 font-inter">
-            © 2026 Flux. Your AI-Powered Research Partner.
-          </span>
-        </div>
-
-        <div className="flex items-center gap-5 text-xs text-muted-foreground font-inter">
-          <Link href="/login" className="hover:text-foreground transition-colors">
-            Log in
-          </Link>
-          <Link href="/dashboard" className="hover:text-foreground transition-colors">
-            Dashboard
-          </Link>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
 export default function Home() {
   return (
     <div className="min-h-dvh flex flex-col bg-background selection:bg-primary/20 selection:text-primary">
-      <Header />
+      <LandingTopbar />
       <main className="flex-1">
         <Hero />
         <UseCases />
         <FinalCta />
       </main>
-      <Footer />
+      <LandingFooter />
     </div>
   );
 }
