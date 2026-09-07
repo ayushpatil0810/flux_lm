@@ -7,7 +7,10 @@ import { NextRequest } from "next/server";
 import { getAuthenticatedUser } from "@/server/utils/auth-utils";
 import { checkRateLimit } from "@/server/utils/rate-limiter";
 import { LearningArtifactService } from "./learning-artifact.service";
-import { createArtifactSchema } from "./learning-artifact.validator";
+import {
+  createArtifactSchema,
+  updateArtifactSchema,
+} from "./learning-artifact.validator";
 
 /**
  * Controller class handling HTTP requests for Learning Artifacts.
@@ -93,6 +96,37 @@ export class LearningArtifactController {
           validation.data,
         );
       return ApiResponse.created(newArtifact, "Artifact generation queued");
+    },
+  );
+
+  /**
+   * Handles PATCH /api/workspaces/[id]/artifacts/[artifactId]
+   * Updates an artifact (e.g. title).
+   */
+  static updateArtifact = asyncHandler(
+    async (
+      req: NextRequest,
+      { params }: { params: Promise<{ id: string; artifactId: string }> },
+    ) => {
+      const { user, workspaceId, artifactId } =
+        await LearningArtifactController.getContext(req, params);
+      const body = await req.json();
+
+      const validation = updateArtifactSchema.safeParse(body);
+      if (!validation.success) {
+        throw ApiError.badRequest(
+          "Validation failed",
+          getZodFieldErrors(validation.error),
+        );
+      }
+
+      const updated = await LearningArtifactService.updateArtifactForWorkspace(
+        workspaceId,
+        artifactId,
+        user.id,
+        validation.data,
+      );
+      return ApiResponse.success(updated, "Artifact updated successfully");
     },
   );
 

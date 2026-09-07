@@ -30,6 +30,7 @@ import { useWorkspacePreview } from "@/components/shell/workspace-panel-context"
 import { SourceDetailDialog } from "./source-detail-dialog";
 import { ConfirmDeleteDialog } from "./confirm-delete-dialog";
 import { RenameSourceDialog } from "./rename-source-dialog";
+import { YouTubePlayerView } from "./youtube-player-view";
 import { getErrorMessage } from "@/lib/api";
 import {
   DropdownMenu,
@@ -43,52 +44,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useWorkspacePanel } from "@/components/shell/workspace-panel-context";
-
-// ── Helpers ─────────────────────────────────────────────────────────────────
-
-function getYouTubeEmbedUrl(url: string) {
-  let videoId = "";
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname === "youtu.be") {
-      videoId = parsed.pathname.slice(1);
-    } else if (parsed.hostname.includes("youtube.com")) {
-      videoId = parsed.searchParams.get("v") || "";
-    }
-  } catch {
-    // ignore
-  }
-  return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
-}
-
-interface TranscriptItem {
-  timestamp?: string;
-  text: string;
-}
-
-function parseYoutubeTranscript(content: string): TranscriptItem[] {
-  if (!content) return [];
-  const lines = content.split("\n");
-  const items: TranscriptItem[] = [];
-
-  for (const rawLine of lines) {
-    const trimmed = rawLine.trim();
-    if (!trimmed) continue;
-    const match = trimmed.match(/^\[(\d{1,2}:\d{2}(?::\d{2})?)\]\s*(.*)$/);
-    if (match) {
-      items.push({
-        timestamp: match[1],
-        text: match[2],
-      });
-    } else {
-      items.push({
-        text: trimmed,
-      });
-    }
-  }
-
-  return items;
-}
 
 // ── Source-type picker cards ────────────────────────────────────────────────
 
@@ -178,7 +133,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
   React.useEffect(() => {
     if (activeSource?.type === "PDF") {
       setIsPdfLoading(true);
-      setPdfViewMode(activeSource.content ? "text" : "pdf");
+      setPdfViewMode("text");
     }
   }, [activeSource?.id, activeSource?.type, activeSource?.content]);
 
@@ -375,7 +330,14 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
           ) : null}
 
           {/* Source Content Body */}
-          <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">
+          <div
+            className={cn(
+              "no-scrollbar min-h-0 flex-1",
+              activeSource.type === "YOUTUBE"
+                ? "flex flex-col overflow-hidden"
+                : "overflow-y-auto",
+            )}
+          >
             {isPdf && pdfViewMode === "pdf" ? (
               <div className="relative h-full w-full">
                 {isPdfLoading ? (
@@ -398,45 +360,11 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                 />
               </div>
             ) : activeSource.type === "YOUTUBE" && activeSource.url ? (
-              <div className="p-3">
-                <div className="aspect-video w-full overflow-hidden rounded-xl bg-black shadow-xs">
-                  <iframe
-                    src={getYouTubeEmbedUrl(activeSource.url)}
-                    title={activeSource.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="h-full w-full border-0"
-                  />
-                </div>
-                {activeSource.content && (
-                  <div className="mt-3.5 border-t border-border/50 pt-3">
-                    <div className="mb-2.5 flex items-center justify-between">
-                      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-                        Transcript
-                      </span>
-                    </div>
-                    <div className="flex flex-col divide-y divide-border/40">
-                      {parseYoutubeTranscript(activeSource.content).map(
-                        (item, index) => (
-                          <div
-                            key={index}
-                            className="flex items-start gap-2.5 py-2 text-xs leading-relaxed"
-                          >
-                            {item.timestamp ? (
-                              <span className="shrink-0 rounded bg-muted/80 px-1.5 py-0.5 font-mono text-[11px] font-medium text-muted-foreground select-none">
-                                {item.timestamp}
-                              </span>
-                            ) : null}
-                            <p className="flex-1 text-foreground/90 font-normal break-words">
-                              {item.text}
-                            </p>
-                          </div>
-                        ),
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
+              <YouTubePlayerView
+                url={activeSource.url}
+                title={activeSource.title}
+                content={activeSource.content}
+              />
             ) : (
               <div className="p-3.5 sm:p-4">
                 {activeSource.url && (

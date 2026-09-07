@@ -8,9 +8,17 @@ export async function GET(
   return LearningArtifactController.getArtifact(req, context);
 }
 
+export async function PATCH(
+  req: NextRequest,
+  context: { params: Promise<{ id: string; artifactId: string }> },
+) {
+  return LearningArtifactController.updateArtifact(req, context);
+}
+
 export async function DELETE(
   req: NextRequest,
   context: { params: Promise<{ id: string; artifactId: string }> },
 ) {
   return LearningArtifactController.deleteArtifact(req, context);
 }
+

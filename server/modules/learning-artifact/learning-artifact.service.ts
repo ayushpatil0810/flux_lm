@@ -3,7 +3,10 @@ import { inngest } from "@/inngest/client";
 import { INNGEST_EVENTS } from "@/inngest/events";
 import { WorkspaceService } from "@/server/modules/workspace/workspace.service";
 import { LearningArtifactRepository } from "./learning-artifact.repository";
-import { CreateArtifactInput } from "./learning-artifact.validator";
+import {
+  CreateArtifactInput,
+  UpdateArtifactInput,
+} from "./learning-artifact.validator";
 import {
   gatherSourceContext,
   generateArtifactContent,
@@ -80,6 +83,27 @@ export class LearningArtifactService {
     });
 
     return artifact;
+  }
+
+  /**
+   * Updates an artifact after verifying workspace ownership.
+   */
+  static async updateArtifactForWorkspace(
+    workspaceId: string,
+    artifactId: string,
+    userId: string,
+    input: UpdateArtifactInput,
+  ) {
+    await LearningArtifactService.getArtifactForWorkspace(
+      workspaceId,
+      artifactId,
+      userId,
+    );
+    const updated = await LearningArtifactRepository.update(artifactId, input);
+    if (!updated) {
+      throw ApiError.notFound("Artifact not found");
+    }
+    return updated;
   }
 
   /**

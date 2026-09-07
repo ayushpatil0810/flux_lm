@@ -94,6 +94,54 @@ async function fetchYoutubeMetadata(videoId: string) {
 }
 
 /**
+ * Detects whether transcript item offsets and durations are returned in milliseconds
+ * (standard for modern YouTube srv3 format) or seconds (classic fallback format).
+ */
+function isTranscriptInMilliseconds(
+  items: Array<{ offset: number; duration?: number }>,
+): boolean {
+  if (items.length === 0) return false;
+
+  // 1. Any subtitle segment duration > 60 is definitively in milliseconds
+  // (a single spoken caption line is virtually never > 60 seconds).
+  if (items.some((item) => (item.duration ?? 0) > 60)) {
+    return true;
+  }
+
+  // 2. Any offset > 43,200 (12 hours) is definitively in milliseconds.
+  if (items.some((item) => item.offset > 43200)) {
+    return true;
+  }
+
+  // 3. Check positive gaps between consecutive items.
+  // In spoken dialog, consecutive captions occur 1 to 10 seconds apart.
+  // In milliseconds, those gaps are 1,000 to 10,000 ms.
+  if (items.length > 1) {
+    let positiveGaps = 0;
+    let msGaps = 0;
+    for (let i = 1; i < items.length; i++) {
+      const diff = items[i].offset - items[i - 1].offset;
+      if (diff > 0) {
+        positiveGaps++;
+        if (diff > 100) {
+          msGaps++;
+        }
+      }
+    }
+    if (positiveGaps > 0 && msGaps / positiveGaps > 0.5) {
+      return true;
+    }
+  }
+
+  // 4. Fallback for single item: offset >= 1000 means milliseconds.
+  if (items.some((item) => item.offset >= 1000)) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Fetches transcript for a YouTube video and formats it into clean timestamped Markdown.
  *
  * @param urlOrId - YouTube URL or Video ID.
@@ -114,11 +162,12 @@ export async function getYoutubeTranscript(
     throw new Error("No transcript found for this YouTube video.");
   }
 
+  const isMs = isTranscriptInMilliseconds(transcriptItems);
+
   // Format segments into timestamped markdown: [00:15] Text snippet...
   const formattedTranscript = transcriptItems
     .map((item) => {
-      const offsetSeconds =
-        item.offset > 100000 ? item.offset / 1000 : item.offset;
+      const offsetSeconds = isMs ? item.offset / 1000 : item.offset;
       const timeStr = formatTimestamp(offsetSeconds);
       return `${timeStr} ${item.text.trim()}`;
     })

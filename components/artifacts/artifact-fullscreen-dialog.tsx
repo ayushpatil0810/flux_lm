@@ -14,6 +14,9 @@ import {
 import { useArtifact, useDeleteArtifact } from "@/hooks/use-artifacts";
 import { useToast } from "@/components/providers/toast-provider";
 import { ConfirmDeleteDialog } from "@/components/sources/confirm-delete-dialog";
+import { ArtifactDetailDialog } from "./artifact-detail-dialog";
+import { RenameArtifactDialog } from "./rename-artifact-dialog";
+import { useWorkspacePreview } from "@/components/shell/workspace-panel-context";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -50,7 +53,10 @@ export function ArtifactFullscreenDialog({
   onOpenChange,
 }: ArtifactFullscreenDialogProps) {
   const { push } = useToast();
+  const { setPreviewArtifactId } = useWorkspacePreview();
   const [isEdgeToEdge, setIsEdgeToEdge] = React.useState(false);
+  const [detailOpen, setDetailOpen] = React.useState(false);
+  const [renameOpen, setRenameOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
 
   const {
@@ -79,6 +85,7 @@ export function ArtifactFullscreenDialog({
       await deleteArtifact.mutateAsync(artifactId);
       push({ title: "Artifact deleted" });
       setDeleteOpen(false);
+      setPreviewArtifactId(null);
       onOpenChange(false);
     } catch (deleteError) {
       setDeleteOpen(false);
@@ -190,10 +197,20 @@ export function ArtifactFullscreenDialog({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-40 rounded-xl">
                     <DropdownMenuItem
+                      onSelect={() => setDetailOpen(true)}
+                    >
+                      View details
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onSelect={() => setRenameOpen(true)}
+                    >
+                      Rename
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
                       variant="destructive"
                       onSelect={() => setDeleteOpen(true)}
                     >
-                      Delete artifact
+                      Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -288,6 +305,23 @@ export function ArtifactFullscreenDialog({
           </DialogPrimitive.Content>
         </DialogPrimitive.Portal>
       </DialogPrimitive.Root>
+
+      {/* Detail Dialog */}
+      <ArtifactDetailDialog
+        artifact={detailOpen ? artifact ?? null : null}
+        onClose={() => setDetailOpen(false)}
+        onRename={() => {
+          setDetailOpen(false);
+          setRenameOpen(true);
+        }}
+      />
+
+      {/* Rename Dialog */}
+      <RenameArtifactDialog
+        workspaceId={workspaceId}
+        artifact={renameOpen ? artifact ?? null : null}
+        onClose={() => setRenameOpen(false)}
+      />
 
       {/* Delete Confirmation Dialog */}
       <ConfirmDeleteDialog

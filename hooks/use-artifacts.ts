@@ -70,6 +70,39 @@ export function useCreateArtifact(workspaceId: string) {
   });
 }
 
+export function useRenameArtifact(workspaceId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: { artifactId: string; title: string }) =>
+      apiFetch<LearningArtifact>(
+        endpoints.artifacts.detail(workspaceId, input.artifactId),
+        {
+          method: "PATCH",
+          json: { title: input.title },
+        },
+      ),
+    onSuccess: (updatedArtifact, { artifactId }) => {
+      queryClient.setQueryData<LearningArtifact>(
+        queryKeys.artifacts.detail(workspaceId, artifactId),
+        updatedArtifact,
+      );
+      queryClient.setQueryData<LearningArtifact[]>(
+        queryKeys.artifacts.all(workspaceId),
+        (old) =>
+          old?.map((item) =>
+            item.id === artifactId ? updatedArtifact : item,
+          ),
+      );
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.artifacts.all(workspaceId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.artifacts.detail(workspaceId, artifactId),
+      });
+    },
+  });
+}
+
 export function useDeleteArtifact(workspaceId: string) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -87,3 +120,4 @@ export function useDeleteArtifact(workspaceId: string) {
     },
   });
 }
+

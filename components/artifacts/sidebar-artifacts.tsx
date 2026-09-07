@@ -26,6 +26,8 @@ import { useWorkspacePreview } from "@/components/shell/workspace-panel-context"
 import { ConfirmDeleteDialog } from "@/components/sources/confirm-delete-dialog";
 import { ArtifactConfigDialog } from "./artifact-config-dialog";
 import { ArtifactFullscreenDialog } from "./artifact-fullscreen-dialog";
+import { ArtifactDetailDialog } from "./artifact-detail-dialog";
+import { RenameArtifactDialog } from "./rename-artifact-dialog";
 import { getErrorMessage } from "@/lib/api";
 import { ArtifactViewer } from "./artifact-viewers";
 import {
@@ -109,6 +111,10 @@ export function SidebarArtifacts({
     setPreviewExpanded,
   } = useWorkspacePreview();
   const [activeType, setActiveType] = React.useState<ArtifactType | null>(null);
+  const [detailTarget, setDetailTarget] =
+    React.useState<LearningArtifact | null>(null);
+  const [renameTarget, setRenameTarget] =
+    React.useState<LearningArtifact | null>(null);
   const [deleteTarget, setDeleteTarget] =
     React.useState<LearningArtifact | null>(null);
 
@@ -228,16 +234,16 @@ export function SidebarArtifacts({
                     />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-44 rounded-xl">
+                <DropdownMenuContent align="end" className="w-40 rounded-xl">
                   <DropdownMenuItem
-                    onSelect={() => setPreviewExpanded(true)}
+                    onSelect={() => setDetailTarget(activeArtifact)}
                   >
-                    <HugeiconsIcon
-                      icon={ArrowExpand01Icon}
-                      strokeWidth={1.5}
-                      className="size-4 mr-1.5"
-                    />
-                    View full screen
+                    View details
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onSelect={() => setRenameTarget(activeArtifact)}
+                  >
+                    Rename
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     variant="destructive"
@@ -463,6 +469,11 @@ export function SidebarArtifacts({
                                 View details
                               </DropdownMenuItem>
                               <DropdownMenuItem
+                                onSelect={() => setRenameTarget(artifact)}
+                              >
+                                Rename
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
                                 variant="destructive"
                                 onSelect={() => setDeleteTarget(artifact)}
                               >
@@ -504,6 +515,19 @@ export function SidebarArtifacts({
         onOpenChange={(open) => {
           if (!open) setActiveType(null);
         }}
+      />
+      <ArtifactDetailDialog
+        artifact={detailTarget}
+        onClose={() => setDetailTarget(null)}
+        onRename={(artifact) => {
+          setDetailTarget(null);
+          setRenameTarget(artifact);
+        }}
+      />
+      <RenameArtifactDialog
+        workspaceId={workspaceId}
+        artifact={renameTarget}
+        onClose={() => setRenameTarget(null)}
       />
       <ConfirmDeleteDialog
         open={deleteTarget !== null}
