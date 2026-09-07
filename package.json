@@ -11,7 +11,9 @@
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:reindex": "bun scripts/reindex.ts",
+    "db:clear": "bun scripts/db_clear.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.42",

@@ -19,8 +19,12 @@ export const CHUNK_OVERLAP = 100;
 /** Number of Pinecone chunks to retrieve per chat query (baseline / per sub-search in advanced pipeline). */
 export const RAG_TOP_K = 6;
 
-/** Minimum cosine similarity score for a retrieved chunk to be included in context. */
-export const RAG_MIN_SCORE = 0.35;
+/**
+ * Minimum cosine similarity score for a retrieved chunk to be included in context.
+ * Set to 0.20 for `text-embedding-3-small` (512 dimensions), where broad/thematic queries
+ * (e.g. "main insights", "summarize") naturally score between 0.22–0.32.
+ */
+export const RAG_MIN_SCORE = 0.2;
 
 /** Candidates fetched per sub-search in the advanced RAG pipeline (query + HyDE vectors). */
 export const RAG_CANDIDATE_FETCH_K = 12;
