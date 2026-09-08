@@ -87,12 +87,12 @@ function RenameForm({
   return (
     <>
       {/* Header — pinned */}
-      <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4 text-left">
+      <DialogHeader className="shrink-0 px-5 pt-5 pb-0 text-left">
         <DialogTitle className="text-heading font-serif">
           Rename source
         </DialogTitle>
-        <DialogDescription>
-          The title is only for your library. It does not change the content.
+        <DialogDescription className="sr-only">
+          Rename source
         </DialogDescription>
       </DialogHeader>
 
@@ -123,8 +123,14 @@ function RenameForm({
       </form>
 
       {/* Footer — pinned */}
-      <div className="border-border/30 flex shrink-0 items-center justify-end gap-2 border-t px-5 py-3">
-        <Button type="button" variant="ghost" size="sm" onClick={onClose}>
+      <div className="flex shrink-0 items-center justify-end gap-2 px-5 pb-5 pt-2">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          className="h-8 text-xs text-muted-foreground hover:text-foreground"
+        >
           Cancel
         </Button>
         <Button
@@ -132,6 +138,7 @@ function RenameForm({
           size="sm"
           form="rename-source-form"
           disabled={rename.isPending || title.trim().length === 0}
+          className="h-8 text-xs"
         >
           {rename.isPending ? "Saving…" : "Save"}
         </Button>

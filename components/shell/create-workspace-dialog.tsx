@@ -94,7 +94,7 @@ export function CreateWorkspaceDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex w-[calc(100%-2rem)] max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:w-full sm:max-w-md">
         {/* Header — pinned */}
-        <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4 text-left">
+        <DialogHeader className="shrink-0 px-5 pt-5 pb-2 text-left">
           <DialogTitle className="text-heading font-serif">
             New workspace
           </DialogTitle>
@@ -167,7 +167,7 @@ export function CreateWorkspaceDialog({
         </form>
 
         {/* Footer — pinned */}
-        <div className="border-border/30 flex shrink-0 items-center justify-end gap-2 border-t px-5 py-3">
+        <div className="flex shrink-0 items-center justify-end gap-2 px-5 pb-5 pt-2">
           <Button
             type="button"
             variant="ghost"

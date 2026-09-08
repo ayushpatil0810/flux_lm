@@ -53,8 +53,12 @@ export async function GET(
 
       return new Response(stream, {
         headers: {
-          "Content-Type": response.ContentType || "application/pdf",
-          "Content-Disposition": `inline; filename="${encodeURIComponent(source.title || "document")}.pdf"`,
+          "Content-Type": response.ContentType || "application/octet-stream",
+          "Content-Disposition": `inline; filename="${encodeURIComponent(
+            (source.metadata?.originalFilename as string | undefined) ||
+              source.title ||
+              "document",
+          )}"`,
           "Cache-Control": "private, max-age=3600",
         },
       });

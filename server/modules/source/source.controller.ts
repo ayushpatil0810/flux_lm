@@ -6,6 +6,7 @@ import { NextRequest } from "next/server";
 import { getAuthenticatedUser } from "@/server/utils/auth-utils";
 import { checkRateLimit } from "@/server/utils/rate-limiter";
 import { SourceService } from "./source.service";
+import { SUPPORTED_EXTENSIONS, getExtension } from "@/lib/file-parser";
 import {
   bulkDeleteSourcesSchema,
   createSourceSchema,
@@ -125,11 +126,13 @@ export class SourceController {
     );
   });
 
+
   /**
-   * Handles POST /api/sources/import/pdf
-   * Imports a PDF file source by parsing text and uploading binary to Cloudflare R2.
+   * Handles POST /api/sources/import/file
+   * Imports a document file (txt, md, docx, pptx, xlsx) by parsing text and
+   * uploading the binary to Cloudflare R2.
    */
-  static importPdfSource = asyncHandler(async (req: NextRequest) => {
+  static importFileSource = asyncHandler(async (req: NextRequest) => {
     const user = await getAuthenticatedUser(req);
     await checkRateLimit(`source_import:${user.id}`, {
       maxRequests: 15,
@@ -142,45 +145,41 @@ export class SourceController {
     const title = (formData.get("title") as string | null) || undefined;
 
     if (!file) {
-      throw ApiError.badRequest("PDF file is required");
+      throw ApiError.badRequest("File is required");
     }
 
     if (!workspaceId) {
       throw ApiError.badRequest("Workspace ID is required");
     }
 
-    // Validate file size: reject files over 20 MB before reading them into memory
-    const MAX_PDF_BYTES = 20 * 1024 * 1024; // 20 MB
-    if (file.size > MAX_PDF_BYTES) {
-      throw ApiError.badRequest("PDF file must be smaller than 20 MB");
+    const extension = getExtension(file.name);
+
+    if (!SUPPORTED_EXTENSIONS.includes(extension as never)) {
+      throw ApiError.badRequest(
+        `Unsupported file type ".${extension}". Supported types: ${SUPPORTED_EXTENSIONS.map((e) => `.${e}`).join(", ")}`,
+      );
+    }
+
+    const MAX_FILE_BYTES = 50 * 1024 * 1024; // 50 MB
+    if (file.size > MAX_FILE_BYTES) {
+      throw ApiError.badRequest("File size must be smaller than 50 MB");
     }
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Validate magic bytes (%PDF header: 0x25, 0x50, 0x44, 0x46)
-    const isPdfHeader =
-      buffer.length >= 4 &&
-      buffer[0] === 0x25 &&
-      buffer[1] === 0x50 &&
-      buffer[2] === 0x44 &&
-      buffer[3] === 0x46;
-
-    if (!isPdfHeader) {
-      throw ApiError.badRequest("Only valid PDF files are accepted");
-    }
-
-    const imported = await SourceService.importPdfSource(user.id, {
+    const imported = await SourceService.importFileSource(user.id, {
       workspaceId,
       title,
+      extension,
       file: {
         data: buffer,
         filename: file.name,
-        contentType: file.type || "application/pdf",
+        contentType: file.type || "application/octet-stream",
       },
     });
 
-    return ApiResponse.created(imported, "PDF source imported successfully");
+    return ApiResponse.created(imported, "File source imported successfully");
   });
 
   /**

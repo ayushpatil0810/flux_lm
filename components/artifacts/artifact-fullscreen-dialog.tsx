@@ -324,16 +324,7 @@ export function ArtifactFullscreenDialog({
       <ConfirmDeleteDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
-        title="Delete artifact"
-        description={
-          <>
-            This permanently deletes{" "}
-            <span className="text-foreground font-medium">
-              {artifact?.title}
-            </span>
-            . This cannot be undone.
-          </>
-        }
+        title={`Delete ${artifact?.title ?? "artifact"}`}
         confirmLabel="Delete artifact"
         pendingLabel="Deleting…"
         isPending={deleteArtifact.isPending}

@@ -3,7 +3,7 @@ import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 import { scrapeUrl } from "@/lib/firecrawl";
 import { generateEmbeddings } from "@/lib/openai";
-import { parsePdf } from "@/lib/pdf";
+import { parseFile, extensionToSourceType } from "@/lib/file-parser";
 import {
   deleteVectorsBySourceId,
   deleteVectorsBySourceIds,
@@ -21,7 +21,7 @@ import { SourceMetadata, SourceChunkMetadata } from "@/server/db/schema";
 import {
   BulkDeleteSourcesInput,
   CreateSourceInput,
-  ImportPdfSourceInput,
+  ImportFileSourceInput,
   ImportTextSourceInput,
   ImportWebsiteSourceInput,
   ImportYoutubeSourceInput,
@@ -216,49 +216,61 @@ export class SourceService {
   }
 
   /**
-   * Imports a PDF file source by extracting text locally via unpdf, uploading the PDF binary
-   * to Cloudflare R2 storage, and enqueuing background processing workflow.
+   * Imports a document file source (pdf, txt, md, docx, pptx, xlsx) by extracting
+   * text locally, uploading the raw file to Cloudflare R2, and enqueuing
+   * background processing.
    *
    * @param userId - Requesting user identifier.
-   * @param input - Payload containing workspaceId, file data/filename, and optional title.
-   * @returns Newly created PDF source record with PENDING status.
-   * @throws {ApiError} If workspace access is denied or PDF parsing fails.
+   * @param input - Payload containing workspaceId, extension, file data, and optional title.
+   * @returns Newly created source record with PENDING status.
+   * @throws {ApiError} If workspace access is denied or file parsing fails.
    */
-  static async importPdfSource(userId: string, input: ImportPdfSourceInput) {
+  static async importFileSource(userId: string, input: ImportFileSourceInput) {
     // Verify workspace access
     await WorkspaceService.getWorkspaceById(input.workspaceId, userId);
 
-    let parsedPdf;
+    let parsed;
     try {
-      parsedPdf = await parsePdf(input.file.data);
+      parsed = await parseFile(input.file.data, input.extension);
     } catch (error: unknown) {
       throw ApiError.badRequest(
-        sanitizeExternalError(error, "Failed to parse PDF document"),
+        sanitizeExternalError(error, "Failed to parse file"),
       );
     }
 
-    // Upload raw PDF file to Cloudflare R2 storage bucket
-    const fileKey = `workspaces/${input.workspaceId}/pdf/${Date.now()}-${input.file.filename}`;
+    const sourceType = extensionToSourceType(input.extension);
+
+    // Upload raw file to Cloudflare R2 storage bucket
+    const fileKey = `workspaces/${input.workspaceId}/files/${Date.now()}-${input.file.filename}`;
     const storageResult = await uploadToStorage({
       key: fileKey,
       body: input.file.data,
-      contentType: input.file.contentType || "application/pdf",
+      contentType:
+        input.file.contentType ||
+        (input.extension === "pdf"
+          ? "application/pdf"
+          : "application/octet-stream"),
     });
 
     const title = input.title?.trim() || input.file.filename;
 
     return await SourceService.createAndProcessSource({
       workspaceId: input.workspaceId,
-      type: "PDF",
+      type: sourceType,
       title,
-      content: parsedPdf.text,
+      content: parsed.text,
       url: storageResult.url,
       status: "PENDING",
       metadata: {
         storageKey: storageResult.key,
         bucket: storageResult.bucket,
         originalFilename: input.file.filename,
-        totalPages: parsedPdf.totalPages,
+        ...(parsed.sectionCount !== undefined
+          ? { totalPages: parsed.sectionCount }
+          : {}),
+        ...(parsed.sheets ? { sheets: parsed.sheets } : {}),
+        ...(parsed.slides ? { slides: parsed.slides } : {}),
+        ...(parsed.html ? { docxHtml: parsed.html } : {}),
       },
     });
   }
@@ -594,11 +606,11 @@ export class SourceService {
 
     await SourceService.removeSourceFromIndex(existingSource.workspaceId, id);
 
-    if (existingSource.type === "PDF" && existingSource.metadata?.storageKey) {
+    if (existingSource.metadata?.storageKey) {
       try {
-        await deleteFromStorage(existingSource.metadata.storageKey);
+        await deleteFromStorage(existingSource.metadata.storageKey as string);
       } catch (err) {
-        log.warn({ err, sourceId: id }, "Failed to delete PDF from storage");
+        log.warn({ err, sourceId: id }, "Failed to delete file from storage");
       }
     }
 
@@ -627,13 +639,13 @@ export class SourceService {
     );
 
     for (const item of deleted) {
-      if (item.type === "PDF" && item.metadata?.storageKey) {
+      if (item.metadata?.storageKey) {
         try {
-          await deleteFromStorage(item.metadata.storageKey);
+          await deleteFromStorage(item.metadata.storageKey as string);
         } catch (err) {
           log.warn(
             { err, sourceId: item.id },
-            "Failed to delete PDF from storage in bulk delete",
+            "Failed to delete file from storage in bulk delete",
           );
         }
       }

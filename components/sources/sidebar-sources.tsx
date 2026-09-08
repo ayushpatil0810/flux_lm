@@ -14,6 +14,10 @@ import {
   Loading02Icon,
   ArrowLeft02Icon,
   LinkSquare01Icon,
+  FileEditIcon,
+  FileSpreadsheetIcon,
+  PresentationBarChart01Icon,
+  File01Icon,
 } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
@@ -31,6 +35,9 @@ import { SourceDetailDialog } from "./source-detail-dialog";
 import { ConfirmDeleteDialog } from "./confirm-delete-dialog";
 import { RenameSourceDialog } from "./rename-source-dialog";
 import { YouTubePlayerView } from "./youtube-player-view";
+import { ExcelTableView } from "./excel-table-view";
+import { PptSlideView } from "./ppt-slide-view";
+import { DocxDocumentView } from "./docx-document-view";
 import { getErrorMessage } from "@/lib/api";
 import {
   DropdownMenu,
@@ -44,6 +51,129 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useWorkspacePanel } from "@/components/shell/workspace-panel-context";
+
+// ── Source format and icon helpers ───────────────────────────────────────────
+
+type SourceFormat =
+  | "pdf"
+  | "xlsx"
+  | "pptx"
+  | "docx"
+  | "md"
+  | "youtube"
+  | "website"
+  | "text";
+
+function getSourceFormat(
+  source: (Pick<Source, "type" | "metadata"> & { title?: string }) | null,
+): SourceFormat {
+  if (!source) return "text";
+  if (source.type === "PDF") return "pdf";
+  if (source.type === "YOUTUBE") return "youtube";
+  if (source.type === "WEBSITE") return "website";
+
+  const originalFilename =
+    typeof source.metadata?.originalFilename === "string"
+      ? source.metadata.originalFilename.toLowerCase()
+      : (source.title || "").toLowerCase();
+
+  if (originalFilename.endsWith(".xlsx") || originalFilename.endsWith(".xls")) {
+    return "xlsx";
+  }
+  if (originalFilename.endsWith(".pptx") || originalFilename.endsWith(".ppt")) {
+    return "pptx";
+  }
+  if (originalFilename.endsWith(".docx") || originalFilename.endsWith(".doc")) {
+    return "docx";
+  }
+  if (source.type === "MARKDOWN" || originalFilename.endsWith(".md")) {
+    return "md";
+  }
+  return "text";
+}
+
+function getSourceIcon(
+  source: Pick<Source, "type" | "metadata">,
+  className?: string,
+) {
+  const originalFilename =
+    typeof source.metadata?.originalFilename === "string"
+      ? source.metadata.originalFilename.toLowerCase()
+      : "";
+
+  if (source.type === "PDF") {
+    return (
+      <HugeiconsIcon
+        icon={Pdf01Icon}
+        strokeWidth={1.5}
+        className={className ?? "size-5 text-red-500"}
+      />
+    );
+  }
+  if (source.type === "WEBSITE") {
+    return (
+      <HugeiconsIcon
+        icon={InternetIcon}
+        strokeWidth={1.5}
+        className={className ?? "size-5 text-blue-500"}
+      />
+    );
+  }
+  if (source.type === "YOUTUBE") {
+    return (
+      <HugeiconsIcon
+        icon={YoutubeIcon}
+        strokeWidth={1.5}
+        className={className ?? "size-5 text-red-500"}
+      />
+    );
+  }
+  // For TEXT / MARKDOWN — check originalFilename for Office format hints
+  if (originalFilename.endsWith(".docx")) {
+    return (
+      <HugeiconsIcon
+        icon={FileEditIcon}
+        strokeWidth={1.5}
+        className={className ?? "size-5 text-blue-500"}
+      />
+    );
+  }
+  if (originalFilename.endsWith(".xlsx")) {
+    return (
+      <HugeiconsIcon
+        icon={FileSpreadsheetIcon}
+        strokeWidth={1.5}
+        className={className ?? "size-5 text-green-600"}
+      />
+    );
+  }
+  if (originalFilename.endsWith(".pptx")) {
+    return (
+      <HugeiconsIcon
+        icon={PresentationBarChart01Icon}
+        strokeWidth={1.5}
+        className={className ?? "size-5 text-orange-500"}
+      />
+    );
+  }
+  if (source.type === "MARKDOWN" || originalFilename.endsWith(".md")) {
+    return (
+      <HugeiconsIcon
+        icon={File01Icon}
+        strokeWidth={1.5}
+        className={className ?? "size-5 text-purple-500"}
+      />
+    );
+  }
+  // Plain text / generic note
+  return (
+    <HugeiconsIcon
+      icon={NoteIcon}
+      strokeWidth={1.5}
+      className={className ?? "size-5 text-amber-500"}
+    />
+  );
+}
 
 // ── Source-type picker cards ────────────────────────────────────────────────
 
@@ -113,7 +243,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
   const [renameSource, setRenameSource] = React.useState<Source | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<Source | null>(null);
 
-  const [pdfViewMode, setPdfViewMode] = React.useState<"pdf" | "text">("text");
+  const [viewMode, setViewMode] = React.useState<"preview" | "text">("preview");
   const [isPdfLoading, setIsPdfLoading] = React.useState(true);
 
   // Derive the active source with freshest data from query
@@ -122,15 +252,40 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
     return sources?.find((s) => s.id === previewSource.id) ?? previewSource;
   }, [previewSource, sources]);
 
-  const isPdf = activeSource?.type === "PDF";
+  const sourceFormat = React.useMemo(
+    () => getSourceFormat(activeSource),
+    [activeSource],
+  );
 
-  // Reset PDF mode & loading when active source changes
+  const hasTwoViews =
+    sourceFormat === "pdf" ||
+    sourceFormat === "xlsx" ||
+    sourceFormat === "pptx" ||
+    sourceFormat === "docx";
+
+  const previewLabel =
+    sourceFormat === "pdf"
+      ? "PDF"
+      : sourceFormat === "xlsx"
+        ? "Table"
+        : sourceFormat === "pptx"
+          ? "Slides"
+          : sourceFormat === "docx"
+            ? "Document"
+            : "Preview";
+
+  // Reset view mode & loading when active source changes
   React.useEffect(() => {
-    if (activeSource?.type === "PDF") {
+    if (activeSource) {
       setIsPdfLoading(true);
-      setPdfViewMode("text");
+      const fmt = getSourceFormat(activeSource);
+      if (["pdf", "xlsx", "pptx", "docx"].includes(fmt)) {
+        setViewMode("preview");
+      } else {
+        setViewMode("text");
+      }
     }
-  }, [activeSource?.id, activeSource?.type, activeSource?.content]);
+  }, [activeSource?.id, activeSource?.type]);
 
   const filteredSources = React.useMemo(() => {
     if (!sources) return [];
@@ -187,15 +342,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
               <span className="text-muted-foreground/40 text-sm select-none">/</span>
               <div className="flex items-center gap-2 min-w-0 truncate">
                 <div className="flex size-5 shrink-0 items-center justify-center">
-                  {activeSource.type === "PDF" ? (
-                    <HugeiconsIcon icon={Pdf01Icon} strokeWidth={1.5} className="size-5 text-red-500" />
-                  ) : activeSource.type === "WEBSITE" ? (
-                    <HugeiconsIcon icon={InternetIcon} strokeWidth={1.5} className="size-5 text-blue-500" />
-                  ) : activeSource.type === "YOUTUBE" ? (
-                    <HugeiconsIcon icon={YoutubeIcon} strokeWidth={1.5} className="size-5 text-red-500" />
-                  ) : (
-                    <HugeiconsIcon icon={NoteIcon} strokeWidth={1.5} className="size-5 text-amber-500" />
-                  )}
+                  {getSourceIcon(activeSource)}
                 </div>
                 <span
                   className="text-sm font-semibold tracking-tight text-foreground truncate"
@@ -207,7 +354,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
             </div>
 
             <div className="flex items-center gap-1 shrink-0">
-              {activeSource.url ? (
+              {activeSource.url && !activeSource.metadata?.storageKey ? (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <a
@@ -222,7 +369,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                   </TooltipTrigger>
                   <TooltipContent side="bottom" sideOffset={6}>Open link</TooltipContent>
                 </Tooltip>
-              ) : activeSource.type === "PDF" ? (
+              ) : activeSource.metadata?.storageKey ? (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <a
@@ -230,12 +377,12 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                       target="_blank"
                       rel="noreferrer"
                       className="text-muted-foreground hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors hover:bg-muted"
-                      aria-label="Open PDF in new tab"
+                      aria-label="Open file in new tab"
                     >
                       <HugeiconsIcon icon={LinkSquare01Icon} strokeWidth={1.5} className="size-5" />
                     </a>
                   </TooltipTrigger>
-                  <TooltipContent side="bottom" sideOffset={6}>Open PDF in new tab</TooltipContent>
+                  <TooltipContent side="bottom" sideOffset={6}>Open file</TooltipContent>
                 </Tooltip>
               ) : null}
 
@@ -291,34 +438,34 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
             </div>
           </div>
 
-          {/* Mode Switcher for PDFs (Text vs PDF view) */}
-          {isPdf && activeSource.content ? (
+          {/* Mode Switcher for formats with two views (Text vs Formatted view) */}
+          {hasTwoViews && activeSource.content ? (
             <div className="flex items-center justify-between border-b border-border/40 bg-muted/20 px-3.5 py-1.5 text-xs shrink-0">
               <span className="text-[11px] text-muted-foreground font-medium">View as</span>
               <div className="flex items-center rounded-md border border-border/60 bg-muted/50 p-0.5">
                 <button
                   type="button"
-                  onClick={() => setPdfViewMode("text")}
+                  onClick={() => setViewMode("text")}
                   className={cn(
                     "rounded px-2 py-0.5 text-[11px] font-medium transition-colors",
-                    pdfViewMode === "text"
+                    viewMode === "text"
                       ? "bg-background text-foreground shadow-2xs font-semibold"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   Text
                 </button>
                 <button
                   type="button"
-                  onClick={() => setPdfViewMode("pdf")}
+                  onClick={() => setViewMode("preview")}
                   className={cn(
                     "rounded px-2 py-0.5 text-[11px] font-medium transition-colors",
-                    pdfViewMode === "pdf"
+                    viewMode === "preview"
                       ? "bg-background text-foreground shadow-2xs font-semibold"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  PDF
+                  {previewLabel}
                 </button>
               </div>
             </div>
@@ -328,12 +475,20 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
           <div
             className={cn(
               "no-scrollbar min-h-0 flex-1",
-              activeSource.type === "YOUTUBE"
+              activeSource.type === "YOUTUBE" ||
+                (viewMode === "preview" &&
+                  (sourceFormat === "xlsx" || sourceFormat === "pptx"))
                 ? "flex flex-col overflow-hidden"
                 : "overflow-y-auto",
             )}
           >
-            {isPdf && pdfViewMode === "pdf" ? (
+            {activeSource.type === "YOUTUBE" && activeSource.url ? (
+              <YouTubePlayerView
+                url={activeSource.url}
+                title={activeSource.title}
+                content={activeSource.content}
+              />
+            ) : viewMode === "preview" && sourceFormat === "pdf" ? (
               <div className="relative h-full w-full">
                 {isPdfLoading ? (
                   <div className="bg-background/90 absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 backdrop-blur-xs">
@@ -354,12 +509,12 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                   className="h-full w-full border-0"
                 />
               </div>
-            ) : activeSource.type === "YOUTUBE" && activeSource.url ? (
-              <YouTubePlayerView
-                url={activeSource.url}
-                title={activeSource.title}
-                content={activeSource.content}
-              />
+            ) : viewMode === "preview" && sourceFormat === "xlsx" ? (
+              <ExcelTableView source={activeSource} />
+            ) : viewMode === "preview" && sourceFormat === "pptx" ? (
+              <PptSlideView source={activeSource} />
+            ) : viewMode === "preview" && sourceFormat === "docx" ? (
+              <DocxDocumentView source={activeSource} />
             ) : (
               <div className="p-3.5 sm:p-4">
                 {activeSource.url && (
@@ -486,7 +641,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                     No sources yet
                   </h3>
                   <p className="mt-1 max-w-[200px] text-xs leading-relaxed text-muted-foreground font-inter font-normal">
-                    Import PDFs, websites, YouTube videos, or notes to get started.
+                    Import PDFs, Word docs, websites, YouTube videos, or notes to get started.
                   </p>
                   <Button
                     type="button"
@@ -532,31 +687,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                             )}
                           >
                             <div className="flex size-7 shrink-0 items-center justify-center">
-                              {source.type === "PDF" ? (
-                                <HugeiconsIcon
-                                  icon={Pdf01Icon}
-                                  strokeWidth={1.5}
-                                  className="size-5 text-red-500"
-                                />
-                              ) : source.type === "WEBSITE" ? (
-                                <HugeiconsIcon
-                                  icon={InternetIcon}
-                                  strokeWidth={1.5}
-                                  className="size-5 text-blue-500"
-                                />
-                              ) : source.type === "YOUTUBE" ? (
-                                <HugeiconsIcon
-                                  icon={YoutubeIcon}
-                                  strokeWidth={1.5}
-                                  className="size-5 text-red-500"
-                                />
-                              ) : (
-                                <HugeiconsIcon
-                                  icon={NoteIcon}
-                                  strokeWidth={1.5}
-                                  className="size-5 text-amber-500"
-                                />
-                              )}
+                              {getSourceIcon(source)}
                             </div>
 
                             <button
@@ -647,16 +778,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
         onOpenChange={(open) => {
           if (!open) setDeleteTarget(null);
         }}
-        title="Delete source"
-        description={
-          <>
-            This permanently deletes{" "}
-            <span className="text-foreground font-medium">
-              {deleteTarget?.title}
-            </span>{" "}
-            from this workspace. This action cannot be undone.
-          </>
-        }
+        title={`Delete ${deleteTarget?.title ?? "source"}`}
         confirmLabel="Delete source"
         pendingLabel="Deleting…"
         isPending={deleteSource.isPending}

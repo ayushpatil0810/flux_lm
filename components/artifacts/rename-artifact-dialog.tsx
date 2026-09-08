@@ -91,12 +91,12 @@ function RenameForm({
   return (
     <>
       {/* Header — pinned */}
-      <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4 text-left">
+      <DialogHeader className="shrink-0 px-5 pt-5 pb-0 text-left">
         <DialogTitle className="text-heading font-serif">
           Rename artifact
         </DialogTitle>
-        <DialogDescription>
-          Give this artifact a descriptive name.
+        <DialogDescription className="sr-only">
+          Give this artifact a descriptive name
         </DialogDescription>
       </DialogHeader>
 
@@ -107,7 +107,12 @@ function RenameForm({
         className="no-scrollbar flex-1 overflow-y-auto px-5 py-4 space-y-4"
       >
         <div className="space-y-1.5">
-          <Label htmlFor="rename-artifact-title">Title</Label>
+          <Label
+            htmlFor="rename-artifact-title"
+            className="text-xs text-muted-foreground font-normal"
+          >
+            Title
+          </Label>
           <Input
             id="rename-artifact-title"
             required
@@ -115,11 +120,12 @@ function RenameForm({
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             maxLength={200}
+            className="h-8.5 text-xs"
             aria-invalid={Boolean(fieldError)}
             aria-describedby={fieldError ? "rename-artifact-error" : undefined}
           />
           {fieldError ? (
-            <p id="rename-artifact-error" className="text-destructive text-sm">
+            <p id="rename-artifact-error" className="text-destructive text-xs">
               {fieldError}
             </p>
           ) : null}
@@ -127,8 +133,14 @@ function RenameForm({
       </form>
 
       {/* Footer — pinned */}
-      <div className="border-border/30 flex shrink-0 items-center justify-end gap-2 border-t px-5 py-3">
-        <Button type="button" variant="ghost" size="sm" onClick={onClose}>
+      <div className="flex shrink-0 items-center justify-end gap-2 px-5 pb-5 pt-2">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          className="h-8 text-xs text-muted-foreground hover:text-foreground"
+        >
           Cancel
         </Button>
         <Button
@@ -136,6 +148,7 @@ function RenameForm({
           size="sm"
           form="rename-artifact-form"
           disabled={rename.isPending || title.trim().length === 0}
+          className="h-8 text-xs"
         >
           {rename.isPending ? "Saving…" : "Save"}
         </Button>

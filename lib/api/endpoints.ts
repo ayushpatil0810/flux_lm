@@ -24,7 +24,7 @@ export const endpoints = {
     list: (workspaceId: string, filters: SourceListFilters = {}) =>
       withQuery("/api/sources", { workspaceId, ...filters }),
     detail: (id: string) => `/api/sources/${id}`,
-    importPdf: () => "/api/sources/import/pdf",
+    importFile: () => "/api/sources/import/file",
     importWebsite: () => "/api/sources/import/website",
     importText: () => "/api/sources/import/text",
     importYoutube: () => "/api/sources/import/youtube",

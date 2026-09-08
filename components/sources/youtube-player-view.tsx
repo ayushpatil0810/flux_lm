@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
-export interface TranscriptItem {
+interface TranscriptItem {
   timestamp?: string;
   seconds?: number;
   text: string;
@@ -54,7 +54,7 @@ declare global {
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
-export function extractYoutubeVideoId(url: string): string {
+function extractYoutubeVideoId(url: string): string {
   let videoId = "";
   try {
     const parsed = new URL(url);
@@ -106,7 +106,7 @@ function parseTimeStringToSeconds(timeStr: string): number {
   return 0;
 }
 
-export function parseYoutubeTranscript(content: string): TranscriptItem[] {
+function parseYoutubeTranscript(content: string): TranscriptItem[] {
   if (!content) return [];
   const lines = content.split("\n");
   const parsedLines: Array<{ rawSeconds: number | null; text: string }> = [];

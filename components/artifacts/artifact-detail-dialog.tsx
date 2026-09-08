@@ -112,23 +112,20 @@ export function ArtifactDetailDialog({
         {artifact ? (
           <>
             {/* Header — pinned */}
-            <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4 text-left">
-              <div className="flex items-center gap-2.5">
-                <div
+            <DialogHeader className="shrink-0 px-5 pt-5 pb-2 text-left">
+              <div className="flex items-start gap-3">
+                <ActiveIcon
                   className={cn(
-                    "flex size-7 shrink-0 items-center justify-center rounded-lg border",
-                    ARTIFACT_TYPE_STYLES[artifact.type].iconBg,
+                    "size-5 mt-0.5 shrink-0",
                     ARTIFACT_TYPE_STYLES[artifact.type].iconColor,
-                    ARTIFACT_TYPE_STYLES[artifact.type].iconBorder,
                   )}
-                >
-                  <ActiveIcon className="size-4" aria-hidden />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <DialogTitle className="text-heading font-serif truncate pr-6">
+                  aria-hidden
+                />
+                <div className="min-w-0 flex-1 pr-6">
+                  <DialogTitle className="text-heading font-serif truncate">
                     {cleanArtifactTitle(artifact.title)}
                   </DialogTitle>
-                  <DialogDescription className="mt-0.5">
+                  <DialogDescription className="mt-0.5 text-xs text-muted-foreground/70">
                     {ARTIFACT_TYPE_LABELS[artifact.type]} · Created{" "}
                     {formatDate(artifact.createdAt)}
                   </DialogDescription>
@@ -138,7 +135,7 @@ export function ArtifactDetailDialog({
 
             {/* Body — scrollable */}
             <div className="no-scrollbar flex-1 overflow-y-auto px-5 py-4 space-y-4">
-              <dl className="grid gap-3 text-sm">
+              <dl className="grid gap-2.5 text-xs">
                 <div className="flex items-center justify-between gap-4">
                   <dt className="text-muted-foreground">Status</dt>
                   <dd>
@@ -149,7 +146,7 @@ export function ArtifactDetailDialog({
                 {stats ? (
                   <div className="flex items-center justify-between gap-4">
                     <dt className="text-muted-foreground">Content size</dt>
-                    <dd className="text-foreground">{stats}</dd>
+                    <dd className="text-foreground font-mono text-[11px]">{stats}</dd>
                   </div>
                 ) : null}
 
@@ -175,12 +172,12 @@ export function ArtifactDetailDialog({
               {artifact.status === "FAILED" ? (
                 <div
                   role="alert"
-                  className="border-destructive/40 bg-destructive/5 rounded-md border px-4 py-3 text-sm"
+                  className="border-destructive/30 bg-destructive/5 rounded-xl border px-3.5 py-2.5 text-xs"
                 >
                   <p className="text-destructive font-medium">
                     Generation failed
                   </p>
-                  <p className="text-muted-foreground mt-1">
+                  <p className="text-muted-foreground mt-0.5 text-[11px]">
                     {processingError ??
                       "The artifact could not be generated. Please try creating it again."}
                   </p>
@@ -189,15 +186,16 @@ export function ArtifactDetailDialog({
             </div>
 
             {/* Footer — pinned */}
-            <div className="border-border/30 flex shrink-0 items-center justify-end gap-2 border-t px-5 py-3">
+            <div className="flex shrink-0 items-center justify-end gap-2 px-5 pb-5 pt-2">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={() => onRename(artifact)}
+                className="h-8 text-xs text-muted-foreground hover:text-foreground"
               >
                 Rename
               </Button>
-              <Button variant="ghost" size="sm" onClick={onClose}>
+              <Button variant="outline" size="sm" onClick={onClose} className="h-8 text-xs">
                 Close
               </Button>
             </div>

@@ -505,16 +505,7 @@ export function SidebarArtifacts({
         onOpenChange={(open) => {
           if (!open) setDeleteTarget(null);
         }}
-        title="Delete artifact"
-        description={
-          <>
-            This permanently deletes{" "}
-            <span className="text-foreground font-medium">
-              {deleteTarget?.title}
-            </span>
-            . This cannot be undone.
-          </>
-        }
+        title={`Delete ${deleteTarget?.title ?? "artifact"}`}
         confirmLabel="Delete artifact"
         pendingLabel="Deleting…"
         isPending={deleteArtifact.isPending}

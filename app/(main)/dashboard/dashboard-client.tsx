@@ -315,17 +315,7 @@ export function DashboardClient({
           onOpenChange={(open) => {
             if (!open) setDeleteTarget(null);
           }}
-          title="Delete workspace"
-          description={
-            <>
-              This permanently deletes{" "}
-              <span className="text-foreground font-medium">
-                {deleteTarget?.title}
-              </span>
-              , including its sources, artifacts, and conversations. This cannot
-              be undone.
-            </>
-          }
+          title={`Delete ${deleteTarget?.title ?? "workspace"}`}
           confirmLabel="Delete workspace"
           pendingLabel="Deleting…"
           isPending={deleteWorkspace.isPending}

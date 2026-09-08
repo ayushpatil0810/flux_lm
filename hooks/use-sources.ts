@@ -223,17 +223,17 @@ export function useImportTextSource(workspaceId: string) {
   });
 }
 
-export function useImportPdfSource(workspaceId: string) {
+export function useImportFileSource(workspaceId: string) {
   const queryClient = useQueryClient();
   const invalidate = useInvalidateSources(workspaceId);
   const replaceOptimistic = useReplaceOptimisticSource(workspaceId);
   return useMutation({
-    mutationFn: (input: { file: File; title?: string }) => {
+    mutationFn: (input: { file: File; title?: string; extension: string }) => {
       const formData = new FormData();
       formData.set("workspaceId", workspaceId);
       if (input.title) formData.set("title", input.title);
       formData.set("file", input.file);
-      return apiFetch<Source>(endpoints.sources.importPdf(), {
+      return apiFetch<Source>(endpoints.sources.importFile(), {
         method: "POST",
         formData,
       });
@@ -245,9 +245,12 @@ export function useImportPdfSource(workspaceId: string) {
       const previous = queryClient.getQueriesData<Source[]>({
         queryKey: queryKeys.sources.all(workspaceId),
       });
+      const ext = input.extension.toLowerCase();
+      const sourceType: Source["type"] =
+        ext === "pdf" ? "PDF" : ext === "md" ? "MARKDOWN" : "TEXT";
       const placeholder = optimisticSource({
-        title: input.title ?? input.file.name.replace(/\.pdf$/i, ""),
-        type: "PDF",
+        title: input.title ?? input.file.name.replace(/\.[^.]+$/, ""),
+        type: sourceType,
         workspaceId,
       });
       queryClient.setQueriesData<Source[]>(

@@ -18,7 +18,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -75,20 +74,20 @@ function SegmentGroup<T extends string | number>({
 }) {
   return (
     <div className="space-y-1.5">
-      <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+      <p className="text-xs text-muted-foreground">
         {label}
       </p>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-1 bg-muted/40 p-0.5 rounded-lg w-fit">
         {options.map((opt) => (
           <button
             key={String(opt)}
             type="button"
             onClick={() => onChange(opt)}
             className={cn(
-              "rounded-lg border px-3 py-1 text-xs font-medium transition-colors",
+              "rounded-md px-2.5 py-1 text-xs transition-colors",
               value === opt
-                ? "border-primary/50 bg-primary/10 text-primary"
-                : "border-border/40 text-muted-foreground hover:border-border/70 hover:text-foreground",
+                ? "bg-background font-medium text-foreground shadow-xs"
+                : "text-muted-foreground hover:text-foreground",
             )}
           >
             {formatLabel ? formatLabel(opt) : String(opt)}
@@ -340,7 +339,7 @@ export function ArtifactConfigDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex w-[calc(100%-2rem)] max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:w-full sm:max-w-md">
         {/* Header — pinned */}
-        <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4">
+        <DialogHeader className="shrink-0 px-5 pt-5 pb-2 text-left">
           <DialogTitle className="text-heading font-serif">
             Generate {type ? ARTIFACT_TYPE_LABELS[type].toLowerCase() : ""}
           </DialogTitle>
@@ -352,9 +351,9 @@ export function ArtifactConfigDialog({
         {/* Body — scrollable */}
         <div className="no-scrollbar flex-1 overflow-y-auto px-5 py-4">
           {readySources.length === 0 ? (
-            <div className="rounded-md border border-dashed px-4 py-6 text-center">
-              <p className="text-sm font-medium">No ready sources</p>
-              <p className="text-muted-foreground mx-auto mt-1.5 max-w-xs text-sm">
+            <div className="rounded-xl border border-dashed border-border/50 px-4 py-8 text-center bg-muted/5">
+              <p className="text-xs font-medium text-foreground">No sources ready</p>
+              <p className="text-muted-foreground/70 mx-auto mt-1 max-w-xs text-xs">
                 Add a source and wait for it to finish processing before
                 generating.
               </p>
@@ -370,14 +369,19 @@ export function ArtifactConfigDialog({
 
               {/* Sources */}
               <div className="space-y-1.5">
-                <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                  Sources
-                </p>
-                <div className="border-border/40 max-h-40 overflow-y-auto rounded-lg border p-1.5">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">
+                    Sources
+                  </p>
+                  <span className="text-[11px] text-muted-foreground/70">
+                    {selectedSources.length} of {readySources.length} selected
+                  </span>
+                </div>
+                <div className="border-border/40 max-h-40 overflow-y-auto rounded-xl border p-1 bg-muted/5">
                   {readySources.map((source) => (
                     <label
                       key={source.id}
-                      className="hover:bg-accent flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors"
+                      className="hover:bg-muted/30 flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-xs transition-colors"
                     >
                       <Checkbox
                         checked={!excludedIds.has(source.id)}
@@ -390,16 +394,16 @@ export function ArtifactConfigDialog({
                     </label>
                   ))}
                 </div>
-                <p className="text-muted-foreground text-xs">
-                  {selectedSources.length} of {readySources.length} selected
-                </p>
               </div>
 
               {/* Optional title */}
-              <div className="grid gap-1.5">
-                <Label htmlFor="artifact-config-title">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="artifact-config-title"
+                  className="text-xs text-muted-foreground font-normal"
+                >
                   Title{" "}
-                  <span className="text-muted-foreground font-normal">
+                  <span className="text-muted-foreground/60">
                     (optional)
                   </span>
                 </Label>
@@ -408,7 +412,8 @@ export function ArtifactConfigDialog({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   maxLength={200}
-                  placeholder="Leave blank for an automatic title"
+                  placeholder="Leave blank for automatic title"
+                  className="h-8.5 text-xs"
                 />
               </div>
             </form>
@@ -417,12 +422,13 @@ export function ArtifactConfigDialog({
 
         {/* Footer — pinned */}
         {readySources.length > 0 && (
-          <div className="border-border/30 flex shrink-0 items-center justify-end gap-2 border-t px-5 py-3">
+          <div className="flex shrink-0 items-center justify-end gap-2 px-5 pb-5 pt-2">
             <Button
               type="button"
               variant="ghost"
               size="sm"
               onClick={() => onOpenChange(false)}
+              className="h-8 text-xs text-muted-foreground hover:text-foreground"
             >
               Cancel
             </Button>
@@ -433,13 +439,14 @@ export function ArtifactConfigDialog({
               disabled={
                 createArtifact.isPending || selectedSources.length === 0
               }
+              className="h-8 text-xs"
             >
               {createArtifact.isPending ? (
                 <>
                   <HugeiconsIcon
                     icon={Loading02Icon}
                     strokeWidth={1.5}
-                    className="size-4 animate-spin"
+                    className="size-3.5 animate-spin"
                     aria-hidden
                   />
                   Starting…

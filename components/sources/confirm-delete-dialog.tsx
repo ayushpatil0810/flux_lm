@@ -15,7 +15,7 @@ interface ConfirmDeleteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  description: React.ReactNode;
+  description?: React.ReactNode;
   confirmLabel: string;
   pendingLabel: string;
   isPending: boolean;
@@ -36,17 +36,20 @@ export function ConfirmDeleteDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex w-[calc(100%-2rem)] max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:w-full sm:max-w-md">
-        <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4 text-left">
-          <DialogTitle className="text-heading font-serif">{title}</DialogTitle>
-          <DialogDescription className="text-xs text-muted-foreground mt-1">
-            {description}
+        <DialogHeader className="px-5 pt-5 pb-0 text-left">
+          <DialogTitle className="text-heading font-serif line-clamp-2 pr-6 leading-snug">
+            {title}
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            {typeof description === "string" ? description : title}
           </DialogDescription>
         </DialogHeader>
-        <div className="border-border/30 flex shrink-0 items-center justify-end gap-2 border-t px-5 py-3">
+        <div className="flex shrink-0 items-center justify-end gap-2 px-5 pb-5 pt-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onOpenChange(false)}
+            className="h-8 text-xs text-muted-foreground hover:text-foreground"
           >
             Cancel
           </Button>
@@ -55,6 +58,7 @@ export function ConfirmDeleteDialog({
             size="sm"
             onClick={onConfirm}
             disabled={isPending}
+            className="h-8 text-xs"
           >
             {isPending ? pendingLabel : confirmLabel}
           </Button>

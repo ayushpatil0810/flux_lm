@@ -109,9 +109,10 @@ export type CreateSourceInput = z.infer<typeof createSourceSchema>;
 export type ImportWebsiteSourceInput = z.infer<
   typeof importWebsiteSourceSchema
 >;
-export interface ImportPdfSourceInput {
+export interface ImportFileSourceInput {
   workspaceId: string;
   title?: string;
+  extension: string;
   file: {
     data: Buffer;
     filename: string;

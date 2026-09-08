@@ -191,14 +191,6 @@ export function MemoriesView() {
           if (!open) setDeleteTarget(null);
         }}
         title="Delete memory"
-        description={
-          <>
-            Flux will no longer use this in conversations:
-            <span className="bg-muted/40 text-foreground/80 mt-2 block max-h-28 overflow-y-auto rounded-md border px-3 py-2 text-sm">
-              {deleteTarget?.memory}
-            </span>
-          </>
-        }
         confirmLabel="Delete memory"
         pendingLabel="Deleting…"
         isPending={deleteMemory.isPending}

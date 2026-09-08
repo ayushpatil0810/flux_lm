@@ -129,7 +129,7 @@ export function EditWorkspaceDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="flex w-[calc(100%-2rem)] max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:w-full sm:max-w-md">
           {/* Header — pinned */}
-          <DialogHeader className="border-border/30 shrink-0 border-b px-5 pt-5 pb-4 text-left">
+          <DialogHeader className="shrink-0 px-5 pt-5 pb-2 text-left">
             <DialogTitle className="text-heading font-serif">
               Workspace settings
             </DialogTitle>
@@ -223,7 +223,7 @@ export function EditWorkspaceDialog({
           </form>
 
           {/* Footer — pinned */}
-          <div className="border-border/30 flex shrink-0 items-center justify-between border-t px-5 py-3">
+          <div className="flex shrink-0 items-center justify-between px-5 pb-5 pt-2">
             <Button
               type="button"
               variant="ghost"
@@ -269,17 +269,7 @@ export function EditWorkspaceDialog({
       <ConfirmDeleteDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
-        title="Delete workspace"
-        description={
-          <>
-            This permanently deletes{" "}
-            <span className="text-foreground font-medium">
-              {workspace?.title}
-            </span>
-            , including its sources, artifacts, and conversations. This cannot
-            be undone.
-          </>
-        }
+        title={`Delete ${workspace?.title ?? "workspace"}`}
         confirmLabel="Delete workspace"
         pendingLabel="Deleting…"
         isPending={deleteWorkspace.isPending}
