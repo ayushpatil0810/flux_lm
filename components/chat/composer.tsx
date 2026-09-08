@@ -5,7 +5,6 @@ import {
   ArrowDown01Icon,
   CpuIcon,
   Link01Icon,
-  Layers01Icon,
 } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
@@ -13,7 +12,6 @@ import * as React from "react";
 import type { ChatModel } from "@/lib/api";
 import { CHAT_MODELS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -196,32 +194,27 @@ export function Composer({
 
             <div className="flex items-center">
               {isStreaming ? (
-                <Button
+                <button
                   type="button"
-                  variant="destructive"
-                  size="icon"
                   onClick={onStop}
                   aria-label="Stop generating"
-                  className="size-9 sm:size-8 rounded-lg shadow-none touch-manipulation"
+                  className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-black/15 bg-white text-black shadow-xs transition-colors hover:bg-neutral-100 touch-manipulation dark:border-white/20"
                 >
-                  <HugeiconsIcon
-                    icon={Layers01Icon}
-                    strokeWidth={1.5}
-                    className="size-3.5 fill-current"
-                    aria-hidden
+                  <span
+                    className="size-2.5 rounded-[2px] bg-black"
+                    aria-hidden="true"
                   />
-                </Button>
+                </button>
               ) : (
-                <Button
+                <button
                   type="submit"
-                  size="icon"
                   disabled={value.trim().length === 0}
                   aria-label="Send message"
                   className={cn(
-                    "size-9 sm:size-8 rounded-lg shadow-none transition-all duration-150 touch-manipulation",
+                    "flex size-8 shrink-0 items-center justify-center rounded-full transition-all duration-150 touch-manipulation",
                     value.trim().length > 0
-                      ? "border border-[#2868F5] bg-gradient-to-b from-[#2875FF] to-[#3378F4] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25)] hover:from-[#347FFF] hover:to-[#4382F5] hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.35)] active:scale-95"
-                      : "bg-muted/70 text-muted-foreground/35 cursor-not-allowed",
+                      ? "border border-[#2868F5] bg-gradient-to-b from-[#2875FF] to-[#3378F4] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25)] hover:from-[#347FFF] hover:to-[#4382F5] cursor-pointer"
+                      : "border border-border/40 bg-muted/60 text-muted-foreground/35 cursor-not-allowed",
                   )}
                 >
                   <HugeiconsIcon
@@ -230,7 +223,7 @@ export function Composer({
                     className="size-3.5"
                     aria-hidden
                   />
-                </Button>
+                </button>
               )}
             </div>
           </div>

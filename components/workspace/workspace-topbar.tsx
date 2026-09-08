@@ -74,7 +74,7 @@ export function WorkspaceTopbar({
             <TooltipTrigger asChild>
               <Link
                 href="/dashboard"
-                className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground active:scale-95"
+                className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground"
                 aria-label="Back to dashboard"
               >
                 <HugeiconsIcon
@@ -130,7 +130,7 @@ export function WorkspaceTopbar({
               <button
                 type="button"
                 onClick={startEditing}
-                className="text-foreground hover:bg-muted/80 flex min-w-0 cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium tracking-tight transition-colors active:scale-[0.99] sm:text-sm"
+                className="text-foreground hover:bg-muted/80 flex min-w-0 cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium tracking-tight transition-colors sm:text-sm"
                 title="Click to rename"
               >
                 <span className="truncate max-w-[110px] xs:max-w-[150px] sm:max-w-[200px] md:max-w-[280px]">
@@ -164,7 +164,7 @@ export function WorkspaceTopbar({
                 size="icon"
                 onClick={onOpenSettings}
                 aria-label="Workspace settings"
-                className="size-8 cursor-pointer rounded-full text-muted-foreground hover:text-foreground active:scale-95"
+                className="size-8 cursor-pointer rounded-full text-muted-foreground hover:text-foreground"
               >
                 <HugeiconsIcon
                   icon={Settings01Icon}

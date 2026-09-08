@@ -302,15 +302,13 @@ export function ChatView({ workspaceId }: ChatViewProps) {
                       setImportDialogOpen(true);
                       setLeftOpen(true);
                     }}
-                    className="group border-border/80 hover:border-border hover:bg-muted/30 mt-5 sm:mt-8 flex items-center gap-3.5 rounded-2xl border border-dashed p-3.5 sm:p-4 text-left transition-all duration-200 cursor-pointer shadow-2xs active:scale-[0.99]"
+                    className="group border-border/80 hover:border-border hover:bg-muted/30 mt-5 sm:mt-8 flex items-center gap-3.5 rounded-2xl border border-dashed p-3.5 sm:p-4 text-left transition-colors duration-200 cursor-pointer shadow-2xs"
                   >
-                    <div className="text-muted-foreground flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-xl bg-muted border border-border/50 transition-transform group-hover:scale-105">
-                      <HugeiconsIcon
-                        icon={FileUploadIcon}
-                        strokeWidth={1.5}
-                        className="size-4.5 sm:size-5"
-                      />
-                    </div>
+                    <HugeiconsIcon
+                      icon={FileUploadIcon}
+                      strokeWidth={1.5}
+                      className="size-7 sm:size-8 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground"
+                    />
                     <div className="min-w-0">
                       <p className="text-xs sm:text-sm font-semibold tracking-tight text-foreground">
                         Add your first source →

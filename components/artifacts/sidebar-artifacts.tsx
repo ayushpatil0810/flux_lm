@@ -352,7 +352,7 @@ export function SidebarArtifacts({
                         <button
                           type="button"
                           onClick={() => setActiveType(type)}
-                          className="group flex items-center gap-2.5 rounded-xl border border-border/50 bg-card/60 px-2.5 py-2 text-left transition-all duration-150 hover:border-primary/40 hover:bg-card hover:shadow-xs active:scale-[0.97]"
+                          className="group flex items-center gap-2.5 rounded-xl border border-border/50 bg-card/60 px-2.5 py-2 text-left transition-colors duration-150 hover:border-primary/40 hover:bg-card hover:shadow-xs"
                         >
                           <div className={cn("flex size-7 shrink-0 items-center justify-center", ARTIFACT_TYPE_STYLES[type].iconColor)}>
                             <Icon className="size-5" aria-hidden />
