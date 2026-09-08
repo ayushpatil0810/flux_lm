@@ -84,8 +84,7 @@ export function MemoriesView() {
             />
           ) : memories.length === 0 ? (
             <EmptyState
-              title="Nothing remembered yet"
-              copy="As you chat, Flux quietly remembers facts and preferences that make later answers better. You can also add one yourself."
+              title="No memories yet"
               action={
                 <Button onClick={() => setAddOpen(true)}>
                   <HugeiconsIcon

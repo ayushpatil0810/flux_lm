@@ -281,9 +281,6 @@ export function ArtifactFullscreenDialog({
                   <p className="text-base font-semibold text-foreground">
                     Generating {ARTIFACT_TYPE_LABELS[artifact.type].toLowerCase()}...
                   </p>
-                  <p className="text-muted-foreground max-w-sm text-xs">
-                    This usually takes a few seconds as your workspace sources are synthesized.
-                  </p>
                 </div>
               ) : artifact.status === "FAILED" ? (
                 <div

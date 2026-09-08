@@ -54,7 +54,6 @@ export function ChatView({ workspaceId }: ChatViewProps) {
     useConversations(workspaceId);
   const { data: sources } = useSources(workspaceId);
 
-  const sourcesCount = sources?.length ?? 0;
   const noSources = sources !== undefined && sources.length === 0;
 
   // Use the first conversation available in the workspace, or undefined if none.
@@ -225,11 +224,6 @@ export function ChatView({ workspaceId }: ChatViewProps) {
           <h2 className="text-base font-semibold tracking-tight text-foreground">
             Chat
           </h2>
-          {sourcesCount > 0 ? (
-            <span className="text-muted-foreground text-xs font-mono">
-              • {sourcesCount} {sourcesCount === 1 ? "source" : "sources"}
-            </span>
-          ) : null}
         </div>
       </div>
 
@@ -285,15 +279,9 @@ export function ChatView({ workspaceId }: ChatViewProps) {
           <>
             <div className="flex min-h-0 flex-1 flex-col items-center px-3 sm:px-8 pt-3 sm:pt-4 pb-2 overflow-y-auto">
               <div className="animate-in fade-in my-auto flex w-full max-w-xl flex-col items-center text-center duration-300">
-                <h1 className="text-foreground font-heading text-xl xs:text-2xl sm:text-3xl md:text-4xl font-medium tracking-tight text-balance">
+                <h1 className="text-foreground font-heading text-xl xs:text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-balance">
                   Ask {workspace?.title ?? "this workspace"}
                 </h1>
-                <p className="text-muted-foreground mt-1.5 sm:mt-2 max-w-md text-xs sm:text-sm leading-relaxed font-inter font-normal text-balance">
-                  Answers grounded in your sources, with citations.
-                  {sourcesCount > 0
-                    ? ` ${sourcesCount} ${sourcesCount === 1 ? "source" : "sources"} connected.`
-                    : ""}
-                </p>
 
                 {noSources ? (
                   <button

@@ -171,7 +171,7 @@ export default function LoginPage() {
             </h1>
             <p className="font-inter text-muted-foreground mt-1.5 text-xs font-normal sm:text-sm text-balance">
               {isSignUp
-                ? "Start building your grounded knowledge workspace."
+                ? "Organize your research and understand anything."
                 : "Sign in to continue to your workspaces."}
             </p>
           </div>

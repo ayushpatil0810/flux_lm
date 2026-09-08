@@ -52,13 +52,11 @@ export type ImportType = "pdf" | "website" | "youtube" | "text";
 export const IMPORT_TYPES: {
   id: ImportType;
   label: string;
-  hint: string;
   Icon: React.FC<{ className?: string }>;
 }[] = [
   {
     id: "pdf",
     label: "PDF",
-    hint: "Upload a PDF document",
     Icon: (props) => (
       <HugeiconsIcon icon={Pdf01Icon} strokeWidth={1.5} {...props} />
     ),
@@ -66,7 +64,6 @@ export const IMPORT_TYPES: {
   {
     id: "website",
     label: "Web",
-    hint: "Extract text from any URL",
     Icon: (props) => (
       <HugeiconsIcon icon={InternetIcon} strokeWidth={1.5} {...props} />
     ),
@@ -74,7 +71,6 @@ export const IMPORT_TYPES: {
   {
     id: "youtube",
     label: "YouTube",
-    hint: "Import video transcript",
     Icon: (props) => (
       <HugeiconsIcon icon={YoutubeIcon} strokeWidth={1.5} {...props} />
     ),
@@ -82,7 +78,6 @@ export const IMPORT_TYPES: {
   {
     id: "text",
     label: "Note",
-    hint: "Create a plain text note",
     Icon: (props) => (
       <HugeiconsIcon icon={NoteIcon} strokeWidth={1.5} {...props} />
     ),
@@ -380,7 +375,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                 )}
                 <div className="prose prose-xs sm:prose-sm dark:prose-invert prose-p:leading-relaxed prose-pre:rounded-lg prose-pre:border prose-pre:border-border/60 prose-pre:bg-muted/50 max-w-none break-words">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {activeSource.content || "*No content extracted.*"}
+                    {activeSource.content || "*No content available.*"}
                   </ReactMarkdown>
                 </div>
               </div>
@@ -408,7 +403,7 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
                     type="button"
                     onClick={onClose}
                     aria-label="Collapse sources panel"
-                    className="text-muted-foreground hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors hover:bg-muted active:scale-95"
+                    className="text-muted-foreground hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors hover:bg-muted"
                   >
                     <HugeiconsIcon
                       icon={SidebarLeftIcon}
@@ -479,11 +474,6 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
               </div>
             ) : sources.length === 0 ? (
               <div className="pt-1">
-                <div className="flex items-center gap-2 px-3.5 pt-1 pb-2">
-                  <p className="text-muted-foreground/70 pl-1 text-xs font-semibold tracking-wider uppercase">
-                    Your Sources
-                  </p>
-                </div>
                 <div className="mx-3.5 my-2 flex flex-col items-center justify-center rounded-2xl border border-border/40 bg-card/40 px-4 py-8 text-center shadow-xs">
                   <div className="mb-2.5 flex size-9 items-center justify-center text-primary">
                     <HugeiconsIcon
@@ -511,15 +501,6 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
               </div>
             ) : (
               <div className="pt-1">
-                <div className="flex items-center gap-2 px-3.5 pt-1 pb-1.5">
-                  <p className="text-muted-foreground/70 pl-1 text-xs font-semibold tracking-wider uppercase">
-                    {searchQuery ? "Filtered Sources" : "Your Sources"}
-                  </p>
-                  <span className="rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-mono font-medium leading-none">
-                    {filteredSources.length}
-                  </span>
-                </div>
-
                 {filteredSources.length === 0 ? (
                   <div className="px-4 py-8 text-center">
                     <p className="text-xs text-muted-foreground">
@@ -672,9 +653,8 @@ export function SidebarSources({ workspaceId, onClose }: SidebarSourcesProps) {
             This permanently deletes{" "}
             <span className="text-foreground font-medium">
               {deleteTarget?.title}
-            </span>
-            , including its extracted text and embeddings. This cannot be
-            undone.
+            </span>{" "}
+            from this workspace. This action cannot be undone.
           </>
         }
         confirmLabel="Delete source"

@@ -282,7 +282,6 @@ export function ArtifactConfigDialog({
       });
       push({
         title: `${ARTIFACT_TYPE_LABELS[type]} queued`,
-        description: "It will appear below when generation finishes.",
       });
       onOpenChange(false);
       if (created?.id && onCreated) {
@@ -345,8 +344,8 @@ export function ArtifactConfigDialog({
           <DialogTitle className="text-heading font-serif">
             Generate {type ? ARTIFACT_TYPE_LABELS[type].toLowerCase() : ""}
           </DialogTitle>
-          <DialogDescription>
-            Built from your workspace's indexed sources.
+          <DialogDescription className="sr-only">
+            Generate {type ? ARTIFACT_TYPE_LABELS[type].toLowerCase() : ""}
           </DialogDescription>
         </DialogHeader>
 
@@ -356,7 +355,7 @@ export function ArtifactConfigDialog({
             <div className="rounded-md border border-dashed px-4 py-6 text-center">
               <p className="text-sm font-medium">No ready sources</p>
               <p className="text-muted-foreground mx-auto mt-1.5 max-w-xs text-sm">
-                Add a source and wait for it to finish indexing before
+                Add a source and wait for it to finish processing before
                 generating.
               </p>
             </div>

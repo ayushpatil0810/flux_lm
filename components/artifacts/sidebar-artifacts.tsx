@@ -275,9 +275,6 @@ export function SidebarArtifacts({
                 <p className="text-sm font-medium">
                   Generating {ARTIFACT_TYPE_LABELS[activeArtifact.type].toLowerCase()}
                 </p>
-                <p className="text-muted-foreground max-w-xs text-xs">
-                  This usually takes a few seconds.
-                </p>
               </div>
             ) : activeArtifact.status === "FAILED" ? (
               <div
@@ -341,7 +338,7 @@ export function SidebarArtifacts({
             {/* Generate section */}
             <div className="shrink-0 p-3.5 pb-2">
               <p className="text-muted-foreground/70 mb-2.5 pl-1 text-xs font-semibold tracking-wider uppercase">
-                Create Study Tools
+                Tools
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {ARTIFACT_TYPE_ORDER.map((type) => {
@@ -373,16 +370,6 @@ export function SidebarArtifacts({
 
             {/* Artifacts section */}
             <div className="pt-1">
-              <div className="flex items-center gap-2 px-3.5 pt-2 pb-1.5">
-                <p className="text-muted-foreground/70 pl-1 text-xs font-semibold tracking-wider uppercase">
-                  Your Artifacts
-                </p>
-                {artifacts && artifacts.length > 0 ? (
-                  <span className="rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-mono font-medium leading-none">
-                    {artifacts.length}
-                  </span>
-                ) : null}
-              </div>
 
               {isPending ? (
                 <div className="px-3.5 pt-2">
@@ -486,23 +473,7 @@ export function SidebarArtifacts({
                     );
                   })}
                 </ul>
-              ) : (
-                <div className="mx-3.5 my-3 flex flex-col items-center justify-center rounded-2xl border border-border/40 bg-card/40 px-4 py-8 text-center shadow-xs">
-                  <div className="mb-2.5 flex size-9 items-center justify-center text-primary">
-                    <HugeiconsIcon
-                      icon={Cards01Icon}
-                      strokeWidth={1.5}
-                      className="size-6"
-                    />
-                  </div>
-                  <h3 className="text-sm font-semibold tracking-tight text-foreground">
-                    No artifacts yet
-                  </h3>
-                  <p className="mt-1 max-w-[200px] text-xs leading-relaxed text-muted-foreground font-inter font-normal">
-                    Generate a summary, quiz, flashcards, or mindmap from your sources.
-                  </p>
-                </div>
-              )}
+              ) : null}
             </div>
           </div>
         </>

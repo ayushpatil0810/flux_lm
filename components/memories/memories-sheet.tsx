@@ -25,8 +25,8 @@ export function MemoriesSheet({ open, onOpenChange }: MemoriesSheetProps) {
       >
         <SheetHeader className="border-border/30 border-b px-6 py-4">
           <SheetTitle>Memories</SheetTitle>
-          <SheetDescription>
-            Facts and preferences Flux remembers from your conversations.
+          <SheetDescription className="sr-only">
+            Memories
           </SheetDescription>
         </SheetHeader>
         <div className="no-scrollbar flex-1 overflow-y-auto">

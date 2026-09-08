@@ -29,8 +29,6 @@ export function SourceDetailDialog({
   onRename,
 }: SourceDetailDialogProps) {
   const metadata = source?.metadata ?? null;
-  const chunkCount =
-    typeof metadata?.chunkCount === "number" ? metadata.chunkCount : null;
   const totalPages =
     typeof metadata?.totalPages === "number" ? metadata.totalPages : null;
   const processingError =
@@ -84,12 +82,7 @@ export function SourceDetailDialog({
                     </dd>
                   </div>
                 ) : null}
-                {chunkCount !== null ? (
-                  <div className="flex items-center justify-between gap-4">
-                    <dt className="text-muted-foreground">Indexed chunks</dt>
-                    <dd>{chunkCount}</dd>
-                  </div>
-                ) : null}
+
                 {totalPages !== null ? (
                   <div className="flex items-center justify-between gap-4">
                     <dt className="text-muted-foreground">Pages</dt>
@@ -116,7 +109,7 @@ export function SourceDetailDialog({
               {source.content ? (
                 <div>
                   <p className="text-muted-foreground mb-1.5 text-xs font-medium tracking-wide uppercase">
-                    Extracted text
+                    Content preview
                   </p>
                   <div className="bg-muted/40 max-h-56 overflow-y-auto rounded-md border p-3">
                     <p className="text-foreground/90 text-xs leading-relaxed whitespace-pre-wrap">

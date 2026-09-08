@@ -18,7 +18,7 @@ import { HeroCta, FinalCtaButton } from "@/components/shell/landing-cta";
 export const metadata: Metadata = {
   title: { absolute: "Flux — Understand Anything" },
   description:
-    "Your research and thinking partner, grounded in the information you trust, built with the latest Gemini models.",
+    "Your research and thinking partner, grounded in the information you trust.",
 };
 
 const USE_CASES = [
@@ -76,7 +76,7 @@ function UseCases() {
             Workflows
           </p>
           <h2 className="font-heading mt-2 text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
-            How you can use Flux ?
+            How you can use Flux
           </h2>
         </div>
 

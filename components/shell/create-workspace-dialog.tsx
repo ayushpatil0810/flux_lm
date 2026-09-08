@@ -98,9 +98,8 @@ export function CreateWorkspaceDialog({
           <DialogTitle className="text-heading font-serif">
             New workspace
           </DialogTitle>
-          <DialogDescription>
-            A workspace groups sources, conversations, and study material
-            around one topic.
+          <DialogDescription className="sr-only">
+            New workspace
           </DialogDescription>
         </DialogHeader>
 

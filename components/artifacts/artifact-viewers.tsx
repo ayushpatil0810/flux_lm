@@ -239,7 +239,7 @@ function TakeawaysViewer({
 }) {
   const items = normalizeStringList(content.takeaways ?? content.items);
   if (items.length === 0) {
-    return <ViewerFallback label="No takeaways were generated." />;
+    return <ViewerFallback label="No takeaways found." />;
   }
   return (
     <ol
@@ -300,7 +300,7 @@ function FlashcardsViewer({
   const [flipped, setFlipped] = React.useState(false);
 
   if (cards.length === 0) {
-    return <ViewerFallback label="No cards were generated." />;
+    return <ViewerFallback label="No flashcards found." />;
   }
 
   const current = cards[Math.min(index, cards.length - 1)];
@@ -587,7 +587,7 @@ function QuizViewer({
   }, [storageKey]);
 
   if (questions.length === 0) {
-    return <ViewerFallback label="No questions were generated." />;
+    return <ViewerFallback label="No questions found." />;
   }
 
   const answeredCount = Object.keys(selections).length;

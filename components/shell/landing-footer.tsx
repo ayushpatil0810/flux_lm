@@ -71,7 +71,7 @@ export function LandingFooter() {
                 <button
                   type="button"
                   onClick={scrollToTop}
-                  className="flex size-7.5 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-all hover:bg-muted/80 hover:text-foreground active:scale-95 sm:size-8"
+                  className="flex size-7.5 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-all hover:bg-muted/80 hover:text-foreground sm:size-8"
                   aria-label="Scroll to top"
                 >
                   <HugeiconsIcon

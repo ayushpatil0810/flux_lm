@@ -233,9 +233,6 @@ function CitationList({
                 &ldquo;{citation.excerpt}&rdquo;
               </p>
             )}
-            <p className="text-primary mt-2 text-[10px] font-medium">
-              Click to view source in preview →
-            </p>
           </div>
         </div>
       ))}

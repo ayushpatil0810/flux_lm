@@ -133,8 +133,8 @@ export function EditWorkspaceDialog({
             <DialogTitle className="text-heading font-serif">
               Workspace settings
             </DialogTitle>
-            <DialogDescription>
-              Manage your workspace details, default AI model, and deletion.
+            <DialogDescription className="sr-only">
+              Workspace settings
             </DialogDescription>
           </DialogHeader>
 

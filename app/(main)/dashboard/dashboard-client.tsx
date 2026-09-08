@@ -125,7 +125,7 @@ export function DashboardClient({
                   Your desk is clear
                 </h3>
                 <p className="font-inter font-normal mt-2.5 mb-8 max-w-md text-sm text-muted-foreground leading-relaxed">
-                  Create your first knowledge workspace to start organizing sources, notes, and sparking AI conversations.
+                  Create your first workspace to start organizing sources, taking notes, and asking questions.
                 </p>
                 <Button
                   onClick={() => setCreateOpen(true)}
@@ -137,7 +137,7 @@ export function DashboardClient({
                     strokeWidth={2}
                     className="size-4"
                   />
-                  Create your first Workspace
+                  Create workspace
                 </Button>
               </div>
             </div>
@@ -203,9 +203,6 @@ export function DashboardClient({
                       <h3 className="text-base sm:text-lg font-semibold tracking-tight text-heading">
                         New Workspace
                       </h3>
-                      <p className="font-inter text-muted-foreground mt-1 line-clamp-2 text-xs sm:text-[13px] leading-relaxed font-normal">
-                        Create a new workspace to organize sources, notes, and AI conversations.
-                      </p>
                     </div>
                   </button>
                 ) : null}
@@ -235,7 +232,7 @@ export function DashboardClient({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="pointer-events-auto relative z-20 size-9 sm:size-8 rounded-lg text-white/75 transition-colors hover:bg-white/20 hover:text-white active:scale-95 touch-manipulation"
+                            className="pointer-events-auto relative z-20 size-9 sm:size-8 rounded-lg text-white/75 transition-colors hover:bg-white/20 hover:text-white touch-manipulation"
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();

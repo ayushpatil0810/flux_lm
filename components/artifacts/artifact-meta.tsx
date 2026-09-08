@@ -40,7 +40,7 @@ export const ARTIFACT_TYPE_LABELS: Record<ArtifactType, string> = {
   FLASHCARDS: "Flashcards",
   QUIZ: "Quiz",
   MINDMAP: "Mind map",
-  REPORT: "AI report",
+  REPORT: "Report",
 };
 
 export const ARTIFACT_TYPE_DESCRIPTIONS: Record<ArtifactType, string> = {

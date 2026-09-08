@@ -131,7 +131,7 @@ export function WorkspaceTopbar({
                 type="button"
                 onClick={startEditing}
                 className="text-foreground hover:bg-muted/80 flex min-w-0 cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium tracking-tight transition-colors sm:text-sm"
-                title="Click to rename"
+                title="Rename workspace"
               >
                 <span className="truncate max-w-[110px] xs:max-w-[150px] sm:max-w-[200px] md:max-w-[280px]">
                   {workspace?.title ?? "Workspace"}

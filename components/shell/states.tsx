@@ -26,18 +26,20 @@ export function LoadingState({ label = "Loading" }: { label?: string }) {
 
 interface EmptyStateProps {
   title: string;
-  copy: string;
+  copy?: string;
   action?: React.ReactNode;
 }
 
-/** Quiet empty state: serif heading, one line of guidance, one action. */
+/** Quiet empty state: serif heading, optional guidance, one action. */
 export function EmptyState({ title, copy, action }: EmptyStateProps) {
   return (
     <div className="rounded-lg border border-dashed px-6 py-14 text-center">
       <h2 className="text-heading font-serif">{title}</h2>
-      <p className="text-muted-foreground mx-auto mt-2 max-w-sm text-sm">
-        {copy}
-      </p>
+      {copy ? (
+        <p className="text-muted-foreground mx-auto mt-2 max-w-sm text-sm">
+          {copy}
+        </p>
+      ) : null}
       {action ? <div className="mt-5 flex justify-center">{action}</div> : null}
     </div>
   );

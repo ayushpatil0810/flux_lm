@@ -146,13 +146,6 @@ export function ArtifactDetailDialog({
                   </dd>
                 </div>
 
-                <div className="flex items-center justify-between gap-4">
-                  <dt className="text-muted-foreground">Type</dt>
-                  <dd className="font-medium text-foreground">
-                    {ARTIFACT_TYPE_LABELS[artifact.type]}
-                  </dd>
-                </div>
-
                 {stats ? (
                   <div className="flex items-center justify-between gap-4">
                     <dt className="text-muted-foreground">Content size</dt>
@@ -169,25 +162,11 @@ export function ArtifactDetailDialog({
                   </div>
                 ) : null}
 
-                <div className="flex items-center justify-between gap-4">
-                  <dt className="text-muted-foreground">Created</dt>
-                  <dd className="text-foreground">
-                    {formatDate(artifact.createdAt)}
-                  </dd>
-                </div>
-
-                <div className="flex items-center justify-between gap-4">
-                  <dt className="text-muted-foreground">Last updated</dt>
-                  <dd className="text-foreground">
-                    {formatDate(artifact.updatedAt)}
-                  </dd>
-                </div>
-
-                {artifact.metadata?.generatedAt ? (
+                {artifact.updatedAt && artifact.updatedAt !== artifact.createdAt ? (
                   <div className="flex items-center justify-between gap-4">
-                    <dt className="text-muted-foreground">Generated</dt>
+                    <dt className="text-muted-foreground">Last updated</dt>
                     <dd className="text-foreground">
-                      {formatDate(artifact.metadata.generatedAt as string)}
+                      {formatDate(artifact.updatedAt)}
                     </dd>
                   </div>
                 ) : null}

@@ -57,10 +57,7 @@ export function MemoryFormDialog({
         push({ title: "Memory updated" });
       } else {
         await createMemory.mutateAsync(value);
-        push({
-          title: "Memory added",
-          description: "Flux will use it in future conversations.",
-        });
+        push({ title: "Memory added" });
       }
       onOpenChange(false);
     } catch (error) {
@@ -85,10 +82,8 @@ export function MemoryFormDialog({
           <DialogTitle className="text-heading font-serif">
             {isEdit ? "Edit memory" : "Add a memory"}
           </DialogTitle>
-          <DialogDescription>
-            {isEdit
-              ? "Change what Flux remembers."
-              : "Something Flux should remember about you or your work, written plainly."}
+          <DialogDescription className="sr-only">
+            {isEdit ? "Edit memory" : "Add memory"}
           </DialogDescription>
         </DialogHeader>
 

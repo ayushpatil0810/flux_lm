@@ -248,7 +248,7 @@ export function ImportSourceDialog({
 
     push({
       title: "PDF added",
-      description: "Flux is reading and indexing the document now.",
+      description: "Flux is processing the document.",
     });
 
     submitInBackground(
@@ -267,7 +267,7 @@ export function ImportSourceDialog({
     if (urlClassification.type === "youtube") {
       push({
         title: "Video added",
-        description: "Flux is importing the video transcript.",
+        description: "Flux is loading the video transcript.",
       });
       submitInBackground(
         importYoutube,
@@ -282,7 +282,7 @@ export function ImportSourceDialog({
     } else {
       push({
         title: "Website added",
-        description: "Flux is crawling and extracting the webpage.",
+        description: "Flux is loading the webpage.",
       });
       submitInBackground(
         importWebsite,
@@ -303,7 +303,7 @@ export function ImportSourceDialog({
 
     push({
       title: "Note added",
-      description: "Note saved and queued for workspace indexing.",
+      description: "Note saved to your workspace.",
     });
 
     submitInBackground(
@@ -327,10 +327,10 @@ export function ImportSourceDialog({
           <DialogHeader className="text-left">
             <DialogTitle className="text-base sm:text-lg font-semibold tracking-tight text-foreground flex items-center gap-2.5">
               <HugeiconsIcon icon={FileUploadIcon} strokeWidth={1.5} className="size-5.5 text-primary shrink-0" />
-              <span>Add Sources to Workspace</span>
+              <span>Add sources</span>
             </DialogTitle>
             <DialogDescription className="sr-only">
-              Add sources to workspace
+              Add sources
             </DialogDescription>
           </DialogHeader>
         </div>
@@ -394,8 +394,7 @@ export function ImportSourceDialog({
                           {stagedFile.name}
                         </p>
                         <p className="text-xs text-muted-foreground font-mono">
-                          {(stagedFile.size / (1024 * 1024)).toFixed(1)} MB • Ready
-                          to upload
+                          {(stagedFile.size / (1024 * 1024)).toFixed(1)} MB
                         </p>
                       </div>
                     </div>
@@ -445,7 +444,7 @@ export function ImportSourceDialog({
                       disabled={importPdf.isPending}
                       className="h-8 px-4 text-xs font-medium gap-1.5 shadow-xs"
                     >
-                      <span>Upload & Index PDF</span>
+                      <span>Upload PDF</span>
                       <HugeiconsIcon
                         icon={ArrowRight01Icon}
                         strokeWidth={2}
@@ -628,7 +627,7 @@ export function ImportSourceDialog({
                   strokeWidth={1.5}
                   className="size-4.5 text-primary"
                 />
-                <span>Need to write a note or paste plain text?</span>
+                <span>Write a note or paste text</span>
               </button>
             ) : (
               <form
