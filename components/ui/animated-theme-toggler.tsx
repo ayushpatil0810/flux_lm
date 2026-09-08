@@ -236,7 +236,11 @@ export const AnimatedThemeToggler = ({
     );
 
     const applyTheme = () => {
-      const newTheme = !isDark;
+      const currentIsDark =
+        typeof document !== "undefined"
+          ? document.documentElement.classList.contains("dark")
+          : isDark;
+      const newTheme = !currentIsDark;
 
       const root = document.documentElement;
       if (newTheme) {
@@ -343,11 +347,8 @@ export const AnimatedThemeToggler = ({
       className={cn(className)}
       {...props}
     >
-      {isDark ? (
-        <HugeiconsIcon icon={Sun} className="size-4.5" />
-      ) : (
-        <HugeiconsIcon icon={Moon} className="size-4.5" />
-      )}
+      <HugeiconsIcon icon={Sun} className="size-4.5 hidden dark:block" />
+      <HugeiconsIcon icon={Moon} className="size-4.5 block dark:hidden" />
       <span className="sr-only">Toggle theme</span>
     </button>
   );

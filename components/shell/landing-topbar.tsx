@@ -15,8 +15,17 @@ import { authClient } from "@/lib/auth-client";
  * - Center pill: Floating pill with quick navigation links.
  * - Right pill: Theme switch + Auth actions / User menu stuck flush to the right screen boundary (curved left end, flat right end).
  */
-export function LandingTopbar() {
+interface LandingTopbarProps {
+  isLoggedIn?: boolean;
+}
+
+export function LandingTopbar({ isLoggedIn: initialIsLoggedIn }: LandingTopbarProps = {}) {
   const { data: session } = authClient.useSession();
+  const authenticated = session?.user
+    ? true
+    : session === null
+      ? false
+      : !!initialIsLoggedIn;
 
   return (
     <header className="pointer-events-none sticky top-0 z-40 flex w-full items-center justify-between gap-2 pt-3 pb-2 sm:gap-4 sm:pt-4">
@@ -37,13 +46,26 @@ export function LandingTopbar() {
       {/* ── Right Pill: Theme switch & Profile / Auth stuck to the right end ── */}
       <div className="pointer-events-auto shrink-0">
         <div className="flex h-11 items-center gap-1.5 rounded-l-full border border-r-0 border-border/80 bg-background/85 py-1.5 pl-3.5 pr-4 shadow-xs backdrop-blur-md sm:h-12 sm:gap-2 sm:pl-4 sm:pr-5 dark:border-border/60 dark:bg-card/85 dark:shadow-md">
-          <ThemeSwitch className="size-8 shrink-0 rounded-full" />
+          <ThemeSwitch className="size-7.5 shrink-0 rounded-full" />
           <div
             aria-hidden="true"
             className="h-3.5 w-px shrink-0 bg-border/60 dark:bg-border/40"
           />
-          {session?.user ? (
-            <UserMenu variant="avatar" />
+          {authenticated ? (
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Button
+                asChild
+                size="sm"
+                className="h-7.5 rounded-full px-2.5 text-xs font-medium shadow-xs sm:h-8 sm:px-3.5"
+              >
+                <Link href="/dashboard">Open App</Link>
+              </Button>
+              <div
+                aria-hidden="true"
+                className="h-3.5 w-px shrink-0 bg-border/60 dark:bg-border/40"
+              />
+              <UserMenu variant="avatar" />
+            </div>
           ) : (
             <div className="flex items-center gap-1 sm:gap-1.5">
               <Button

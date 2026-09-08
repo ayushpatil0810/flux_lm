@@ -8,6 +8,8 @@ import {
   SparkleIcon,
 } from "@hugeicons/core-free-icons";
 
+import { headers } from "next/headers";
+import { auth } from "@/server/auth";
 import { Button } from "@/components/ui/button";
 import { LandingTopbar } from "@/components/shell/landing-topbar";
 import { LandingFooter } from "@/components/shell/landing-footer";
@@ -39,7 +41,7 @@ const USE_CASES = [
   },
 ] as const;
 
-function Hero() {
+function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
     <section className="relative flex min-h-[calc(100dvh-3.5rem)] flex-col items-center justify-center px-4 py-12 text-center sm:px-6">
       <div className="mx-auto flex w-full max-w-4xl flex-col items-center">
@@ -59,7 +61,7 @@ function Hero() {
         <div className="mt-8 flex items-center justify-center">
           <Button asChild size="lg" className="h-11 rounded-xl px-7 text-sm gap-2 shadow-sm">
             <Link href="/dashboard">
-              Try Flux
+              {isLoggedIn ? "Open App" : "Try Flux"}
               <HugeiconsIcon
                 icon={ArrowRight01Icon}
                 strokeWidth={1.5}
@@ -120,7 +122,7 @@ function UseCases() {
   );
 }
 
-function FinalCta() {
+function FinalCta({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
     <section className="py-20 sm:py-28 border-t border-border/40">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
@@ -133,7 +135,7 @@ function FinalCta() {
         <div className="mt-7 flex justify-center">
           <Button asChild size="lg" className="h-11 rounded-xl px-7 text-sm gap-2 shadow-sm">
             <Link href="/dashboard">
-              Get started for free
+              {isLoggedIn ? "Open App" : "Get started for free"}
               <HugeiconsIcon
                 icon={ArrowRight01Icon}
                 strokeWidth={1.5}
@@ -148,14 +150,19 @@ function FinalCta() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const isLoggedIn = !!session?.user;
+
   return (
     <div className="min-h-dvh flex flex-col bg-background selection:bg-primary/20 selection:text-primary">
-      <LandingTopbar />
+      <LandingTopbar isLoggedIn={isLoggedIn} />
       <main className="flex-1">
-        <Hero />
+        <Hero isLoggedIn={isLoggedIn} />
         <UseCases />
-        <FinalCta />
+        <FinalCta isLoggedIn={isLoggedIn} />
       </main>
       <LandingFooter />
     </div>
