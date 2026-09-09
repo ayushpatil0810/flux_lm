@@ -43,11 +43,8 @@ export const metadata: Metadata = {
   description:
     "Intelligent knowledge workspace for your PDFs, notes, and web sources.",
   icons: {
-    icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "any" },
-    ],
-    apple: "/apple-icon.png",
+    icon: [{ url: "/icon.png", type: "image/png" }],
+    apple: [{ url: "/icon.png", type: "image/png" }],
   },
   appleWebApp: {
     capable: true,

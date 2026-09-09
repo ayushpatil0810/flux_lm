@@ -5,13 +5,13 @@ export function WorkspaceViewSkeleton() {
   return (
     <div className="bg-background flex h-full flex-col overflow-hidden">
       {/* Topbar Skeleton */}
-      <header className="pointer-events-none sticky top-0 z-40 flex w-full shrink-0 items-center justify-between gap-2 pt-2.5 pb-2 transition-all sm:pt-3">
+      <header className="pointer-events-none sticky top-0 z-40 flex w-full shrink-0 items-center justify-between gap-2 pt-3 pb-2 sm:gap-4 sm:pt-4">
         {/* ── Left Pill: Back to Dashboard & Flux Brand ── */}
         <div className="pointer-events-auto shrink-0">
           <div className="flex h-11 items-center gap-1.5 rounded-r-full border border-l-0 border-border/80 bg-background/85 py-1.5 pl-2.5 pr-4 shadow-xs backdrop-blur-md sm:h-12 sm:gap-2 sm:pl-3 sm:pr-5 dark:border-border/60 dark:bg-card/85 dark:shadow-md">
             <Skeleton className="size-8 rounded-full" />
             <div className="flex items-center gap-2 pl-0.5">
-              <Skeleton className="size-4.5 rounded-sm sm:size-5" />
+              <Skeleton className="size-6 rounded-sm sm:size-6.5" />
               <Skeleton className="h-4 w-9 rounded-sm" />
             </div>
           </div>
@@ -28,7 +28,7 @@ export function WorkspaceViewSkeleton() {
 
         {/* ── Right Pill: Settings, Theme & User ── */}
         <div className="pointer-events-auto shrink-0">
-          <div className="flex h-11 items-center gap-1.5 rounded-l-full border border-r-0 border-border/80 bg-background/85 py-1.5 pl-3.5 pr-3 shadow-xs backdrop-blur-md sm:h-12 sm:gap-2 sm:pl-4 sm:pr-4 dark:border-border/60 dark:bg-card/85 dark:shadow-md">
+          <div className="flex h-11 items-center gap-1.5 rounded-l-full border border-r-0 border-border/80 bg-background/85 py-1.5 pl-3.5 pr-4 shadow-xs backdrop-blur-md sm:h-12 sm:gap-2 sm:pl-4 sm:pr-5 dark:border-border/60 dark:bg-card/85 dark:shadow-md">
             <Skeleton className="size-8 rounded-full" />
             <div
               aria-hidden="true"

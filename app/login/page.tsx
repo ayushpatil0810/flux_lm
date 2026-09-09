@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FluxLogo } from "@/components/ui/logo";
-import { ThemeSwitch } from "@/components/ui/theme-switch";
+import { AppTopbar } from "@/components/shell/app-topbar";
 
 type Mode = "sign-in" | "sign-up";
 
@@ -121,42 +121,24 @@ export default function LoginPage() {
       </div>
 
       {/* Top Header */}
-      <header className="pointer-events-none sticky top-0 z-40 flex w-full items-center justify-between gap-2 pt-3 pb-2 sm:gap-4 sm:pt-4">
-        {/* ── Left Pill: Logo stuck flush to left screen edge ── */}
-        <div className="pointer-events-auto shrink-0">
-          <Link
-            href="/"
-            className="group flex h-11 items-center gap-2.5 rounded-r-full border border-l-0 border-border/80 bg-background/85 py-1.5 pl-4 pr-4 shadow-xs backdrop-blur-md transition-all hover:border-border hover:bg-background/95 sm:h-12 sm:pl-5 sm:pr-5 dark:border-border/60 dark:bg-card/85 dark:shadow-md dark:hover:bg-card/95"
-            aria-label="Back to home"
+      <AppTopbar
+        homeHref="/"
+        homeAriaLabel="Back to home"
+        showThemeSwitch={true}
+        showUserMenu={false}
+        rightEnd={
+          <button
+            type="button"
+            onClick={() => {
+              setMode(isSignUp ? "sign-in" : "sign-up");
+              setError(null);
+            }}
+            className="cursor-pointer rounded-full px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground sm:px-3 sm:text-sm"
           >
-            <FluxLogo className="text-primary size-4.5 shrink-0 transition-transform duration-200 group-hover:scale-105 sm:size-5" />
-            <span className="font-mono text-sm font-semibold tracking-tight text-foreground sm:text-[15px]">
-              Flux
-            </span>
-          </Link>
-        </div>
-
-        {/* ── Right Pill: Theme switch & Mode toggle stuck flush to right screen edge ── */}
-        <div className="pointer-events-auto shrink-0">
-          <div className="flex h-11 items-center gap-1.5 rounded-l-full border border-r-0 border-border/80 bg-background/85 py-1.5 pl-3.5 pr-4 shadow-xs backdrop-blur-md sm:h-12 sm:gap-2 sm:pl-4 sm:pr-5 dark:border-border/60 dark:bg-card/85 dark:shadow-md">
-            <ThemeSwitch className="size-8 shrink-0 rounded-full" />
-            <div
-              aria-hidden="true"
-              className="h-3.5 w-px shrink-0 bg-border/60 dark:bg-border/40"
-            />
-            <button
-              type="button"
-              onClick={() => {
-                setMode(isSignUp ? "sign-in" : "sign-up");
-                setError(null);
-              }}
-              className="cursor-pointer rounded-full px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground sm:px-3 sm:text-sm"
-            >
-              {isSignUp ? "Sign in" : "Sign up"}
-            </button>
-          </div>
-        </div>
-      </header>
+            {isSignUp ? "Sign in" : "Sign up"}
+          </button>
+        }
+      />
 
       {/* Main Auth Container */}
       <main className="relative z-10 flex flex-1 items-center justify-center px-4 py-8 sm:py-12 sm:px-6">
@@ -164,7 +146,7 @@ export default function LoginPage() {
           {/* Brand Icon + Title */}
           <div className="flex flex-col items-center text-center">
             <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/25 shadow-xs">
-              <FluxLogo className="size-6 shrink-0" />
+              <FluxLogo className="size-7.5 shrink-0" />
             </div>
             <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-[26px]">
               {isSignUp ? "Create your account" : "Welcome back"}

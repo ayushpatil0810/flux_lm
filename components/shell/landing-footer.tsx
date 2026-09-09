@@ -36,7 +36,7 @@ export function LandingFooter() {
               className="flex items-center gap-2 transition-opacity hover:opacity-85"
               aria-label="Flux home"
             >
-              <FluxLogo className="text-primary size-4.5 shrink-0 sm:size-5" />
+              <FluxLogo className="size-5.5 shrink-0 sm:size-6" />
               <span className="font-mono text-sm font-semibold tracking-tight text-foreground sm:text-[15px]">
                 Flux
               </span>
