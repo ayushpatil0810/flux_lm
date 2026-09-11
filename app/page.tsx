@@ -16,7 +16,7 @@ import { LandingFooter } from "@/components/shell/landing-footer";
 import { HeroCta, FinalCtaButton } from "@/components/shell/landing-cta";
 
 export const metadata: Metadata = {
-  title: { absolute: "Flux — Understand Anything" },
+  title: { absolute: "Flux | AI Research Assistant" },
   description:
     "Your research and thinking partner, grounded in the information you trust.",
 };
