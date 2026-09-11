@@ -175,44 +175,7 @@ function getSourceIcon(
   );
 }
 
-// ── Source-type picker cards ────────────────────────────────────────────────
 
-export type ImportType = "pdf" | "website" | "youtube" | "text";
-
-export const IMPORT_TYPES: {
-  id: ImportType;
-  label: string;
-  Icon: React.FC<{ className?: string }>;
-}[] = [
-  {
-    id: "pdf",
-    label: "PDF",
-    Icon: (props) => (
-      <HugeiconsIcon icon={Pdf01Icon} strokeWidth={1.5} {...props} />
-    ),
-  },
-  {
-    id: "website",
-    label: "Web",
-    Icon: (props) => (
-      <HugeiconsIcon icon={InternetIcon} strokeWidth={1.5} {...props} />
-    ),
-  },
-  {
-    id: "youtube",
-    label: "YouTube",
-    Icon: (props) => (
-      <HugeiconsIcon icon={YoutubeIcon} strokeWidth={1.5} {...props} />
-    ),
-  },
-  {
-    id: "text",
-    label: "Note",
-    Icon: (props) => (
-      <HugeiconsIcon icon={NoteIcon} strokeWidth={1.5} {...props} />
-    ),
-  },
-];
 
 // ── Main panel ──────────────────────────────────────────────────────────────
 

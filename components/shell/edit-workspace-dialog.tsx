@@ -19,18 +19,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { CHAT_MODEL, CHAT_MODELS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 const MODEL_OPTIONS = [
   {
-    value: "gpt-4o-mini",
-    label: "GPT-4o mini",
+    value: "gpt-5.4-mini",
+    label: "GPT-5.4 mini",
     description: "Fast, great for most questions",
   },
   {
-    value: "gpt-4o",
-    label: "GPT-4o",
-    description: "Stronger reasoning, harder material",
+    value: "gpt-5.4-nano",
+    label: "GPT-5.4 nano",
+    description: "Ultra-fast and lightweight",
   },
 ] as const;
 
@@ -54,7 +55,7 @@ export function EditWorkspaceDialog({
 
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
-  const [model, setModel] = React.useState<string>("gpt-4o-mini");
+  const [model, setModel] = React.useState<string>(CHAT_MODEL);
   const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>(
     {},
   );
@@ -63,16 +64,21 @@ export function EditWorkspaceDialog({
     if (workspace && open) {
       setTitle(workspace.title);
       setDescription(workspace.description || "");
-      setModel(workspace.defaultModel === "gpt-4o" ? "gpt-4o" : "gpt-4o-mini");
+      const resolvedModel =
+        CHAT_MODELS.find((m) => m === workspace.defaultModel) ?? CHAT_MODEL;
+      setModel(resolvedModel);
       setFieldErrors({});
     }
   }, [workspace, open]);
+
+  const currentWorkspaceModel =
+    CHAT_MODELS.find((m) => m === workspace?.defaultModel) ?? CHAT_MODEL;
 
   const unchanged =
     workspace !== null &&
     title.trim() === workspace.title &&
     description.trim() === (workspace.description || "") &&
-    model === (workspace.defaultModel === "gpt-4o" ? "gpt-4o" : "gpt-4o-mini");
+    model === currentWorkspaceModel;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

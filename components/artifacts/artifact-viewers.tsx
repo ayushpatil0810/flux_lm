@@ -354,7 +354,7 @@ function FlashcardsViewer({
         >
           {/* Front Face (Prompt) */}
           <div
-            className="absolute inset-0 flex h-full w-full flex-col justify-between rounded-2xl border border-border/80 bg-card p-6 sm:p-8 text-center shadow-xs transition-all duration-200 group-hover:border-border group-hover:shadow-md [backface-visibility:hidden]"
+            className="absolute inset-0 flex h-full w-full flex-col justify-between rounded-2xl border border-border/80 bg-card p-4 sm:p-8 text-center shadow-xs transition-all duration-200 group-hover:border-border group-hover:shadow-md [backface-visibility:hidden]"
             style={{ backfaceVisibility: "hidden" }}
           >
             <div className="flex w-full items-center justify-between">
@@ -367,7 +367,7 @@ function FlashcardsViewer({
             </div>
 
             <div className="my-auto flex items-center justify-center px-2 py-4">
-              <p className="font-heading text-base sm:text-lg md:text-xl font-medium leading-relaxed text-foreground">
+              <p className="font-heading text-base sm:text-lg md:text-xl font-medium leading-relaxed text-foreground break-words">
                 {current.front}
               </p>
             </div>
@@ -382,7 +382,7 @@ function FlashcardsViewer({
 
           {/* Back Face (Answer) */}
           <div
-            className="absolute inset-0 flex h-full w-full flex-col justify-between rounded-2xl border border-primary/40 bg-card p-6 sm:p-8 text-center shadow-xs transition-all duration-200 group-hover:border-primary/60 group-hover:shadow-md [backface-visibility:hidden]"
+            className="absolute inset-0 flex h-full w-full flex-col justify-between rounded-2xl border border-primary/40 bg-card p-4 sm:p-8 text-center shadow-xs transition-all duration-200 group-hover:border-primary/60 group-hover:shadow-md [backface-visibility:hidden]"
             style={{
               backfaceVisibility: "hidden",
               transform: "rotateY(180deg)",
@@ -398,7 +398,7 @@ function FlashcardsViewer({
             </div>
 
             <div className="my-auto flex items-center justify-center px-2 py-4">
-              <p className="font-heading text-base sm:text-lg md:text-xl font-medium leading-relaxed text-foreground">
+              <p className="font-heading text-base sm:text-lg md:text-xl font-medium leading-relaxed text-foreground break-words">
                 {current.back}
               </p>
             </div>
@@ -414,12 +414,12 @@ function FlashcardsViewer({
       </div>
 
       {/* Navigation Controls & Deck Progress */}
-      <div className="mt-5 flex items-center justify-between gap-3">
+      <div className="mt-5 flex items-center justify-between gap-2 max-w-full">
         <Button
           variant="outline"
           size="sm"
           onClick={() => go(-1)}
-          className="h-8 gap-1 rounded-lg text-xs"
+          className="h-8 shrink-0 gap-1 rounded-lg px-2.5 sm:px-3 text-xs"
         >
           <HugeiconsIcon
             icon={ArrowLeft02Icon}
@@ -429,31 +429,21 @@ function FlashcardsViewer({
           <span>Previous</span>
         </Button>
 
-        <div className="flex flex-col items-center gap-1.5">
+        <div className="flex min-w-0 shrink flex-col items-center gap-1.5 px-1">
           <span
-            className="font-mono text-xs text-muted-foreground"
+            className="font-mono text-xs text-muted-foreground whitespace-nowrap"
             aria-live="polite"
           >
             {index + 1} of {cards.length}
           </span>
-          {/* Progress dots indicator */}
-          <div className="flex items-center gap-1">
-            {cards.slice(0, 12).map((_, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "h-1 rounded-full transition-all duration-300",
-                  i === index % Math.min(cards.length, 12)
-                    ? "w-4 bg-primary"
-                    : "w-1.5 bg-muted-foreground/25",
-                )}
-              />
-            ))}
-            {cards.length > 12 && (
-              <span className="text-[9px] font-mono text-muted-foreground/50">
-                +{cards.length - 12}
-              </span>
-            )}
+          {/* Responsive progress indicator bar that never overflows */}
+          <div className="h-1 w-12 sm:w-16 rounded-full bg-muted-foreground/20 overflow-hidden">
+            <div
+              className="h-full bg-primary rounded-full transition-all duration-300"
+              style={{
+                width: `${((index + 1) / cards.length) * 100}%`,
+              }}
+            />
           </div>
         </div>
 
@@ -461,7 +451,7 @@ function FlashcardsViewer({
           variant="outline"
           size="sm"
           onClick={() => go(1)}
-          className="h-8 gap-1 rounded-lg text-xs"
+          className="h-8 shrink-0 gap-1 rounded-lg px-2.5 sm:px-3 text-xs"
         >
           <span>Next</span>
           <HugeiconsIcon

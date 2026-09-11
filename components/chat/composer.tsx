@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const MODEL_LABELS: Record<ChatModel, string> = {
-  "gpt-4o-mini": "GPT-4o mini",
-  "gpt-4o": "GPT-4o",
+  "gpt-5.4-mini": "GPT-5.4 mini",
+  "gpt-5.4-nano": "GPT-5.4 nano",
 };
 
 interface ComposerProps {

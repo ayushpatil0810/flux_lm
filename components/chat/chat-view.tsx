@@ -15,6 +15,7 @@ import {
   type ChatRequestMessage,
   type Message,
 } from "@/lib/api";
+import { CHAT_MODEL, CHAT_MODELS } from "@/lib/constants";
 import { useWorkspaceContext } from "@/components/shell/workspace-context";
 import { useConversations, useMessages } from "@/hooks/use-conversations";
 import { useSources } from "@/hooks/use-sources";
@@ -88,7 +89,8 @@ export function ChatView({ workspaceId }: ChatViewProps) {
   const lastStreamRef = React.useRef<StreamState | null>(null);
 
   const effectiveModel: ChatModel =
-    model ?? (workspace?.defaultModel === "gpt-4o" ? "gpt-4o" : "gpt-4o-mini");
+    model ??
+    (CHAT_MODELS.find((m) => m === workspace?.defaultModel) ?? CHAT_MODEL);
 
   // Reset workspace-scoped transient state when switching workspaces
   React.useEffect(() => {

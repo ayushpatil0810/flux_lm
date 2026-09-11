@@ -153,50 +153,46 @@ export function PptSlideView({ source }: PptSlideViewProps) {
 
       {/* Body */}
       {viewStyle === "single" ? (
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 flex flex-col justify-center items-center">
+        <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 flex flex-col justify-center items-center">
           {/* Single Slide Box */}
-          <div className="w-full max-w-xl rounded-xl border border-border/70 bg-card p-5 sm:p-7 shadow-2xs flex flex-col justify-between aspect-[16/10] sm:aspect-[16/9]">
+          <div className="w-full max-w-xl rounded-xl border border-border/70 bg-card p-4 sm:p-6 shadow-2xs flex flex-col justify-between min-h-[220px] sm:min-h-[260px] sm:aspect-[16/10] overflow-hidden">
             <div className="flex items-center justify-between text-xs text-muted-foreground font-mono mb-2 shrink-0">
-              <span>Slide {activeSlide.slideNumber}</span>
-              <span>
+              <span className="whitespace-nowrap">Slide {activeSlide.slideNumber}</span>
+              <span className="whitespace-nowrap">
                 {activeSlide.slideNumber} / {slides.length}
               </span>
             </div>
 
-            <div className="my-auto py-2">
-              <h3 className="text-base sm:text-lg font-semibold tracking-tight text-foreground mb-3">
+            <div className="my-auto py-1 flex-1 min-h-0 overflow-y-auto pr-1">
+              <h3 className="text-sm sm:text-base md:text-lg font-semibold tracking-tight text-foreground mb-2 break-words">
                 {activeSlide.title}
               </h3>
 
               {activeSlide.bullets && activeSlide.bullets.length > 0 ? (
-                <ul className="list-disc pl-4 space-y-1.5 text-xs sm:text-sm text-foreground/85 leading-relaxed overflow-y-auto max-h-48 pr-1">
+                <ul className="list-disc pl-4 space-y-1.5 text-xs sm:text-sm text-foreground/85 leading-relaxed break-words">
                   {activeSlide.bullets.map((bullet, idx) => (
-                    <li key={idx}>{bullet}</li>
+                    <li key={idx} className="break-words">{bullet}</li>
                   ))}
                 </ul>
               ) : null}
-            </div>
-
-            <div className="pt-2 text-[10px] text-muted-foreground/50 font-mono text-right shrink-0">
-              {source.title}
             </div>
           </div>
 
           {/* Navigation Buttons Below Presentation */}
           {slides.length > 1 && (
-            <div className="flex items-center justify-center gap-3 mt-4 shrink-0">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mt-4 shrink-0 max-w-full">
               <button
                 type="button"
                 onClick={() => setCurrentSlideIdx((prev) => Math.max(0, prev - 1))}
                 disabled={currentSlideIdx === 0}
                 aria-label="Previous slide"
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border/70 bg-card hover:bg-muted disabled:opacity-30 disabled:pointer-events-none transition-colors shadow-2xs"
+                className="flex shrink-0 items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border/70 bg-card hover:bg-muted disabled:opacity-30 disabled:pointer-events-none transition-colors shadow-2xs"
               >
                 <HugeiconsIcon icon={ArrowLeft01Icon} strokeWidth={1.5} className="size-3.5" />
                 <span>Previous</span>
               </button>
 
-              <span className="font-mono text-xs text-muted-foreground px-1">
+              <span className="font-mono text-xs text-muted-foreground px-1 whitespace-nowrap shrink-0">
                 {currentSlideIdx + 1} of {slides.length}
               </span>
 
@@ -209,7 +205,7 @@ export function PptSlideView({ source }: PptSlideViewProps) {
                 }
                 disabled={currentSlideIdx === slides.length - 1}
                 aria-label="Next slide"
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border/70 bg-card hover:bg-muted disabled:opacity-30 disabled:pointer-events-none transition-colors shadow-2xs"
+                className="flex shrink-0 items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border/70 bg-card hover:bg-muted disabled:opacity-30 disabled:pointer-events-none transition-colors shadow-2xs"
               >
                 <span>Next</span>
                 <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={1.5} className="size-3.5" />

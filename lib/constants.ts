@@ -1,8 +1,8 @@
 /** Default chat model when the client or workspace does not specify one. */
-export const CHAT_MODEL = "gpt-4o-mini";
+export const CHAT_MODEL = "gpt-5.4-mini";
 
 /** Allowed chat models exposed to the client and workspace settings. */
-export const CHAT_MODELS = ["gpt-4o-mini", "gpt-4o"] as const;
+export const CHAT_MODELS = ["gpt-5.4-mini", "gpt-5.4-nano"] as const;
 
 /** OpenAI embedding model used for RAG vector indexing and query embedding. */
 export const EMBEDDING_MODEL = "text-embedding-3-small";
@@ -33,7 +33,7 @@ export const RAG_CANDIDATE_FETCH_K = 12;
 export const RAG_FINAL_TOP_K = 8;
 
 /** Fast chat model used for query enhancement and HyDE passage generation. */
-export const RAG_HYDE_MODEL = "gpt-4o-mini";
+export const RAG_HYDE_MODEL = "gpt-5.4-mini";
 
 /** Enqueue a conversation summary job every N persisted messages. */
 export const CONVERSATION_SUMMARY_INTERVAL = 8;

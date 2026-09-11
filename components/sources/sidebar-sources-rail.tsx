@@ -10,7 +10,6 @@ import * as React from "react";
 
 import { useSources } from "@/hooks/use-sources";
 import { useWorkspacePanel } from "@/components/shell/workspace-panel-context";
-import { IMPORT_TYPES } from "./sidebar-sources";
 import {
   Tooltip,
   TooltipContent,
@@ -24,8 +23,7 @@ interface SidebarSourcesRailProps {
 
 /**
  * Thinner collapsed rail for the Sources sidebar.
- * Displays quick-import source icons with a plus badge at the bottom-right corner,
- * opening the unified import dialogue box.
+ * Displays a single quick-import action to open the unified import dialogue box.
  */
 export function SidebarSourcesRail({
   workspaceId,
@@ -66,36 +64,27 @@ export function SidebarSourcesRail({
       {/* Divider */}
       <div className="my-2 h-px w-6 shrink-0 bg-border/50" />
 
-      {/* Import Source Icons with Plus Badges */}
-      <div className="no-scrollbar flex min-h-0 flex-1 flex-col items-center gap-1.5 overflow-y-auto py-0.5">
-        {IMPORT_TYPES.map(({ id, label, Icon }) => (
-          <Tooltip key={id}>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={() => setImportDialogOpen(true)}
-                aria-label={`Add ${label}`}
-                className="relative flex size-9.5 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden"
-              >
-                <Icon className="size-5" />
-
-                {/* Plus badge safely anchored at bottom-right inside button bounds */}
-                <span className="absolute bottom-0.5 right-0.5 flex size-3.5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xs ring-1.5 ring-card">
-                  <HugeiconsIcon
-                    icon={Add01Icon}
-                    strokeWidth={3}
-                    className="size-2.5"
-                    aria-hidden
-                  />
-                </span>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={8}>
-              Add {label}
-            </TooltipContent>
-          </Tooltip>
-        ))}
-      </div>
+      {/* Single Unified Add Source Action */}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            onClick={() => setImportDialogOpen(true)}
+            aria-label="Add Source"
+            className="flex size-9 items-center justify-center rounded-lg border border-dashed border-border/80 text-muted-foreground hover:border-primary/60 hover:bg-primary/10 hover:text-primary transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden cursor-pointer"
+          >
+            <HugeiconsIcon
+              icon={Add01Icon}
+              strokeWidth={2}
+              className="size-4.5"
+              aria-hidden
+            />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="right" sideOffset={8}>
+          Add Source
+        </TooltipContent>
+      </Tooltip>
 
       {/* Bottom: Source Count & Quick Browse */}
       {sourceCount > 0 && (

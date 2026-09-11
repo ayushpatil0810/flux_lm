@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CHAT_MODEL } from "@/lib/constants";
 
 /**
  * Zod validation schema for creating a new Workspace payload.
@@ -14,7 +15,7 @@ export const createWorkspaceSchema = z.object({
     .max(500, "Description cannot exceed 500 characters")
     .optional(),
   icon: z.string().optional(),
-  defaultModel: z.string().default("gpt-4o-mini"),
+  defaultModel: z.string().default(CHAT_MODEL),
 });
 
 /**
