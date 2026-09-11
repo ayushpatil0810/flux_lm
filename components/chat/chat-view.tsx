@@ -56,9 +56,14 @@ export function ChatView({ workspaceId }: ChatViewProps) {
 
   const noSources = sources !== undefined && sources.length === 0;
 
-  // Use the first conversation available in the workspace, or undefined if none.
+  const [selectedConversationId, setSelectedConversationId] = React.useState<
+    string | undefined
+  >(undefined);
+
+  // Use selected conversation if set, otherwise first available in workspace
   const activeConversationId =
-    conversations && conversations.length > 0 ? conversations[0].id : undefined;
+    selectedConversationId ??
+    (conversations && conversations.length > 0 ? conversations[0].id : undefined);
 
   const messagesQuery = useMessages(activeConversationId);
 
@@ -72,53 +77,35 @@ export function ChatView({ workspaceId }: ChatViewProps) {
 
   /**
    * Once the user sends their first message, keep the MessageList mounted
-   * even while transient query states (conversations list, messages) are
-   * resolving. This prevents the welcome screen from flashing back after
-   * the stream finishes and the new conversation ID is briefly unknown.
+   * even while transient query states are resolving.
    */
   const hasEverStreamedRef = React.useRef(false);
 
   /**
-   * Keep a copy of the last stream so we can continue showing the optimistic
-   * user + assistant messages while the persisted messages are being fetched
-   * after the stream completes. This prevents the brief loading-spinner flash
-   * that would otherwise appear when the conversation ID changes on first send.
+   * Keep a copy of the last stream so we can continue showing optimistic
+   * messages while persisted messages are being fetched.
    */
   const lastStreamRef = React.useRef<StreamState | null>(null);
 
   const effectiveModel: ChatModel =
     model ?? (workspace?.defaultModel === "gpt-4o" ? "gpt-4o" : "gpt-4o-mini");
 
-  // Reset transient stream state when moving between conversations (if it ever happens).
-  const [prevConversationId, setPrevConversationId] =
-    React.useState(activeConversationId);
-  if (activeConversationId !== prevConversationId) {
-    setPrevConversationId(activeConversationId);
-    // Only wipe the last stream once the new conversation's messages are loaded,
-    // so we never show a spinner between "stream done" and "messages fetched".
-    if (messagesQuery.data && messagesQuery.data.length > 0) {
-      lastStreamRef.current = null;
-    }
+  // Reset workspace-scoped transient state when switching workspaces
+  React.useEffect(() => {
+    setSelectedConversationId(undefined);
     setStream(null);
     setStreamError(null);
-    // Reset the "ever streamed" guard when moving workspaces.
+    lastStreamRef.current = null;
     hasEverStreamedRef.current = false;
-  }
+  }, [workspaceId]);
 
-  // Clear the lastStream once the real messages are available.
-  React.useEffect(() => {
-    if (messagesQuery.data && messagesQuery.data.length > 0) {
-      lastStreamRef.current = null;
-    }
-  }, [messagesQuery.data]);
-
-  // Abort any in-flight stream when switching conversations or unmounting.
+  // Abort any in-flight stream when switching workspace or unmounting
   React.useEffect(() => {
     return () => {
       abortRef.current?.abort();
       abortRef.current = null;
     };
-  }, [activeConversationId]);
+  }, [workspaceId]);
 
   async function send(text: string) {
     const content = text.trim();
@@ -126,7 +113,11 @@ export function ChatView({ workspaceId }: ChatViewProps) {
 
     hasEverStreamedRef.current = true;
     setStreamError(null);
-    const newStream: StreamState = { userText: content, assistantText: "" };
+    const newStream: StreamState = {
+      userText: content,
+      assistantText: "",
+      isStreaming: true,
+    };
     setStream(newStream);
     lastStreamRef.current = newStream;
 
@@ -155,6 +146,7 @@ export function ChatView({ workspaceId }: ChatViewProps) {
               const updated = {
                 ...current,
                 assistantText: current.assistantText + chunk,
+                isStreaming: true,
               };
               lastStreamRef.current = updated;
               return updated;
@@ -162,31 +154,78 @@ export function ChatView({ workspaceId }: ChatViewProps) {
         },
       );
 
-      // Keep `stream` set while we fetch the persisted messages so the
-      // optimistic messages stay visible — no loading-spinner flash.
-      await queryClient.invalidateQueries({
+      const targetId = returnedId ?? activeConversationId;
+      if (targetId) {
+        setSelectedConversationId(targetId);
+      }
+
+      // Immediately mark isStreaming false so the spinner stops as soon as generation completes
+      setStream((current) =>
+        current ? { ...current, isStreaming: false } : null,
+      );
+
+      // Fetch persisted messages from the database
+      if (targetId) {
+        try {
+          const persistedMessages = await apiFetch<Message[]>(
+            endpoints.conversations.messages(targetId),
+          );
+          queryClient.setQueryData(
+            queryKeys.conversations.messages(targetId),
+            persistedMessages,
+          );
+        } catch {
+          // If network fetch fails, keep optimistic messages in query cache so they never disappear
+          const fallbackMessages: Message[] = [
+            ...(messagesQuery.data ?? []),
+            {
+              id: `opt-user-${Date.now()}`,
+              conversationId: targetId,
+              role: "USER",
+              content,
+              citations: null,
+              createdAt: new Date().toISOString(),
+            },
+            {
+              id: `opt-asst-${Date.now()}`,
+              conversationId: targetId,
+              role: "ASSISTANT",
+              content: lastStreamRef.current?.assistantText ?? "",
+              citations: null,
+              createdAt: new Date().toISOString(),
+            },
+          ];
+          queryClient.setQueryData(
+            queryKeys.conversations.messages(targetId),
+            fallbackMessages,
+          );
+        }
+      }
+
+      // Revalidate conversations list so workspace sidebar/header updates
+      void queryClient.invalidateQueries({
         queryKey: queryKeys.conversations.all(workspaceId),
       });
-      if (returnedId) {
-        await queryClient.fetchQuery({
-          queryKey: queryKeys.conversations.messages(returnedId),
-          queryFn: () =>
-            apiFetch<Message[]>(endpoints.conversations.messages(returnedId)),
-          retry: shouldRetry,
-        });
-      }
-      // Clear the live stream. lastStreamRef stays alive until the effect above
-      // sees messages.data populated, preventing the flash.
+
+      // Clear stream now that messages are committed to the cache
       setStream(null);
+      lastStreamRef.current = null;
     } catch (error) {
+      const returnedId =
+        (error as { conversationId?: string | null })?.conversationId ??
+        activeConversationId;
+      if (returnedId) {
+        setSelectedConversationId(returnedId);
+      }
+
       if (controller.signal.aborted) {
         // The user stopped the reply. Resync in case anything persisted.
-        await queryClient.invalidateQueries({
+        void queryClient.invalidateQueries({
           queryKey: queryKeys.conversations.all(workspaceId),
         });
-        if (activeConversationId) {
-          await queryClient.invalidateQueries({
-            queryKey: queryKeys.conversations.messages(activeConversationId),
+        if (returnedId) {
+          void queryClient.invalidateQueries({
+            queryKey: queryKeys.conversations.messages(returnedId),
           });
         }
         lastStreamRef.current = null;
@@ -239,6 +278,7 @@ export function ChatView({ workspaceId }: ChatViewProps) {
           <>
             {activeConversationId &&
             messagesQuery.isPending &&
+            !stream &&
             !lastStreamRef.current ? (
               <LoadingState label="Loading conversation" />
             ) : activeConversationId && messagesQuery.isError ? (

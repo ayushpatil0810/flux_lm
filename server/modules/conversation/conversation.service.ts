@@ -253,46 +253,80 @@ export class ConversationService {
       ),
       tools,
       stopWhen: webSearchEnabled ? isStepCount(3) : undefined,
-      onFinish: async ({ response, text }) => {
-        const assistantText = text.trim();
-        if (!assistantText) return;
+    });
 
-        // Build citations (if we want to extract web citations we can parse the tool calls, but for simplicity we rely on DB citations)
-        // Note: AI SDK v3.x onFinish provides `text`, `toolCalls`, `toolResults` etc.
-        const allCitations = [...citations];
+    const textStream = result.textStream;
+    const encoder = new TextEncoder();
 
-        const addedMessage = await ConversationService._insertMessage(
-          conversation.id,
-          {
-            role: "ASSISTANT",
-            content: assistantText,
-            citations: allCitations.length > 0 ? allCitations : undefined,
-          },
-        );
+    const responseStream = new ReadableStream({
+      async start(controller) {
+        const reader = textStream.getReader();
+        let fullAssistantText = "";
 
-        // Update the conversation's title if this is the first real exchange and title is default
-        if (
-          conversation.title === "New Chat" ||
-          conversation.title === "New chat"
-        ) {
-          await ConversationRepository.update(conversation.id, {
-            title: buildConversationTitle(userText),
-          });
-        }
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            fullAssistantText += value;
+            controller.enqueue(encoder.encode(value));
+          }
 
-        // Check if we need to summarize
-        const messageCount = addedMessage.messageCount;
-        if (messageCount === CONVERSATION_SUMMARY_INTERVAL) {
-          await inngest.send({
-            name: INNGEST_EVENTS.CONVERSATION_SUMMARIZE,
-            data: { conversationId: conversation.id, userId },
-          });
+          const assistantText = fullAssistantText.trim();
+          if (assistantText) {
+            const addedMessage = await ConversationService._insertMessage(
+              conversation.id,
+              {
+                role: "ASSISTANT",
+                content: assistantText,
+                citations: citations.length > 0 ? citations : undefined,
+              },
+            );
+
+            // Update the conversation's title if this is the first real exchange and title is default
+            if (
+              conversation.title === "New Chat" ||
+              conversation.title === "New chat"
+            ) {
+              await ConversationRepository.update(conversation.id, {
+                title: buildConversationTitle(userText),
+              });
+            }
+
+            // Check if we need to summarize
+            const messageCount = addedMessage.messageCount;
+            if (messageCount === CONVERSATION_SUMMARY_INTERVAL) {
+              await inngest.send({
+                name: INNGEST_EVENTS.CONVERSATION_SUMMARIZE,
+                data: { conversationId: conversation.id, userId },
+              });
+            }
+          }
+
+          controller.close();
+        } catch (error) {
+          // If the stream was interrupted/aborted, attempt to persist any partial assistant response
+          const partialText = fullAssistantText.trim();
+          if (partialText) {
+            try {
+              await ConversationService._insertMessage(conversation.id, {
+                role: "ASSISTANT",
+                content: partialText,
+                citations: citations.length > 0 ? citations : undefined,
+              });
+            } catch {
+              // Ignore partial persist errors on abort
+            }
+          }
+          controller.error(error);
+        } finally {
+          reader.releaseLock();
         }
       },
     });
 
-    return result.toTextStreamResponse({
+    return new Response(responseStream, {
       headers: {
+        "Content-Type": "text/plain; charset=utf-8",
         "X-Conversation-Id": conversation.id,
       },
     });

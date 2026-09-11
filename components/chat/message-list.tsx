@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 export interface StreamState {
   userText: string;
   assistantText: string;
+  isStreaming?: boolean;
 }
 
 export interface StreamError {
@@ -56,6 +57,26 @@ export function MessageList({
       el.scrollHeight - el.scrollTop - el.clientHeight < 80;
   }
 
+  const lastMessage =
+    messages.length > 0 ? messages[messages.length - 1] : null;
+  const secondLastMessage =
+    messages.length > 1 ? messages[messages.length - 2] : null;
+
+  // Prevent rendering stream duplicate if messages already contains the assistant message
+  const isAssistantAlreadyInMessages =
+    lastMessage?.role === "ASSISTANT" &&
+    stream?.assistantText !== undefined &&
+    lastMessage.content === stream.assistantText;
+
+  // Prevent rendering duplicate user bubble if messages already has the user message
+  const isUserAlreadyInMessages = Boolean(
+    stream?.userText &&
+      ((lastMessage?.role === "USER" &&
+        lastMessage.content === stream.userText) ||
+        (secondLastMessage?.role === "USER" &&
+          secondLastMessage.content === stream.userText)),
+  );
+
   return (
     <div
       ref={scrollRef}
@@ -72,13 +93,15 @@ export function MessageList({
             onOpenSource={onOpenSource}
           />
         ))}
-        {stream ? (
+        {stream && !isAssistantAlreadyInMessages ? (
           <>
-            <TranscriptMessage role="USER" content={stream.userText} />
+            {!isUserAlreadyInMessages && (
+              <TranscriptMessage role="USER" content={stream.userText} />
+            )}
             <TranscriptMessage
               role="ASSISTANT"
               content={stream.assistantText}
-              streaming
+              streaming={stream.isStreaming ?? true}
             />
           </>
         ) : null}

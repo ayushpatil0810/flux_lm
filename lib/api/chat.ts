@@ -83,6 +83,11 @@ export async function streamWorkspaceChat(
     }
     const tail = decoder.decode();
     if (tail) onChunk(tail);
+  } catch (err) {
+    if (err && typeof err === "object") {
+      (err as { conversationId?: string | null }).conversationId = conversationId;
+    }
+    throw err;
   } finally {
     reader.releaseLock();
   }

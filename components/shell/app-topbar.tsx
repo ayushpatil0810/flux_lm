@@ -89,10 +89,10 @@ export function AppTopbar({
 
             <Link
               href={homeHref}
-              className="group flex items-center gap-2 pl-0.5 text-foreground transition-opacity hover:opacity-85"
+              className="flex items-center gap-2 pl-0.5 text-foreground transition-opacity hover:opacity-85"
               aria-label={homeAriaLabel}
             >
-              <FluxLogo className="size-6 shrink-0 transition-transform duration-200 group-hover:scale-105 sm:size-6.5" />
+              <FluxLogo className="size-6 shrink-0 sm:size-6.5" />
               <span className="font-mono text-sm font-semibold tracking-tight text-foreground sm:text-[15px]">
                 Flux
               </span>
@@ -101,10 +101,10 @@ export function AppTopbar({
         ) : (
           <Link
             href={homeHref}
-            className="group flex h-11 items-center gap-2.5 rounded-r-full border border-l-0 border-border/80 bg-background/85 py-1.5 pl-4 pr-4 shadow-xs backdrop-blur-md transition-all hover:border-border hover:bg-background/95 sm:h-12 sm:pl-5 sm:pr-5 dark:border-border/60 dark:bg-card/85 dark:shadow-md dark:hover:bg-card/95"
+            className="flex h-11 items-center gap-2.5 rounded-r-full border border-l-0 border-border/80 bg-background/85 py-1.5 pl-4 pr-4 shadow-xs backdrop-blur-md transition-all hover:border-border hover:bg-background/95 sm:h-12 sm:pl-5 sm:pr-5 dark:border-border/60 dark:bg-card/85 dark:shadow-md dark:hover:bg-card/95"
             aria-label={homeAriaLabel}
           >
-            <FluxLogo className="size-6 shrink-0 transition-transform duration-200 group-hover:scale-105 sm:size-6.5" />
+            <FluxLogo className="size-6 shrink-0 sm:size-6.5" />
             <span className="font-mono text-sm font-semibold tracking-tight text-foreground sm:text-[15px]">
               Flux
             </span>
