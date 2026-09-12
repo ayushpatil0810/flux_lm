@@ -1,0 +1,60 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flux-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/flux?sslmode=disable
+      - BETTER_AUTH_URL=http://localhost:3000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - flux-network
+
+  db:
+    image: postgres:16-alpine
+    container_name: flux-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: flux
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d flux"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - flux-network
+
+  inngest:
+    image: inngest/inngest:latest
+    container_name: flux-inngest
+    restart: unless-stopped
+    ports:
+      - "8288:8288"
+    command: ["inngest-cli", "dev", "-u", "http://app:3000/api/inngest"]
+    depends_on:
+      - app
+    networks:
+      - flux-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  flux-network:
+    driver: bridge
