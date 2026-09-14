@@ -7,7 +7,7 @@ import {
   Layers01Icon,
   SparkleIcon,
 } from "@hugeicons/core-free-icons";
-
+import { CanvasText} from "@/components/ui/canvas-text";
 import { Suspense } from "react";
 import { headers } from "next/headers";
 import { auth } from "@/server/auth";
@@ -51,7 +51,24 @@ function Hero({ isLoggedIn }: { isLoggedIn?: boolean }) {
         </p>
 
         <h1 className="font-heading mt-4 text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-foreground text-balance">
-          Understand Anything
+          <CanvasText
+          text="Understand Anything"
+          backgroundClassName="bg-blue-600 dark:bg-blue-700"
+          colors={[
+            "rgba(0, 153, 255, 1)",
+            "rgba(0, 153, 255, 0.9)",
+            "rgba(0, 153, 255, 0.8)",
+            "rgba(0, 153, 255, 0.7)",
+            "rgba(0, 153, 255, 0.6)",
+            "rgba(0, 153, 255, 0.5)",
+            "rgba(0, 153, 255, 0.4)",
+            "rgba(0, 153, 255, 0.3)",
+            "rgba(0, 153, 255, 0.2)",
+            "rgba(0, 153, 255, 0.1)",
+          ]}
+          lineGap={4}
+          animationDuration={20}
+        />
         </h1>
 
         <p className="font-inter font-normal mt-4 sm:mt-5 max-w-2xl text-sm sm:text-xl leading-relaxed text-muted-foreground text-balance">

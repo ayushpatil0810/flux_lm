@@ -145,9 +145,7 @@ export default function LoginPage() {
         <div className="w-full max-w-[420px] rounded-3xl border border-border/80 bg-card/75 p-6 shadow-xl backdrop-blur-xl sm:p-8 dark:border-border/60 dark:bg-card/60 dark:shadow-2xl">
           {/* Brand Icon + Title */}
           <div className="flex flex-col items-center text-center">
-            <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/25 shadow-xs">
-              <FluxLogo className="size-7.5 shrink-0" />
-            </div>
+              <FluxLogo className="size-12 shrink-0" />
             <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-[26px]">
               {isSignUp ? "Create your account" : "Welcome back"}
             </h1>

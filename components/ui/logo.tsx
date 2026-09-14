@@ -20,6 +20,3 @@ export function FluxLogo({
     />
   );
 }
-
-export const TallieLogo = FluxLogo;
-
