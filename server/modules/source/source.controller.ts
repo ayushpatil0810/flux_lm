@@ -6,7 +6,7 @@ import { NextRequest } from "next/server";
 import { getAuthenticatedUser } from "@/server/utils/auth-utils";
 import { checkRateLimit } from "@/server/utils/rate-limiter";
 import { SourceService } from "./source.service";
-import { SUPPORTED_EXTENSIONS, getExtension } from "@/lib/file-parser";
+import { SUPPORTED_EXTENSIONS, getExtension } from "@/lib/parsers";
 import {
   bulkDeleteSourcesSchema,
   createSourceSchema,

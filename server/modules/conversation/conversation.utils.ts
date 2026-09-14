@@ -1,4 +1,4 @@
-import { retrieveWorkspaceContextAdvanced } from "@/lib/rag";
+import { retrieveWorkspaceContextAdvanced } from "@/lib/ai";
 import type { UIMessage } from "ai";
 
 function getTextFromUIMessage(message: UIMessage) {

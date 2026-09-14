@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getAuthenticatedUser } from "@/server/utils/auth-utils";
 import { SourceService } from "@/server/modules/source/source.service";
-import { r2Client, getPresignedDownloadUrl } from "@/lib/storage";
+import { r2Client, getPresignedDownloadUrl } from "@/lib/integrations";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 

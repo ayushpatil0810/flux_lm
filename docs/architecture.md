@@ -125,13 +125,13 @@ Request → [proxy.ts Middleware] → [Route Handler] → [Controller] → [Serv
 - Encapsulate all database interaction using **Drizzle ORM**.
 - Provide strongly typed query boundaries, isolating database table specifics from business services.
 
-### 2.4 Ingestion Parsers (`lib/file-parser.ts`, `lib/youtube.ts`, `lib/firecrawl.ts`)
-- **PDF Parser (`lib/pdf.ts`)**: Built on `unpdf` to extract textual content while tracking page offsets.
-- **DOCX Parser (`lib/file-parser.ts`)**: Uses `mammoth` to extract raw text and convert styling into HTML for rich previewing.
-- **PPTX Parser (`lib/file-parser.ts`)**: Unzips PowerPoint presentation archives via `JSZip`, parses slide XML (`ppt/slides/slide*.xml`), and structures slide titles and bullet points.
-- **XLSX Parser (`lib/file-parser.ts`)**: Leverages `exceljs` to parse workbooks, normalize row/column widths, and extract tabular data.
-- **YouTube Parser (`lib/youtube.ts`)**: Validates video IDs, queries the YouTube oEmbed API for metadata (title, author, thumbnail), fetches caption segments via `youtube-transcript`, applies heuristic timescale detection (milliseconds vs. seconds), and formats output into timestamped Markdown.
-- **Web Scraper (`lib/firecrawl.ts`)**: Connects to the Firecrawl API to extract clean Markdown stripped of navigation bars, footers, and scripts.
+### 2.4 Ingestion Parsers & Integrations (`lib/parsers/`, `lib/integrations/`)
+- **PDF Parser (`lib/parsers/pdf.ts`)**: Built on `unpdf` to extract textual content while tracking page offsets.
+- **DOCX Parser (`lib/parsers/file-parser.ts`)**: Uses `mammoth` to extract raw text and convert styling into HTML for rich previewing.
+- **PPTX Parser (`lib/parsers/file-parser.ts`)**: Unzips PowerPoint presentation archives via `JSZip`, parses slide XML (`ppt/slides/slide*.xml`), and structures slide titles and bullet points.
+- **XLSX Parser (`lib/parsers/file-parser.ts`)**: Leverages `exceljs` to parse workbooks, normalize row/column widths, and extract tabular data.
+- **YouTube Parser (`lib/parsers/youtube.ts`)**: Validates video IDs, queries the YouTube oEmbed API for metadata (title, author, thumbnail), fetches caption segments via `youtube-transcript`, applies heuristic timescale detection (milliseconds vs. seconds), and formats output into timestamped Markdown.
+- **Web Scraper (`lib/integrations/firecrawl.ts`)**: Connects to the Firecrawl API to extract clean Markdown stripped of navigation bars, footers, and scripts.
 
 ---
 

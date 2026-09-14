@@ -1,16 +1,23 @@
-import { chunkPages, chunkText } from "@/lib/chunker";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
-import { scrapeUrl } from "@/lib/firecrawl";
-import { generateEmbeddings } from "@/lib/openai";
-import { parseFile, extensionToSourceType } from "@/lib/file-parser";
 import {
   deleteVectorsBySourceId,
   deleteVectorsBySourceIds,
+  generateEmbeddings,
   upsertVectors,
-} from "@/lib/pinecone";
-import { uploadToStorage, deleteFromStorage } from "@/lib/storage";
-import { getYoutubeTranscript } from "@/lib/youtube";
+} from "@/lib/ai";
+import {
+  chunkPages,
+  chunkText,
+  extensionToSourceType,
+  getYoutubeTranscript,
+  parseFile,
+} from "@/lib/parsers";
+import {
+  deleteFromStorage,
+  scrapeUrl,
+  uploadToStorage,
+} from "@/lib/integrations";
 import { inngest } from "@/inngest/client";
 import { INNGEST_EVENTS } from "@/inngest/events";
 import { WorkspaceService } from "@/server/modules/workspace/workspace.service";

@@ -1,4 +1,4 @@
-import { searchWeb } from "@/lib/firecrawl";
+import { searchWeb } from "@/lib/integrations";
 import { tool } from "ai";
 import { z } from "zod";
 import { logger } from "@/lib/logger";

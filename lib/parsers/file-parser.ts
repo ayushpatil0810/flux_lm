@@ -1,6 +1,6 @@
 import mammoth from "mammoth";
 import JSZip from "jszip";
-import { parsePdf } from "@/lib/pdf";
+import { parsePdf } from "./pdf";
 
 type SupportedFileExtension =
   | "pdf"

@@ -1,5 +1,5 @@
 import { MemoryClient } from "mem0ai";
-import { logger } from "./logger";
+import { logger } from "@/lib/logger";
 import { env } from "@/lib/env";
 
 // Initialize the Mem0 client using the API key from environment variables.

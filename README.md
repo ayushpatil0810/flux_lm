@@ -214,19 +214,16 @@ flux/
 │   ├── client.ts                       # Inngest client initialization
 │   ├── events.ts                       # Event name constants
 │   └── functions.ts                    # Durable workflows (source, artifact, summary)
-├── lib/                                # Core shared utilities & service clients
+├── lib/                                # Core shared utilities & domain modules
+│   ├── ai/                             # AI models, embeddings, vector DB, memory, RAG
 │   ├── api/                            # Typed client-side API fetcher
-│   ├── chunker.ts                      # Recursive paragraph/sentence & page-aware chunker
+│   ├── integrations/                   # External service clients (Firecrawl, Cloudflare R2)
+│   ├── parsers/                        # Multimodal file, PDF, YouTube, and text chunkers
+│   ├── auth-client.ts                  # Better Auth React client
 │   ├── constants.ts                    # Model names, vector dimensions, RAG thresholds
 │   ├── env.ts                          # Type-safe Zod environment variable parser
-│   ├── file-parser.ts                  # Multimodal file parsing (PDF, DOCX, PPTX, XLSX)
-│   ├── firecrawl.ts                    # Firecrawl web scraping & search client
-│   ├── mem0.ts                         # Mem0 user memory client & helper methods
-│   ├── openai.ts                       # OpenAI client & embedding utilities
-│   ├── pinecone.ts                     # Pinecone vector upsert & similarity querying
-│   ├── rag.ts                          # Advanced RAG pipeline (HyDE, dual search, RRF)
-│   ├── storage.ts                      # Cloudflare R2 / S3 client & presigned URLs
-│   └── youtube.ts                      # YouTube transcript fetcher & timestamp parser
+│   ├── logger.ts                       # Structured Pino logger
+│   └── utils.ts                        # UI & string formatting utilities (cn, formatDate)
 ├── proxy.ts                            # Next.js route protection & auth proxy middleware
 ├── scripts/                            # Operational & database maintenance scripts
 │   ├── db_clear.ts                     # Truncates PostgreSQL tables & wipes Pinecone index

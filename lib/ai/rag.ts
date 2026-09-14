@@ -29,8 +29,8 @@ import {
   RAG_HYDE_MODEL,
   RAG_MIN_SCORE,
 } from "@/lib/constants";
-import { generateEmbedding } from "@/lib/openai";
-import { querySimilarity, type ScoredChunkResult } from "@/lib/pinecone";
+import { generateEmbedding } from "./openai";
+import { querySimilarity, type ScoredChunkResult } from "./pinecone";
 import { logger } from "@/lib/logger";
 import type { RetrievedChunk } from "@/server/modules/conversation/conversation.utils";
 

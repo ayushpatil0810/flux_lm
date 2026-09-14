@@ -3,7 +3,7 @@ import {
   addMemory,
   updateUserMemory,
   deleteUserMemory,
-} from "@/lib/mem0";
+} from "@/lib/ai";
 import { CreateMemoryInput, UpdateMemoryInput } from "./memory.validator";
 import { ApiError } from "@/server/utils/api-error";
 

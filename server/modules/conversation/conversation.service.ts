@@ -27,7 +27,7 @@ import {
   buildConversationTitle,
 } from "./conversation.utils";
 import { webSearchTool } from "./conversation.tools";
-import { searchUserMemories, addMemoriesFromMessages } from "@/lib/mem0";
+import { searchUserMemories, addMemoriesFromMessages } from "@/lib/ai";
 import { inngest } from "@/inngest/client";
 import { INNGEST_EVENTS } from "@/inngest/events";
 
