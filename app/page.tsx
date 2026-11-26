@@ -14,6 +14,7 @@ import { auth } from "@/server/auth";
 import { LandingTopbar } from "@/components/shell/landing-topbar";
 import { LandingFooter } from "@/components/shell/landing-footer";
 import { HeroCta, FinalCtaButton } from "@/components/shell/landing-cta";
+import { WorkspaceDemo } from "@/components/landing/workspace-demo/workspace-demo";
 
 export const metadata: Metadata = {
   title: { absolute: "Flux | AI Research Assistant" },
@@ -44,7 +45,7 @@ const USE_CASES = [
 
 function Hero({ isLoggedIn }: { isLoggedIn?: boolean }) {
   return (
-    <section className="relative flex min-h-[calc(100dvh-3.5rem)] flex-col items-center justify-center px-4 py-12 text-center sm:px-6">
+    <section className="relative flex flex-col items-center px-4 pt-12 text-center sm:px-6 sm:pt-16">
       <div className="mx-auto flex w-full max-w-4xl flex-col items-center">
         <p className="font-mono text-xs font-medium uppercase tracking-wider text-primary">
           Your AI-Powered Research Partner
@@ -80,6 +81,7 @@ function Hero({ isLoggedIn }: { isLoggedIn?: boolean }) {
           <HeroCta initialIsLoggedIn={isLoggedIn} />
         </div>
       </div>
+      <WorkspaceDemo />
     </section>
   );
 }
