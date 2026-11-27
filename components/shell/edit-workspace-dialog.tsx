@@ -6,7 +6,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { getErrorMessage, getFieldErrors, type Workspace } from "@/lib/api";
 import { useDeleteWorkspace, useUpdateWorkspace } from "@/hooks/use-workspaces";
-import { useToast } from "@/components/providers/toast-provider";
+import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { ConfirmDeleteDialog } from "@/components/sources/confirm-delete-dialog";
 import {

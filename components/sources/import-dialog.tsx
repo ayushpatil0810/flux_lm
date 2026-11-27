@@ -22,8 +22,8 @@ import {
   useImportTextSource,
   useImportFileSource,
 } from "@/hooks/use-sources";
-import { useToast } from "@/components/providers/toast-provider";
-import type { ToastOptions } from "@/components/providers/toast-provider";
+import { useToast } from "@/components/ui/toast";
+import type { ToastOptions } from "@/components/ui/toast";
 import { getErrorMessage, getFieldErrors } from "@/lib/api";
 
 type PushToast = (options: ToastOptions) => void;

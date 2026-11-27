@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { getErrorMessage, getFieldErrors, type Source } from "@/lib/api";
 import { useRenameSource } from "@/hooks/use-sources";
-import { useToast } from "@/components/providers/toast-provider";
+import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

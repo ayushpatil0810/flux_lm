@@ -19,7 +19,7 @@ import {
   useArtifact,
   useDeleteArtifact,
 } from "@/hooks/use-artifacts";
-import { useToast } from "@/components/providers/toast-provider";
+import { useToast } from "@/components/ui/toast";
 import { ErrorState, LoadingState } from "@/components/shell/states";
 import { Button } from "@/components/ui/button";
 import { useWorkspacePreview } from "@/components/shell/workspace-panel-context";

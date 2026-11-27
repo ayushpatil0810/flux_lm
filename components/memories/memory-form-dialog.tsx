@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { getErrorMessage, getFieldErrors, type MemoryItem } from "@/lib/api";
 import { useCreateMemory, useUpdateMemory } from "@/hooks/use-memories";
-import { useToast } from "@/components/providers/toast-provider";
+import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

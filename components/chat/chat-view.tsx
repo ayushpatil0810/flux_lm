@@ -19,7 +19,7 @@ import { CHAT_MODEL, CHAT_MODELS } from "@/lib/constants";
 import { useWorkspaceContext } from "@/components/shell/workspace-context";
 import { useConversations, useMessages } from "@/hooks/use-conversations";
 import { useSources } from "@/hooks/use-sources";
-import { useToast } from "@/components/providers/toast-provider";
+import { useToast } from "@/components/ui/toast";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { FileUploadIcon } from "@hugeicons/core-free-icons";
 import {
