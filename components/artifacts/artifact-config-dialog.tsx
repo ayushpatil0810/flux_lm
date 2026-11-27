@@ -8,7 +8,7 @@ import type { ArtifactType } from "@/lib/api";
 import { getErrorMessage } from "@/lib/api";
 import { useCreateArtifact } from "@/hooks/use-artifacts";
 import { useSources } from "@/hooks/use-sources";
-import { useToast } from "@/components/providers/toast-provider";
+import { useToast } from "@/components/ui/toast";
 import { ARTIFACT_TYPE_LABELS } from "./artifact-meta";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";

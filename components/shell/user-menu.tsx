@@ -7,7 +7,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Clock01Icon, Logout01Icon } from "@hugeicons/core-free-icons";
 import { authClient } from "@/lib/auth-client";
 import { cn, getInitials } from "@/lib/utils";
-import { useToast } from "@/components/providers/toast-provider";
+import { useToast } from "@/components/ui/toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,

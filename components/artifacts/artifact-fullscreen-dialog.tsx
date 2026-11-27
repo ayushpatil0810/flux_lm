@@ -12,7 +12,7 @@ import {
 } from "@hugeicons/core-free-icons";
 
 import { useArtifact, useDeleteArtifact } from "@/hooks/use-artifacts";
-import { useToast } from "@/components/providers/toast-provider";
+import { useToast } from "@/components/ui/toast";
 import { ConfirmDeleteDialog } from "@/components/sources/confirm-delete-dialog";
 import { ArtifactDetailDialog } from "./artifact-detail-dialog";
 import { RenameArtifactDialog } from "./rename-artifact-dialog";

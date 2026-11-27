@@ -17,7 +17,7 @@ import { useDashboardSearch } from "@/components/shell/dashboard-search-context"
 import type { Workspace } from "@/lib/api";
 import { getErrorMessage } from "@/lib/api";
 import { useWorkspaces, useDeleteWorkspace } from "@/hooks/use-workspaces";
-import { useToast } from "@/components/providers/toast-provider";
+import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

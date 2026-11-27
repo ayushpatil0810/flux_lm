@@ -9,11 +9,10 @@ import {
 
 import * as React from "react";
 import dynamic from "next/dynamic";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import type { LearningArtifact, LearningArtifactContent } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { MarkdownContent } from "@/components/ui/markdown-content";
 
 const MindmapFlow = dynamic(
   () => import("./mindmap-flow").then((mod) => mod.MindmapFlow),
@@ -26,37 +25,6 @@ const MindmapFlow = dynamic(
     ),
   },
 );
-
-/**
- * Reusable Markdown renderer with GFM plugin and secure external link handling.
- */
-function MarkdownRenderer({
-  content,
-  className,
-}: {
-  content: string;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "prose prose-sm dark:prose-invert max-w-none break-words",
-        className,
-      )}
-    >
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        components={{
-          a: ({ node, ...props }) => (
-            <a target="_blank" rel="noopener noreferrer" {...props} />
-          ),
-        }}
-      >
-        {content}
-      </ReactMarkdown>
-    </div>
-  );
-}
 
 /**
  * Per-type renderers for generated artifact content. Resiliently handles
@@ -159,7 +127,7 @@ function ProseViewer({
         isExpanded ? "max-w-4xl px-2 sm:px-6 py-2" : "max-w-3xl",
       )}
     >
-      <MarkdownRenderer content={text} />
+      <MarkdownContent content={text} externalLinks />
     </div>
   );
 }
@@ -222,7 +190,7 @@ function ReportViewer({
           <h2 className="text-foreground text-base md:text-lg font-semibold tracking-tight border-b border-border/40 pb-2">
             {section.title}
           </h2>
-          <MarkdownRenderer content={section.content} />
+          <MarkdownContent content={section.content} externalLinks />
         </section>
       ))}
     </div>
@@ -257,7 +225,7 @@ function TakeawaysViewer({
             {String(index + 1).padStart(2, "0")}
           </span>
           <div className="flex-1 min-w-0">
-            <MarkdownRenderer content={item} className="text-sm text-foreground/90" />
+            <MarkdownContent content={item} className="text-sm text-foreground/90" externalLinks />
           </div>
         </li>
       ))}

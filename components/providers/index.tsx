@@ -2,19 +2,16 @@
 
 import { QueryProvider } from "./query-provider";
 import { ThemeProvider } from "./theme-provider";
-import { ToastProvider } from "./toast-provider";
+import { Toaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-/**
- * Root Client Providers wrapper combining ThemeProvider, QueryProvider,
- * and the global ToastProvider notification channel.
- */
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <QueryProvider>
         <TooltipProvider>
-          <ToastProvider>{children}</ToastProvider>
+          {children}
+          <Toaster />
         </TooltipProvider>
       </QueryProvider>
     </ThemeProvider>

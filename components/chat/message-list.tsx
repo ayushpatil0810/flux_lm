@@ -3,11 +3,12 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { File01Icon, BookOpen01Icon } from "@hugeicons/core-free-icons";
 
 import * as React from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
 import type { CitationMetadata, Message } from "@/lib/api";
+import { AiStatus } from "@/components/ui/ai-status";
 import { Button } from "@/components/ui/button";
+import { MarkdownContent } from "@/components/ui/markdown-content";
+import { StreamingResponse } from "@/components/ui/streaming-response";
 
 export interface StreamState {
   userText: string;
@@ -41,14 +42,21 @@ export function MessageList({
   onOpenSource,
 }: MessageListProps) {
   const scrollRef = React.useRef<HTMLDivElement>(null);
+  const transcriptRef = React.useRef<HTMLDivElement>(null);
   const pinnedToBottom = React.useRef(true);
 
   React.useEffect(() => {
     const el = scrollRef.current;
-    if (el && pinnedToBottom.current) {
-      el.scrollTop = el.scrollHeight;
-    }
-  }, [messages.length, stream?.assistantText, streamError]);
+    const transcript = transcriptRef.current;
+    if (!el || !transcript) return;
+
+    const observer = new ResizeObserver(() => {
+      if (pinnedToBottom.current) el.scrollTop = el.scrollHeight;
+    });
+    observer.observe(transcript);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   function handleScroll() {
     const el = scrollRef.current;
@@ -83,7 +91,10 @@ export function MessageList({
       onScroll={handleScroll}
       className="min-h-0 flex-1 overflow-y-auto"
     >
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 sm:gap-5 px-3 sm:px-6 md:px-8 pt-2 sm:pt-3 pb-2">
+      <div
+        ref={transcriptRef}
+        className="mx-auto flex w-full max-w-3xl flex-col gap-4 sm:gap-5 px-3 sm:px-6 md:px-8 pt-2 sm:pt-3 pb-2"
+      >
         {messages.map((message) => (
           <TranscriptMessage
             key={message.id}
@@ -161,31 +172,11 @@ function TranscriptMessage({
 
   return (
     <article className="animate-in fade-in w-full duration-200">
-      {content ? (
-        <div className="prose prose-sm dark:prose-invert prose-p:leading-relaxed prose-pre:rounded-lg prose-pre:border prose-pre:border-border/60 prose-pre:bg-muted/50 max-w-none break-words">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
-          {streaming && (
-            <span
-              aria-hidden
-              className="border-primary ml-1.5 inline-block size-3.5 animate-spin rounded-full border-2 border-t-transparent align-middle"
-            />
-          )}
-        </div>
-      ) : streaming ? (
-        <div className="flex items-center gap-1.5 py-2">
-          <span
-            className="bg-muted-foreground/60 size-1.5 animate-bounce rounded-full"
-            style={{ animationDelay: "0ms" }}
-          />
-          <span
-            className="bg-muted-foreground/60 size-1.5 animate-bounce rounded-full"
-            style={{ animationDelay: "150ms" }}
-          />
-          <span
-            className="bg-muted-foreground/60 size-1.5 animate-bounce rounded-full"
-            style={{ animationDelay: "300ms" }}
-          />
-        </div>
+      {streaming && <AiStatus state={content ? "writing" : "thinking"} />}
+      {streaming !== undefined ? (
+        <StreamingResponse text={content} streaming={streaming} />
+      ) : content ? (
+        <MarkdownContent content={content} />
       ) : null}
 
       {citations && citations.length > 0 ? (

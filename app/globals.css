@@ -396,29 +396,6 @@
 }
 
 @layer utilities {
-  /* Quiet enter transition for menus and dialogs. Respects reduced motion. */
-  .ui-enter-fade {
-    opacity: 1;
-    transform: scale(1);
-    transition:
-      opacity 200ms cubic-bezier(0.23, 1, 0.32, 1),
-      transform 200ms cubic-bezier(0.23, 1, 0.32, 1),
-      height 200ms cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  @starting-style {
-    .ui-enter-fade {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .ui-enter-fade {
-      transition: none;
-    }
-  }
-
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -644,7 +621,7 @@
   border: 1px solid rgba(128, 128, 128, 0.15);
 }
 
-.prose pre {
+.prose pre:not([data-slot="code-block-pre"]) {
   font-family: var(--font-geist-mono), monospace;
   font-size: 0.8rem;
   background-color: var(--muted);

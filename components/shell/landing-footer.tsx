@@ -89,11 +89,13 @@ export function LandingFooter() {
         </div>
       </div>
 
-      {/* Mobile-only copyright below pills */}
-      <div className="mt-4 text-center sm:hidden">
-        <span className="font-inter text-[11px] text-muted-foreground/60">
+      <div className="mt-4 space-y-1 text-center font-inter text-xs text-muted-foreground">
+        <p className="sm:hidden">
           © 2026 Flux. Understand Anything.
-        </span>
+        </p>
+        <a href="https://www.rareui.com" className="underline-offset-4 hover:underline focus-visible:underline">
+          Components by Rare UI
+        </a>
       </div>
     </footer>
   );

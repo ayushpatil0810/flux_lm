@@ -11,7 +11,7 @@ import * as React from "react";
 import { getErrorMessage, type MemoryItem } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { useDeleteMemory, useMemories } from "@/hooks/use-memories";
-import { useToast } from "@/components/providers/toast-provider";
+import { useToast } from "@/components/ui/toast";
 import {
   EmptyState,
   ErrorState,

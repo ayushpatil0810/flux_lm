@@ -27,7 +27,7 @@ import remarkGfm from "remark-gfm";
 import type { Source } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useSources, useDeleteSource } from "@/hooks/use-sources";
-import { useToast } from "@/components/providers/toast-provider";
+import { useToast } from "@/components/ui/toast";
 import { ErrorState, LoadingState } from "@/components/shell/states";
 import { Button } from "@/components/ui/button";
 import { useWorkspacePreview } from "@/components/shell/workspace-panel-context";
