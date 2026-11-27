@@ -161,26 +161,26 @@ flowchart TB
 
 ## Tech Stack
 
-| Area | Technology | Purpose |
-| :--- | :--- | :--- |
-| **Frontend Framework** | [Next.js 16.3.1](https://nextjs.org/) (App Router) | Server components, streaming routes, and application layout |
-| **UI Library & Motion** | [React 19.2.8](https://react.dev/) | Core UI rendering with React 19 concurrent features |
-| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) | Modern utility-first stylesheet engine |
-| **Component Primitives** | [Radix UI](https://www.radix-ui.com/) & [Hugeicons](https://hugeicons.com/) | Accessible interactive primitives and icon system |
-| **Graph / Mindmap Visualization** | [@xyflow/react](https://reactflow.dev/) & [@dagrejs/dagre](https://github.com/dagrejs/dagre) | Interactive node-edge mind maps with automatic directed graph layout |
-| **State & Data Fetching** | [@tanstack/react-query 5](https://tanstack.com/query) | Client-side caching, polling, and optimistic updates |
-| **Database & ORM** | [PostgreSQL](https://www.postgresql.org/) & [Drizzle ORM 0.45.2](https://orm.drizzle.team/) | Relational storage, migrations, and type-safe relational schemas |
-| **Vector Database** | [Pinecone 8.2.0](https://www.pinecone.io/) | High-dimensional similarity search with metadata filtering |
-| **Object Storage** | [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) via `@aws-sdk/client-s3` | S3-compatible private storage for uploaded raw documents |
-| **Background Workflows** | [Inngest 4.18.1](https://www.inngest.com/) | Durable execution, retries, and step-function orchestration |
-| **AI Framework** | [Vercel AI SDK 7](https://sdk.vercel.ai/) (`ai`, `@ai-sdk/openai`) | Streaming LLM completions, structured object generation, tool calling |
-| **AI Models** | OpenAI (`gpt-5.4-mini`, `gpt-5.4-nano`, `text-embedding-3-small`) | Generation, hypothetical document synthesis, and 512-dim embeddings |
-| **Long-Term Memory** | [Mem0 3.1.6](https://mem0.ai/) (`mem0ai`) | Cross-session user memory extraction and semantic memory search |
-| **Web Scraping** | [Firecrawl 4.32.2](https://www.firecrawl.dev/) | Webpage-to-Markdown conversion and live web search tools |
-| **File Parsing** | `unpdf`, `mammoth`, `jszip`, `exceljs`, `youtube-transcript` | Format-specific document and media transcript extraction |
-| **Authentication** | [Better Auth 1.6.29](https://www.better-auth.com/) | User accounts, password hashing, OAuth providers, JWT cookie sessions |
-| **Rate Limiting** | [@upstash/ratelimit](https://upstash.com/) & [@upstash/redis](https://upstash.com/) | Sliding-window API rate limiting with local in-memory fallback |
-| **Runtime & Package Manager** | [Bun](https://bun.sh/) / [Node.js 20+](https://nodejs.org/) | Script execution, package resolution, and runtime environment |
+| Area                              | Technology                                                                                   | Purpose                                                               |
+| :-------------------------------- | :------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| **Frontend Framework**            | [Next.js 16.3.1](https://nextjs.org/) (App Router)                                           | Server components, streaming routes, and application layout           |
+| **UI Library & Motion**           | [React 19.2.8](https://react.dev/)                                                           | Core UI rendering with React 19 concurrent features                   |
+| **Styling**                       | [Tailwind CSS v4](https://tailwindcss.com/)                                                  | Modern utility-first stylesheet engine                                |
+| **Component Primitives**          | [Radix UI](https://www.radix-ui.com/) & [Hugeicons](https://hugeicons.com/)                  | Accessible interactive primitives and icon system                     |
+| **Graph / Mindmap Visualization** | [@xyflow/react](https://reactflow.dev/) & [@dagrejs/dagre](https://github.com/dagrejs/dagre) | Interactive node-edge mind maps with automatic directed graph layout  |
+| **State & Data Fetching**         | [@tanstack/react-query 5](https://tanstack.com/query)                                        | Client-side caching, polling, and optimistic updates                  |
+| **Database & ORM**                | [PostgreSQL](https://www.postgresql.org/) & [Drizzle ORM 0.45.2](https://orm.drizzle.team/)  | Relational storage, migrations, and type-safe relational schemas      |
+| **Vector Database**               | [Pinecone 8.2.0](https://www.pinecone.io/)                                                   | High-dimensional similarity search with metadata filtering            |
+| **Object Storage**                | [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) via `@aws-sdk/client-s3`  | S3-compatible private storage for uploaded raw documents              |
+| **Background Workflows**          | [Inngest 4.18.1](https://www.inngest.com/)                                                   | Durable execution, retries, and step-function orchestration           |
+| **AI Framework**                  | [Vercel AI SDK 7](https://sdk.vercel.ai/) (`ai`, `@ai-sdk/openai`)                           | Streaming LLM completions, structured object generation, tool calling |
+| **AI Models**                     | OpenAI (`gpt-5.4-mini`, `gpt-5.4-nano`, `text-embedding-3-small`)                            | Generation, hypothetical document synthesis, and 512-dim embeddings   |
+| **Long-Term Memory**              | [Mem0 3.1.6](https://mem0.ai/) (`mem0ai`)                                                    | Cross-session user memory extraction and semantic memory search       |
+| **Web Scraping**                  | [Firecrawl 4.32.2](https://www.firecrawl.dev/)                                               | Webpage-to-Markdown conversion and live web search tools              |
+| **File Parsing**                  | `unpdf`, `mammoth`, `jszip`, `exceljs`, `youtube-transcript`                                 | Format-specific document and media transcript extraction              |
+| **Authentication**                | [Better Auth 1.6.29](https://www.better-auth.com/)                                           | User accounts, password hashing, OAuth providers, JWT cookie sessions |
+| **Rate Limiting**                 | [@upstash/ratelimit](https://upstash.com/) & [@upstash/redis](https://upstash.com/)          | Sliding-window API rate limiting with local in-memory fallback        |
+| **Runtime & Package Manager**     | [Bun](https://bun.sh/) / [Node.js 20+](https://nodejs.org/)                                  | Script execution, package resolution, and runtime environment         |
 
 ---
 
@@ -257,12 +257,15 @@ flux/
 The fastest way to launch the complete system (Flux Next.js application, PostgreSQL 16 database, and Inngest background workflow server) is with Docker Compose:
 
 1. **Copy the environment template**:
+
    ```bash
    cp .env.example .env
    ```
-   *Populate your `OPENAI_API_KEY` and `PINECONE_API_KEY` in `.env`.*
+
+   _Populate your `OPENAI_API_KEY` and `PINECONE_API_KEY` in `.env`._
 
 2. **Build and start all containers**:
+
    ```bash
    docker compose up --build
    ```
@@ -275,6 +278,7 @@ The fastest way to launch the complete system (Flux Next.js application, Postgre
    ```
 
 The services will be reachable at:
+
 - **Flux Web Interface**: [http://localhost:3000](http://localhost:3000)
 - **Inngest Workflow Dashboard**: [http://localhost:8288](http://localhost:8288)
 - **PostgreSQL Database**: `localhost:5432`
@@ -288,7 +292,7 @@ If you prefer to run the application directly on your host machine:
 #### Prerequisites
 
 - **Runtime**: [Bun](https://bun.sh/) (recommended) or [Node.js 20+](https://nodejs.org/)
-- **Database**: PostgreSQL 14+ database instance (e.g. Neon, Supabase, or local PostgreSQL)
+- **Database**: PostgreSQL 14+ database instance (e.g. Neon, or local PostgreSQL)
 - **Vector Database**: [Pinecone](https://www.pinecone.io/) index created with **512 dimensions** and **cosine** metric
 - **AI Services**: [OpenAI API Key](https://platform.openai.com/)
 - **Optional Services**:
@@ -306,7 +310,7 @@ cd flux
 bun install
 ```
 
-*(Alternatively, use `npm install` or `pnpm install`)*
+_(Alternatively, use `npm install` or `pnpm install`)_
 
 ### 2. Configure Environment Variables
 
@@ -489,7 +493,7 @@ Code quality and formatting are maintained via ESLint and Prettier:
   bun x tsc --noEmit
   ```
 
-*(Note: Automated unit/integration test suites are not currently configured in this repository; verification is performed through TypeScript strict mode, ESLint, and Inngest local step tracing).*
+_(Note: Automated unit/integration test suites are not currently configured in this repository; verification is performed through TypeScript strict mode, ESLint, and Inngest local step tracing)._
 
 ---
 
