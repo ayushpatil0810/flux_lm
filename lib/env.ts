@@ -23,8 +23,9 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   ENCRYPTION_KEY: z.string().optional(),
 
-  // External Integrations (Firecrawl)
+  // External Integrations (Firecrawl, Supadata)
   FIRECRAWL_API_KEY: z.string().optional(),
+  SUPADATA_API_KEY: z.string().optional(),
 
   // Cloudflare R2 Storage
   R2_ACCOUNT_ID: z.string().optional(),
@@ -64,4 +65,3 @@ const parseEnv = () => {
 };
 
 export const env = parseEnv();
-

@@ -1,5 +1,7 @@
-import { logger } from "@/lib/logger";
+import { Supadata } from "@supadata/js";
 import { YtCaptionKit } from "yt-caption-kit";
+import { logger } from "@/lib/logger";
+import { env } from "@/lib/env";
 
 const log = logger.child({ module: "YouTube" });
 
@@ -94,7 +96,82 @@ async function fetchYoutubeMetadata(videoId: string) {
 }
 
 /**
+ * Fetches transcript via Supadata managed API — works reliably from cloud/Vercel IPs.
+ * Supadata offsets are in milliseconds.
+ *
+ * @param videoId - 11-character YouTube Video ID.
+ */
+async function fetchTranscriptViaSupadata(videoId: string): Promise<string> {
+  const supadata = new Supadata({ apiKey: env.SUPADATA_API_KEY! });
+  const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+  const result = await supadata.transcript({ url: videoUrl });
+
+  // For long videos Supadata returns a JobId instead of the transcript directly.
+  // Poll until complete (max ~30s).
+  let transcript;
+  if ("jobId" in result) {
+    const maxAttempts = 10;
+    for (let i = 0; i < maxAttempts; i++) {
+      await new Promise((r) => setTimeout(r, 3000));
+      const job = await supadata.transcript.getJobStatus(result.jobId);
+      if (job.status === "completed" && job.result) {
+        transcript = job.result;
+        break;
+      }
+      if (job.status === "failed") {
+        throw new Error("Supadata transcript job failed");
+      }
+    }
+    if (!transcript) {
+      throw new Error("Supadata transcript job timed out");
+    }
+  } else {
+    transcript = result;
+  }
+
+  if (!transcript.content || transcript.content.length === 0) {
+    throw new Error("No transcript found for this YouTube video.");
+  }
+
+  // Supadata returns an array of { text, offset (ms), duration (ms) }
+  return (transcript.content as Array<{ text: string; offset: number }>)
+    .map((item) => {
+      const timeStr = formatTimestamp(item.offset / 1000);
+      return `${timeStr} ${item.text.trim()}`;
+    })
+    .join("\n");
+}
+
+/**
+ * Fetches transcript via yt-caption-kit — works on local/residential IPs only,
+ * NOT reliable from cloud providers (AWS/GCP/Vercel).
+ *
+ * @param videoId - 11-character YouTube Video ID.
+ */
+async function fetchTranscriptViaLocal(videoId: string): Promise<string> {
+  const api = new YtCaptionKit();
+  const transcript = await api.fetch(videoId, { languages: ["en"] });
+
+  if (!transcript || transcript.length === 0) {
+    throw new Error("No transcript found for this YouTube video.");
+  }
+
+  // yt-caption-kit returns `start` in seconds
+  return transcript.snippets
+    .map((item) => {
+      const timeStr = formatTimestamp(item.start);
+      return `${timeStr} ${item.text.trim()}`;
+    })
+    .join("\n");
+}
+
+/**
  * Fetches transcript for a YouTube video and formats it into clean timestamped Markdown.
+ *
+ * Strategy:
+ * - If SUPADATA_API_KEY is set → use Supadata (works from Vercel/cloud IPs).
+ * - Otherwise → fall back to local yt-caption-kit (works only from non-cloud IPs).
  *
  * @param urlOrId - YouTube URL or Video ID.
  * @returns Formatted transcript text and metadata.
@@ -105,25 +182,12 @@ export async function getYoutubeTranscript(
   const videoId = extractYoutubeVideoId(urlOrId);
   const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
-  const api = new YtCaptionKit();
-
-  const [metadata, transcript] = await Promise.all([
+  const [metadata, transcriptText] = await Promise.all([
     fetchYoutubeMetadata(videoId),
-    api.fetch(videoId, { languages: ["en"] }),
+    env.SUPADATA_API_KEY
+      ? fetchTranscriptViaSupadata(videoId)
+      : fetchTranscriptViaLocal(videoId),
   ]);
-
-  if (!transcript || transcript.length === 0) {
-    throw new Error("No transcript found for this YouTube video.");
-  }
-
-  // yt-caption-kit returns `start` in seconds (always)
-  // Format segments into timestamped markdown: [00:15] Text snippet...
-  const formattedTranscript = transcript.snippets
-    .map((item) => {
-      const timeStr = formatTimestamp(item.start);
-      return `${timeStr} ${item.text.trim()}`;
-    })
-    .join("\n");
 
   return {
     videoId,
@@ -131,6 +195,6 @@ export async function getYoutubeTranscript(
     title: metadata.title,
     authorName: metadata.authorName,
     thumbnailUrl: metadata.thumbnailUrl,
-    transcriptText: formattedTranscript,
+    transcriptText,
   };
 }
